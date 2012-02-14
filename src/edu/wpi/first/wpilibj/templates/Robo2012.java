@@ -29,7 +29,7 @@ public class Robo2012 extends IterativeRobot {
 
     public void robotInit() {
         Timer.delay(10);
-        drive = new RobotDrive(1, 2);
+        drive = new RobotDrive(RoboMap.MOTOR1, RoboMap.MOTOR2);
         //drive = new RobotDrive(1, 2, 3, 4);
         stick = new Joystick(1);
         controls = new Controls(stick);

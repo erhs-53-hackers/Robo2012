@@ -18,8 +18,8 @@ public class Launcher {
      * Default constructor for the launcher
      */
     public Launcher() {
-        this.launchMotor = new Jaguar(7);
-        this.loadMotor = new Jaguar(8);
+        this.launchMotor = new Jaguar(RoboMap.LAUNCH_MOTOR);
+        this.loadMotor = new Jaguar(RoboMap.LOAD_MOTOR);
         this.encoder = new Encoder(1, 2, false);
         this.encoder.setDistancePerPulse(1);
     }
