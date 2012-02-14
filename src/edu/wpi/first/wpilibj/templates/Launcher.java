@@ -20,21 +20,7 @@ public class Launcher {
     public Launcher() {
         this.launchMotor = new Jaguar(RoboMap.LAUNCH_MOTOR);
         this.loadMotor = new Jaguar(RoboMap.LOAD_MOTOR);
-        this.encoder = new Encoder(1, 2, false);
-        this.encoder.setDistancePerPulse(1);
-    }
-    
-    /**
-     * Constructor used for custom ports on the motors and encoder
-     * @param motor the split motor used in the launcher
-     * @param loadMotor the motor used to load the launcher
-     * @param encoder the shaft encoder, attached to either motor
-     * 
-     */
-    public Launcher(Jaguar launchMotor, Jaguar loadMotor, Encoder encoder) {
-        this.launchMotor = launchMotor;
-        this.loadMotor = loadMotor;
-        this.encoder = encoder;
+        this.encoder = new Encoder(RoboMap.LAUNCH_ENCODER1, RoboMap.LAUNCH_ENCODER2, false);
         this.encoder.setDistancePerPulse(1);
     }
     

@@ -18,9 +18,6 @@ public class Robo2012 extends IterativeRobot {
     ParticleAnalysisReport target;
     Physics physics;
     Launcher launcher;
-    Jaguar launcher1;
-    Jaguar launcher2;
-    Encoder launcherEncoder;
     Jaguar bridgeArm;
     Messager msg;
     Controls controls;
@@ -30,8 +27,8 @@ public class Robo2012 extends IterativeRobot {
     public void robotInit() {
         Timer.delay(10);
         drive = new RobotDrive(RoboMap.MOTOR1, RoboMap.MOTOR2);
-        //drive = new RobotDrive(1, 2, 3, 4);
-        stick = new Joystick(1);
+        //drive = new RobotDrive(RoboMap.MOTOR1, RoboMap.MOTOR2, RoboMap.MOTOR3, RoboMap.MOTOR4);
+        stick = new Joystick(RoboMap.JOYSTICK1);
         controls = new Controls(stick);
         msg = new Messager();
         camera = AxisCamera.getInstance();
@@ -39,12 +36,13 @@ public class Robo2012 extends IterativeRobot {
         camera.writeResolution(AxisCamera.ResolutionT.k640x480);
         imageProc = new ImageProcessing();
         physics = new Physics();
-        bridgeArm = new Jaguar(1);
+        bridgeArm = new Jaguar(RoboMap.BRIDGE_MOTOR);
         launcher = new Launcher();
         msg.printLn("FRC 2012");
     }
 
     public void autonomousPeriodic() {
+        Gyro gyro;
     }
 
     public void teleopPeriodic() {
@@ -53,29 +51,25 @@ public class Robo2012 extends IterativeRobot {
         //drive.mecanumDrive_Cartesian(stick.getX(), stick.getY(), 0, 0);
         
         // motor to lower bridge
-        if (stick.getRawButton(1)) bridgeArm.set(.2);
+        if (controls.button1()) bridgeArm.set(.2);
         else bridgeArm.set(0);
         
-        /*
-         * Select the target to aim at 
-         */
-        if (stick.getRawButton(3)) {
+        //Select the target to aim at 
+        if (controls.button3()) {
             target = imageProc.leftT;
             isShooting = true;
-        } else if (stick.getRawButton(4)) {
+        } else if (controls.button4()) {
             target = imageProc.rightT;
             isShooting = true;
-        } else if (stick.getRawButton(5)) {
+        } else if (controls.button5()) {
             target = imageProc.topT;
             isShooting = true;
-        } else if (stick.getRawButton(6)) {
+        } else if (controls.button6()) {
             target = imageProc.bottomT;
             isShooting = true;
         }
 
-        /*
-         * Have the camera scan for targets
-         */
+        // Have the camera scan for targets
         if (camera.freshImage()) {
             try {
                 imageProc.getTheParticles(camera);
