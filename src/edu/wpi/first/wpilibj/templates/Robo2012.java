@@ -21,6 +21,8 @@ public class Robo2012 extends IterativeRobot {
     Jaguar bridgeArm;
     AnalogChannel autoPot;
     AnalogChannel telePot;
+    Gyro gyr;
+    GyroX gyro;
     Messager msg;
     Controls controls;
     
@@ -40,6 +42,8 @@ public class Robo2012 extends IterativeRobot {
         physics = new Physics();
         bridgeArm = new Jaguar(RoboMap.BRIDGE_MOTOR);
         launcher = new Launcher();
+        gyr = new Gyro(RoboMap.GYRO);
+        gyro = new GyroX(gyr, drive);
         autoPot = new AnalogChannel(RoboMap.AUTO_POT);
         telePot = new AnalogChannel(RoboMap.TELO_POT);
         msg.printLn("FRC 2012");
@@ -65,6 +69,12 @@ public class Robo2012 extends IterativeRobot {
     }
 
     public void teleopPeriodic() {
+        
+        gyro.refreshGyro();
+        
+        if (stick.getRawButton(7)) {
+            gyro.turnToAngle(0, gyro.modulatedAngle);
+        }
         
         drive.arcadeDrive(stick);
         //drive.mecanumDrive_Cartesian(stick.getX(), stick.getY(), 0, 0);
