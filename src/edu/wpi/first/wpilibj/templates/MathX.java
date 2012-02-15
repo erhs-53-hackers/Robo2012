@@ -10,6 +10,11 @@ import com.sun.squawk.util.MathUtils;
  */
 public class MathX{
     
+    public static double round(double input) {
+        double result = MathUtils.round(input);
+        return result;
+    }
+    
     public static double abs(double input) {
         double result = java.lang.Math.abs(input);
         return result;

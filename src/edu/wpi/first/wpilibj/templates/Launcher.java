@@ -24,14 +24,24 @@ public class Launcher {
         this.encoder.setDistancePerPulse(1);
     }
     
+    private double getRPM() {
+        double encod1 = encoder.get();
+        double deltaTime = .01;
+        Timer.delay(deltaTime);
+        double encod2 = encoder.get();
+        double deltaEncod = encod2 - encod1;
+        double RPM = deltaEncod / (deltaTime * 6);
+        return RPM;
+    }
+    
     public void shoot(int pixel) {
         double speed = 0.0;
         int launchSpeed = pixel * /* this can change to tested values later */1000;
         encoder.start();
-        while (MathX.abs(encoder.getRate() - launchSpeed) >= 5) {
+        while (MathX.abs(getRPM() - launchSpeed) >= 100) {
             launchMotor.set(speed);
             speed += .025;
-            Timer.delay(.1);
+            Timer.delay(.025);
         }
         encoder.stop();
         loadMotor.set(.25);

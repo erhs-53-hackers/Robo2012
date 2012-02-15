@@ -19,6 +19,8 @@ public class Robo2012 extends IterativeRobot {
     Physics physics;
     Launcher launcher;
     Jaguar bridgeArm;
+    AnalogChannel autoPot;
+    AnalogChannel telePot;
     Messager msg;
     Controls controls;
     
@@ -38,11 +40,28 @@ public class Robo2012 extends IterativeRobot {
         physics = new Physics();
         bridgeArm = new Jaguar(RoboMap.BRIDGE_MOTOR);
         launcher = new Launcher();
+        autoPot = new AnalogChannel(RoboMap.AUTO_POT);
+        telePot = new AnalogChannel(RoboMap.TELO_POT);
         msg.printLn("FRC 2012");
     }
 
     public void autonomousPeriodic() {
-        Gyro gyro;
+        int x = (int) MathX.round(autoPot.getAverageVoltage());
+        int shootDelay = 0;
+        boolean shootFlag = true;
+        
+        if (x <= 4) {
+            shootDelay = x;
+        } else if (x == 5) {
+            shootFlag = false;
+        }
+
+        if (shootFlag != false) {
+            Timer.delay(shootDelay);
+            //image processing here
+            //physics code here
+            //shooting algorithm here
+        }
     }
 
     public void teleopPeriodic() {
