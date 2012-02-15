@@ -47,6 +47,7 @@ public class Launcher {
         loadMotor.set(.25);
         Timer.delay(5);
         loadMotor.set(0);
+        launchMotor.set(0);
     }
    
 }
