@@ -20,7 +20,7 @@ public class GyroX {
     double targetAngle = 0;
     
     public GyroX(final int gyroInit, RobotDrive drive) {
-        this.gyro = gyro;
+        this.gyro = new Gyro(gyroInit);
         this.drive = drive;
     }
 

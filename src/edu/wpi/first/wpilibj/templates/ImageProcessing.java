@@ -13,7 +13,7 @@ import edu.wpi.first.wpilibj.image.NIVision.MeasurementType;
 /**
  *
  * @author Rajath
- * 19ft 
+ *
  */
 public class ImageProcessing {
 

@@ -16,7 +16,7 @@ public class RoboMap {
     public static final int BRIDGE_MOTOR = 7;
     public static final int LAUNCH_LIMIT = 8;
     public static final int LAUNCH_ENCODER1 = 9;
-    public static final int LAUNCH_ENCODER2 = 10;
+    public static final int LAUNCH_ENCODER2 = 10; 
     
     /* Analog */
     public static final int AUTO_POT = 1;

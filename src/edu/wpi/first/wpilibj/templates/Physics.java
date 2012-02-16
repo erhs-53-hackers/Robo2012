@@ -2,7 +2,7 @@ package edu.wpi.first.wpilibj.templates;
 
 /**
  *
- * @author nick, michael
+ * @author Nick, Michael
  */
 public class Physics {
     
