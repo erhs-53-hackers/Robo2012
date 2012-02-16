@@ -9,6 +9,10 @@ import edu.wpi.first.wpilibj.*;
 import edu.wpi.first.wpilibj.camera.AxisCamera;
 import edu.wpi.first.wpilibj.image.ParticleAnalysisReport;
 
+/**
+ *
+ * @author Team53
+ */
 public class Robo2012 extends IterativeRobot {
 
     RobotDrive drive;
@@ -21,17 +25,14 @@ public class Robo2012 extends IterativeRobot {
     Jaguar bridgeArm;
     AnalogChannel autoPot;
     AnalogChannel telePot;
-    Gyro gyr;
     GyroX gyro;
     Messager msg;
     Controls controls;
-    
     boolean isShooting = false;
 
     public void robotInit() {
         Timer.delay(10);
-        drive = new RobotDrive(RoboMap.MOTOR1, RoboMap.MOTOR2);
-        //drive = new RobotDrive(RoboMap.MOTOR1, RoboMap.MOTOR2, RoboMap.MOTOR3, RoboMap.MOTOR4);
+        drive = new RobotDrive(RoboMap.MOTOR1, RoboMap.MOTOR2, RoboMap.MOTOR3, RoboMap.MOTOR4);
         stick = new Joystick(RoboMap.JOYSTICK1);
         controls = new Controls(stick);
         msg = new Messager();
@@ -42,8 +43,7 @@ public class Robo2012 extends IterativeRobot {
         physics = new Physics();
         bridgeArm = new Jaguar(RoboMap.BRIDGE_MOTOR);
         launcher = new Launcher();
-        gyr = new Gyro(RoboMap.GYRO);
-        gyro = new GyroX(gyr, drive);
+        gyro = new GyroX(RoboMap.GYRO, drive);
         autoPot = new AnalogChannel(RoboMap.AUTO_POT);
         telePot = new AnalogChannel(RoboMap.TELO_POT);
         msg.printLn("FRC 2012");
@@ -53,7 +53,7 @@ public class Robo2012 extends IterativeRobot {
         int x = (int) MathX.round(autoPot.getAverageVoltage());
         int shootDelay = 0;
         boolean shootFlag = true;
-        
+
         if (x <= 4) {
             shootDelay = x;
         } else if (x == 5) {
@@ -69,20 +69,23 @@ public class Robo2012 extends IterativeRobot {
     }
 
     public void teleopPeriodic() {
-        
+
         gyro.refreshGyro();
-        
-        if (stick.getRawButton(7)) {
+
+        if (controls.button7()) {
             gyro.turnToAngle(0, gyro.modulatedAngle);
         }
-        
+
         drive.arcadeDrive(stick);
-        //drive.mecanumDrive_Cartesian(stick.getX(), stick.getY(), 0, 0);
-        
+        //drive.mecanumDrive_Cartesian(stick.getX(), stick.getY(), stick.getZ(), 0);
+
         // motor to lower bridge
-        if (controls.button1()) bridgeArm.set(.2);
-        else bridgeArm.set(0);
-        
+        if (controls.button1()) {
+            bridgeArm.set(.2);
+        } else {
+            bridgeArm.set(0);
+        }
+
         //Select the target to aim at 
         if (controls.button3()) {
             target = imageProc.leftT;
@@ -105,18 +108,19 @@ public class Robo2012 extends IterativeRobot {
                 int pixelHeight = imageProc.getImgHeight(imageProc.party);
                 msg.printLn("Pixels = " + pixelHeight);
                 msg.printLn(imageProc.orginizeParticles(imageProc.party, imageProc.getTotalXCenter(imageProc.party), imageProc.getTotalXCenter(imageProc.party)));
-                
+
+                // if a target is selected, aim and shoot the ball
                 if (isShooting) {
                     launcher.shoot(pixelHeight);
                     /*
-                        physics.setP(imageProc.getImgHeight(imageProc.party));
-                        physics.calculateInfo();
-                        double velocity = physics.calculateLaunchVelocity();
-                        msg.printLn("" + velocity);
-                        physics.pushInfoToDashboard();
-                        msg.printLn("" + imageProc.getTotalXCenter(imageProc.party));
-                        msg.printLn("" + imageProc.getTotalYCenter(imageProc.party));
-                    */
+                     * physics.setP(imageProc.getImgHeight(imageProc.party));
+                     * physics.calculateInfo(); double velocity =
+                     * physics.calculateLaunchVelocity(); msg.printLn("" +
+                     * velocity); physics.pushInfoToDashboard(); msg.printLn(""
+                     * + imageProc.getTotalXCenter(imageProc.party));
+                     * msg.printLn("" +
+                     * imageProc.getTotalYCenter(imageProc.party));
+                     */
                     isShooting = false;
                 }
             } catch (Exception e) {

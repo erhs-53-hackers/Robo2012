@@ -9,7 +9,7 @@ import edu.wpi.first.wpilibj.RobotDrive;
 
 /**
  *
- * @author Nick
+ * @author Nick, Alex
  */
 
 public class GyroX {
@@ -19,7 +19,7 @@ public class GyroX {
     double modulatedAngle;
     double targetAngle = 0;
     
-    public GyroX(Gyro gyro, RobotDrive drive) {
+    public GyroX(final int gyroInit, RobotDrive drive) {
         this.gyro = gyro;
         this.drive = drive;
     }

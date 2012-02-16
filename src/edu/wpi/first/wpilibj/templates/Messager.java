@@ -4,10 +4,10 @@ import edu.wpi.first.wpilibj.DriverStationLCD;
 import edu.wpi.first.wpilibj.Timer;
 
 /**
- *
- * @author Michael
+ * 
  * This class uses the DriverStationLCD class to post messages to the driver station
  * It uses an array of strings to make the driver station lcd more like a console
+ * @author Michael
  */
 public class Messager {
 
