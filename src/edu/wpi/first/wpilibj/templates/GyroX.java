@@ -17,6 +17,7 @@ public class GyroX {
     RobotDrive drive;
     Gyro gyro;
     double modulatedAngle;
+    double targetAngle = 0;
     
     public GyroX(Gyro gyro, RobotDrive drive) {
         this.gyro = gyro;
@@ -43,6 +44,12 @@ public class GyroX {
     public double refreshGyro() {
         modulatedAngle = modAngle(gyro.getAngle() * 4.14015366);
         return modulatedAngle;
+    }
+    
+    public void goStraight(boolean newTarget){
+        if(newTarget) targetAngle = modulatedAngle;
+        double driveConstant = (Math.abs(targetAngle-modulatedAngle)>10 ? .75:.45) * ((targetAngle-modulatedAngle)>0 ? 1:-1);
+        drive.tankDrive(.25-driveConstant,.25+driveConstant);
     }
     
 }
