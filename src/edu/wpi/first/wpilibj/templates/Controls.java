@@ -54,5 +54,17 @@ public class Controls {
     public boolean button9() {
         return joystick.getRawButton(9);
     }
+    
+    public boolean button10() {
+        return joystick.getRawButton(10);
+    }
+    
+    public boolean button11() {
+        return joystick.getRawButton(11);
+    }
+    
+    public boolean button12() {
+        return joystick.getRawButton(12);
+    }
 
 }

@@ -71,14 +71,15 @@ public class Robo2012 extends IterativeRobot {
     public void teleopPeriodic() {
 
         gyro.refreshGyro();
-
+        
         if (controls.button7()) {
-            gyro.turnToAngle(0, gyro.modulatedAngle);
+            gyro.turnToAngle(0);
         }
-
-        drive.arcadeDrive(stick);
+        
+        //drive.arcadeDrive(stick.getX(), stick.getTwist());
+        //drive.arcadeDrive(stick);
         //drive.mecanumDrive_Cartesian(stick.getX(), stick.getY(), stick.getZ(), 0);
-
+        
         // motor to lower bridge
         if (controls.button1()) {
             bridgeArm.set(.2);
