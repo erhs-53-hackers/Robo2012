@@ -47,31 +47,17 @@ public class ImageProcessing {
     public int getTarget(ParticleAnalysisReport part) {
         return part.boundingRectWidth/2;
     }
-
-    public int getImgHeight(ParticleAnalysisReport[] part) {
-        int avgHeight = 0;
-        for (int i = 0; i < part.length; i++) {
-            ParticleAnalysisReport r = part[i];
-            avgHeight = avgHeight + r.boundingRectHeight;
-        }
-        if (part.length == 0) {
-            return -1;
-        } else {
-            avgHeight = avgHeight / part.length;
-            return avgHeight;
+    
+    public static ParticleAnalysisReport getTopmost(ParticleAnalysisReport[] parts) {
+        ParticleAnalysisReport p = parts[0];
+        for(int i=0;i<parts.length;i++) {
+            if(p.center_mass_y < parts[i].center_mass_y) {
+                p = parts[i];
+            }
         }
         
+        return p;        
     }
-    
-    public int getH(ParticleAnalysisReport[] part) {
-        int avgHeight = 0;
-        for (int i = 0; i < 1; i++) {
-            avgHeight = part[i].boundingRectHeight;
-        }
-        return avgHeight;
-        
-    }
-    
     
     
         public int[] getImgWidthArry(ParticleAnalysisReport[] part) {
@@ -83,18 +69,6 @@ public class ImageProcessing {
         return array;
     }
         
-    public ParticleAnalysisReport suedo(AxisCamera cam) throws Exception {
-        ParticleAnalysisReport[] party =  getTheParticles(cam);
-        System.out.println("" + party.length);
-        for(int i=0;i<party.length;i++) {
-            if(party[i].particleArea > 1000) {
-                return party[i];
-            }
-        }
-        
-        return null;
-    }
-
     public int getTotalXCenter(ParticleAnalysisReport[] part) {
         int avgHeight = 0;
         for (int i = 0; i < part.length; i++) {
@@ -108,6 +82,7 @@ public class ImageProcessing {
             return avgHeight;
         }
     }
+    
     public int getTotalYCenter(ParticleAnalysisReport[] part) {
         int avgHeight = 0;
         for (int i = 0; i < part.length; i++) {

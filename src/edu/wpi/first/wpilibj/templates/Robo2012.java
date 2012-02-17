@@ -32,6 +32,7 @@ public class Robo2012 extends IterativeRobot {
 
     public void robotInit() {
         Timer.delay(10);
+        //left front, left back, right front, right back
         drive = new RobotDrive(RoboMap.MOTOR1, RoboMap.MOTOR2, RoboMap.MOTOR3, RoboMap.MOTOR4);
         stick = new Joystick(RoboMap.JOYSTICK1);
         controls = new Controls(stick);
@@ -49,23 +50,26 @@ public class Robo2012 extends IterativeRobot {
         msg.printLn("FRC 2012");
     }
 
-    public void autonomousPeriodic() {
-        int x = (int) MathX.round(autoPot.getAverageVoltage());
-        int shootDelay = 0;
-        boolean shootFlag = true;
-
-        if (x <= 4) {
-            shootDelay = x;
-        } else if (x == 5) {
-            shootFlag = false;
-        }
-
-        if (shootFlag != false) {
-            Timer.delay(shootDelay);
-            //image processing here
-            //physics code here
-            //shooting algorithm here
-        }
+    public void autonomousPeriodic() {      
+        if (camera.freshImage()) {
+            try {
+                ParticleAnalysisReport[] parts = imageProc.getTheParticles(camera);
+                ParticleAnalysisReport topTarget = ImageProcessing.getTopmost(parts);
+                
+                msg.printLn("Pixels = " + topTarget.boundingRectHeight);                
+                //turn code here
+                //
+                
+                launcher.shoot(topTarget.boundingRectHeight);
+                //load and shoot again
+                    
+                    
+                
+            } catch (Exception e) {
+                e.printStackTrace();
+                msg.printLn("ERROR!!! Cannot Fetch Image");
+            }
+        }        
     }
 
     public void teleopPeriodic() {
@@ -106,13 +110,13 @@ public class Robo2012 extends IterativeRobot {
         if (camera.freshImage()) {
             try {
                 imageProc.getTheParticles(camera);
-                int pixelHeight = imageProc.getImgHeight(imageProc.party);
-                msg.printLn("Pixels = " + pixelHeight);
+                //int pixelHeight = imageProc.getImgHeight(imageProc.party);
+               // msg.printLn("Pixels = " + pixelHeight);
                 msg.printLn(imageProc.orginizeParticles(imageProc.party, imageProc.getTotalXCenter(imageProc.party), imageProc.getTotalXCenter(imageProc.party)));
 
                 // if a target is selected, aim and shoot the ball
                 if (isShooting) {
-                    launcher.shoot(pixelHeight);
+                   // launcher.shoot(pixelHeight);
                     /*
                      * physics.setP(imageProc.getImgHeight(imageProc.party));
                      * physics.calculateInfo(); double velocity =
