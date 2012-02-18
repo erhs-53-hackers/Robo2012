@@ -64,11 +64,10 @@ public class Robo2012 extends IterativeRobot {
                 ParticleAnalysisReport topTarget = ImageProcessing.getTopmost(parts);
                 
                 msg.printLn("Pixels = " + topTarget.boundingRectHeight);                
-                //turn code here
-                //
                 ColorImage img = camera.getImage();
                 double p = img.getWidth()/2;
                 double angle = p/Physics.LAMBDA;
+                gyro.turnAngle(angle);
                 if(isShooting){
                     Timer.delay(3);
                     launcher.shoot(topTarget.boundingRectHeight);
