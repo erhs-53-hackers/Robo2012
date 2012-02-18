@@ -36,6 +36,9 @@ public class Robo2012 extends IterativeRobot {
         Timer.delay(10);
         //left front, left back, right front, right back
         drive = new RobotDrive(RoboMap.MOTOR1, RoboMap.MOTOR2, RoboMap.MOTOR3, RoboMap.MOTOR4);
+        //--only if magnum bot (mecanum drive)--
+        //drive.setInvertedMotor(RobotDrive.MotorType.kFrontRight, true);
+        //drive.setInvertedMotor(RobotDrive.MotorType.kRearRight, true);
         stick = new Joystick(RoboMap.JOYSTICK1);
         controls = new Controls(stick);
         msg = new Messager();
