@@ -29,6 +29,7 @@ public class Robo2012 extends IterativeRobot {
     Messager msg;
     Controls controls;
     boolean isShooting = false;
+    int shots = 0;
 
     public void robotInit() {
         Timer.delay(10);
@@ -50,6 +51,12 @@ public class Robo2012 extends IterativeRobot {
         msg.printLn("FRC 2012");
     }
 
+    public void autonomousInit() {
+        super.autonomousInit();
+        isShooting = true;
+    }
+
+    
     public void autonomousPeriodic() {      
         if (camera.freshImage()) {
             try {
@@ -59,11 +66,15 @@ public class Robo2012 extends IterativeRobot {
                 msg.printLn("Pixels = " + topTarget.boundingRectHeight);                
                 //turn code here
                 //
-                
-                launcher.shoot(topTarget.boundingRectHeight);
-                //load and shoot again
-                    
-                    
+                if(isShooting){
+                    Timer.delay(3);
+                    launcher.shoot(topTarget.boundingRectHeight);
+                    //load and shoot again
+                    shots++;
+                    if(shots == 2) {
+                        isShooting = false;
+                    }
+                }                  
                 
             } catch (Exception e) {
                 e.printStackTrace();
