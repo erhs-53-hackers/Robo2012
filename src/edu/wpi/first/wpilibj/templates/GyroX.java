@@ -28,7 +28,6 @@ public class GyroX {
         double nowAngle = newAngle-modulatedAngle;
         if(nowAngle>180) nowAngle -= 360;
         if(nowAngle<-180) nowAngle += 360;
-        double driverate = nowAngle / 180;
         int multi = (nowAngle > 0 ? 1: -1);
         if(Math.abs(nowAngle) > 1.5){
             if(Math.abs(nowAngle) < 10) drive.tankDrive(.45 * multi, -.45 * multi);
@@ -36,8 +35,8 @@ public class GyroX {
         }
     }
     
-    private double modAngle(double inpangle){
-        double retangle = inpangle%360 + (inpangle>180 ? -360:0);
+    private double modAngle(double angle){
+        double retangle = angle%360 + (angle>180 ? -360:0);
         return retangle;
     }
     
@@ -52,8 +51,8 @@ public class GyroX {
         drive.tankDrive(.25-driveConstant,.25+driveConstant);
     }
     
-    public void turnAngle(double turnamount){
-        double newangle = modulatedAngle + turnamount;
-        turnToAngle(newangle);
+    public void turnAngle(double turnAmount){
+        double newAngle = modulatedAngle + turnAmount;
+        turnToAngle(newAngle);
     }
 }
