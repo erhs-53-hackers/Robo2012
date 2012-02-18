@@ -7,6 +7,7 @@ package edu.wpi.first.wpilibj.templates;
 
 import edu.wpi.first.wpilibj.*;
 import edu.wpi.first.wpilibj.camera.AxisCamera;
+import edu.wpi.first.wpilibj.image.ColorImage;
 import edu.wpi.first.wpilibj.image.ParticleAnalysisReport;
 
 /**
@@ -52,7 +53,6 @@ public class Robo2012 extends IterativeRobot {
     }
 
     public void autonomousInit() {
-        super.autonomousInit();
         isShooting = true;
     }
 
@@ -66,6 +66,9 @@ public class Robo2012 extends IterativeRobot {
                 msg.printLn("Pixels = " + topTarget.boundingRectHeight);                
                 //turn code here
                 //
+                ColorImage img = camera.getImage();
+                double p = img.getWidth()/2;
+                double angle = p/Physics.LAMBDA;
                 if(isShooting){
                     Timer.delay(3);
                     launcher.shoot(topTarget.boundingRectHeight);

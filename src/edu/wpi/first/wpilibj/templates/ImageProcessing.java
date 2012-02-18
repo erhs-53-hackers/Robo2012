@@ -31,6 +31,7 @@ public class ImageProcessing {
 
     public ParticleAnalysisReport[] getTheParticles(AxisCamera cam) throws Exception {
         ColorImage colorImg = cam.getImage(); //get image from the camera
+        
         BinaryImage binImg = colorImg.thresholdRGB(0, 42, 71, 255, 0, 255);//seperate the light and dark image
         colorImg.free();
         BinaryImage clnImg = binImg.removeSmallObjects(false, 2);//remove the small objects 
