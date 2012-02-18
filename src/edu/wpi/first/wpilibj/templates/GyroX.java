@@ -24,8 +24,8 @@ public class GyroX {
         this.drive = drive;
     }
 
-    public void turnToAngle(double newAngle, double currentAngle) {
-        double nowAngle = newAngle-currentAngle;
+    public void turnToAngle(double newAngle) {
+        double nowAngle = newAngle-modulatedAngle;
         if(nowAngle>180) nowAngle -= 360;
         if(nowAngle<-180) nowAngle += 360;
         double driverate = nowAngle / 180;
@@ -52,4 +52,8 @@ public class GyroX {
         drive.tankDrive(.25-driveConstant,.25+driveConstant);
     }
     
+    public void turnAngle(double turnamount){
+        double newangle = modulatedAngle + turnamount;
+        turnToAngle(newangle);
+    }
 }
