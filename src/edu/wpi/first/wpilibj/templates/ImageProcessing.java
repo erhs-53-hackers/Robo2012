@@ -47,10 +47,40 @@ public class ImageProcessing {
         return party;
     }
 
-    public static ParticleAnalysisReport getTopmost(ParticleAnalysisReport[] parts) {
+    public static ParticleAnalysisReport getTopMost(ParticleAnalysisReport[] parts) {
         ParticleAnalysisReport p = parts[0];
         for (int i = 0; i < parts.length; i++) {
             if (p.center_mass_y < parts[i].center_mass_y) {
+                p = parts[i];
+            }
+        }
+
+        return p;
+    }
+    public static ParticleAnalysisReport getBottomMost(ParticleAnalysisReport[] parts) {
+        ParticleAnalysisReport p = parts[0];
+        for (int i = 0; i < parts.length; i++) {
+            if (p.center_mass_y > parts[i].center_mass_y) {
+                p = parts[i];
+            }
+        }
+
+        return p;
+    }
+    public static ParticleAnalysisReport getLeftMost(ParticleAnalysisReport[] parts) {
+        ParticleAnalysisReport p = parts[0];
+        for (int i = 0; i < parts.length; i++) {
+            if (p.center_mass_x > parts[i].center_mass_x) {
+                p = parts[i];
+            }
+        }
+
+        return p;
+    }
+    public static ParticleAnalysisReport getRightMost(ParticleAnalysisReport[] parts) {
+        ParticleAnalysisReport p = parts[0];
+        for (int i = 0; i < parts.length; i++) {
+            if (p.center_mass_x > parts[i].center_mass_x) {
                 p = parts[i];
             }
         }

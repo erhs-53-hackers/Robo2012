@@ -64,7 +64,7 @@ public class Robo2012 extends IterativeRobot {
         if (camera.freshImage()) {
             try {
                 ParticleAnalysisReport[] parts = imageProc.getTheParticles(camera);
-                ParticleAnalysisReport topTarget = ImageProcessing.getTopmost(parts);
+                ParticleAnalysisReport topTarget = ImageProcessing.getTopMost(parts);
                 
                 msg.printLn("Pixels = " + topTarget.boundingRectHeight);                
                 ColorImage img = camera.getImage();
