@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj.image.BinaryImage;
 import edu.wpi.first.wpilibj.image.ParticleAnalysisReport;
 import edu.wpi.first.wpilibj.image.CriteriaCollection;
 import edu.wpi.first.wpilibj.image.NIVision.MeasurementType;
+
 /**
  *
  * @author Rajath
@@ -31,7 +32,7 @@ public class ImageProcessing {
 
     public ParticleAnalysisReport[] getTheParticles(AxisCamera cam) throws Exception {
         ColorImage colorImg = cam.getImage(); //get image from the camera
-        
+
         BinaryImage binImg = colorImg.thresholdRGB(0, 42, 71, 255, 0, 255);//seperate the light and dark image
         colorImg.free();
         BinaryImage clnImg = binImg.removeSmallObjects(false, 2);//remove the small objects 
@@ -45,31 +46,48 @@ public class ImageProcessing {
         //orginizeParticles(party, getTotalXCenter(party), getTotalYCenter(party));
         return party;
     }
-    public int getTarget(ParticleAnalysisReport part) {
-        return part.boundingRectWidth/2;
-    }
-    
-    public static ParticleAnalysisReport getTopmost(ParticleAnalysisReport[] parts) {
+
+    public static ParticleAnalysisReport getTopMost(ParticleAnalysisReport[] parts) {
         ParticleAnalysisReport p = parts[0];
-        for(int i=0;i<parts.length;i++) {
-            if(p.center_mass_y < parts[i].center_mass_y) {
+        for (int i = 0; i < parts.length; i++) {
+            if (p.center_mass_y < parts[i].center_mass_y) {
                 p = parts[i];
             }
         }
-        
-        return p;        
+
+        return p;
     }
-    
-    
-        public int[] getImgWidthArry(ParticleAnalysisReport[] part) {
-       int[] array = new int[part.length];
-        for (int i = 0; i < part.length; i++) {
-            ParticleAnalysisReport r = part[i];
-            array[i] = r.boundingRectHeight;           
-       }
-        return array;
+    public static ParticleAnalysisReport getBottomMost(ParticleAnalysisReport[] parts) {
+        ParticleAnalysisReport p = parts[0];
+        for (int i = 0; i < parts.length; i++) {
+            if (p.center_mass_y > parts[i].center_mass_y) {
+                p = parts[i];
+            }
+        }
+
+        return p;
     }
-        
+    public static ParticleAnalysisReport getLeftMost(ParticleAnalysisReport[] parts) {
+        ParticleAnalysisReport p = parts[0];
+        for (int i = 0; i < parts.length; i++) {
+            if (p.center_mass_x > parts[i].center_mass_x) {
+                p = parts[i];
+            }
+        }
+
+        return p;
+    }
+    public static ParticleAnalysisReport getRightMost(ParticleAnalysisReport[] parts) {
+        ParticleAnalysisReport p = parts[0];
+        for (int i = 0; i < parts.length; i++) {
+            if (p.center_mass_x > parts[i].center_mass_x) {
+                p = parts[i];
+            }
+        }
+
+        return p;
+    }
+
     public int getTotalXCenter(ParticleAnalysisReport[] part) {
         int avgHeight = 0;
         for (int i = 0; i < part.length; i++) {
@@ -83,7 +101,7 @@ public class ImageProcessing {
             return avgHeight;
         }
     }
-    
+
     public int getTotalYCenter(ParticleAnalysisReport[] part) {
         int avgHeight = 0;
         for (int i = 0; i < part.length; i++) {
@@ -115,7 +133,7 @@ public class ImageProcessing {
             System.out.println(part.length + " Report(s)");
             for (int i = 0; i < part.length; i++) {
                 ParticleAnalysisReport r = part[i];
-                
+
                 if (r.particleArea > 15000) {
                     topT = r;
                     System.out.println(i + ": " + r.particleArea);
@@ -134,7 +152,7 @@ public class ImageProcessing {
                         bottomT = r;
                         System.out.println("Bottom");
                     }
-                }               
+                }
             }
             System.out.println("----------------------");
             return s;
