@@ -66,5 +66,36 @@ public class Controls {
     public boolean button12() {
         return joystick.getRawButton(12);
     }
-
+    
+    public boolean FOV_Top() {
+        if (joystick.getRawAxis(6) == -1) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+    
+    public boolean FOV_Bottom() {
+        if (joystick.getRawAxis(6) == 1) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+    
+    public boolean FOV_Left() {
+        if (joystick.getRawAxis(5) == -1) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+    
+    public boolean FOV_Right() {
+        if (joystick.getRawAxis(5) == 1) {
+            return true;
+        } else {
+            return false;
+        }
+    }
 }

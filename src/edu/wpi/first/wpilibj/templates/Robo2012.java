@@ -24,18 +24,24 @@ public class Robo2012 extends IterativeRobot {
     Physics physics;
     Launcher launcher;
     Jaguar bridgeArm;
+    Jaguar launchTurn;
+    Jaguar collectMotor;
     AnalogChannel autoPot;
     AnalogChannel telePot;
     GyroX gyro;
     Messager msg;
     Controls controls;
+    Ultrasonic ultrasonic;
+    
     boolean isShooting = false;
     int shots = 0;
+    double distanceFromTarget;
 
     public void robotInit() {
         Timer.delay(10);
         //left front, left back, right front, right back
-        drive = new RobotDrive(RoboMap.MOTOR1, RoboMap.MOTOR2, RoboMap.MOTOR3, RoboMap.MOTOR4);
+        drive = new RobotDrive(
+                RoboMap.MOTOR1, RoboMap.MOTOR2, RoboMap.MOTOR3, RoboMap.MOTOR4);
         stick = new Joystick(RoboMap.JOYSTICK1);
         controls = new Controls(stick);
         msg = new Messager();
@@ -45,10 +51,16 @@ public class Robo2012 extends IterativeRobot {
         imageProc = new ImageProcessing();
         physics = new Physics();
         bridgeArm = new Jaguar(RoboMap.BRIDGE_MOTOR);
+        launchTurn = new Jaguar(RoboMap.LAUNCH_TURN);
+        collectMotor = new Jaguar(RoboMap.COLLECT_MOTOR);
         launcher = new Launcher();
         gyro = new GyroX(RoboMap.GYRO, drive);
         autoPot = new AnalogChannel(RoboMap.AUTO_POT);
         telePot = new AnalogChannel(RoboMap.TELO_POT);
+        ultrasonic = new Ultrasonic(
+                RoboMap.ULTRASONIC_PING, RoboMap.ULTRASONIC_ECHO);
+        ultrasonic.setDistanceUnits(Ultrasonic.Unit.kInches);
+        ultrasonic.setEnabled(true);
         msg.printLn("FRC 2012");
     }
 
@@ -56,66 +68,80 @@ public class Robo2012 extends IterativeRobot {
         isShooting = true;
     }
 
-    
-    public void autonomousPeriodic() {      
+    public void autonomousPeriodic() {
         if (camera.freshImage()) {
             try {
                 ParticleAnalysisReport[] parts = imageProc.getTheParticles(camera);
                 ParticleAnalysisReport topTarget = ImageProcessing.getTopmost(parts);
-                
-                msg.printLn("Pixels = " + topTarget.boundingRectHeight);                
+
+                msg.printLn("Pixels = " + topTarget.boundingRectHeight);
                 //turn code here
                 //
                 ColorImage img = camera.getImage();
-                double p = img.getWidth()/2;
-                double angle = p/Physics.LAMBDA;
-                if(isShooting){
+                double p = img.getWidth() / 2;
+                double angle = p / Physics.LAMBDA;
+                if (isShooting) {
                     Timer.delay(3);
                     launcher.shoot(topTarget.boundingRectHeight);
                     //load and shoot again
                     shots++;
-                    if(shots == 2) {
+                    if (shots == 2) {
                         isShooting = false;
                     }
-                }                  
-                
+                }
+
             } catch (Exception e) {
                 e.printStackTrace();
                 msg.printLn("ERROR!!! Cannot Fetch Image");
             }
-        }        
+        }
     }
 
     public void teleopPeriodic() {
 
+        drive.mecanumDrive_Cartesian(
+                stick.getX(), stick.getY(), MathX.pow(stick.getZ(), 3), 0);
+        
         gyro.refreshGyro();
         
-        if (controls.button7()) {
+        distanceFromTarget = ultrasonic.pidGet();        
+        
+        if (controls.button2()) {
             gyro.turnToAngle(0);
         }
         
-        //drive.arcadeDrive(stick.getX(), stick.getTwist());
-        //drive.arcadeDrive(stick);
-        //drive.mecanumDrive_Cartesian(stick.getX(), stick.getY(), stick.getZ(), 0);
+        //motor to collect the balls off the ground
+        collectMotor.set(.5);
         
-        // motor to lower bridge
-        if (controls.button1()) {
-            bridgeArm.set(.2);
+        //motor to control lazy susan for launcher
+        if (controls.button10()) {
+            launchTurn.set(.25);
+        } else if (controls.button11()) {
+            launchTurn.set(-.25);
+        } else {
+            launchTurn.set(0);
+        }
+        
+        // motor to lower bridge arm
+        if (controls.button6()) {
+            bridgeArm.set(.75);
+        } else if (controls.button7()) {
+            bridgeArm.set(-.5);
         } else {
             bridgeArm.set(0);
         }
 
         //Select the target to aim at 
-        if (controls.button3()) {
+        if (controls.FOV_Left()) {
             target = imageProc.leftT;
             isShooting = true;
-        } else if (controls.button4()) {
+        } else if (controls.FOV_Right()) {
             target = imageProc.rightT;
             isShooting = true;
-        } else if (controls.button5()) {
+        } else if (controls.FOV_Top()) {
             target = imageProc.topT;
             isShooting = true;
-        } else if (controls.button6()) {
+        } else if (controls.FOV_Bottom()) {
             target = imageProc.bottomT;
             isShooting = true;
         }
@@ -125,12 +151,12 @@ public class Robo2012 extends IterativeRobot {
             try {
                 imageProc.getTheParticles(camera);
                 //int pixelHeight = imageProc.getImgHeight(imageProc.party);
-               // msg.printLn("Pixels = " + pixelHeight);
+                // msg.printLn("Pixels = " + pixelHeight);
                 msg.printLn(imageProc.orginizeParticles(imageProc.party, imageProc.getTotalXCenter(imageProc.party), imageProc.getTotalXCenter(imageProc.party)));
 
                 // if a target is selected, aim and shoot the ball
                 if (isShooting) {
-                   // launcher.shoot(pixelHeight);
+                    // launcher.shoot(pixelHeight);
                     /*
                      * physics.setP(imageProc.getImgHeight(imageProc.party));
                      * physics.calculateInfo(); double velocity =
