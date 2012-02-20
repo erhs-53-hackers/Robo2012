@@ -85,7 +85,7 @@ public class Robo2012 extends IterativeRobot {
                 if(isShooting){
                     Timer.delay(3);
                     
-                    launcher.shoot(topTarget.boundingRectHeight, 10);
+                    launcher.shoot(topTarget.boundingRectHeight, Physics.HOOP3);
                     //load and shoot again
                     shots++;
                     if (shots == 2) {
