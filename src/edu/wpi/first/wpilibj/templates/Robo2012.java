@@ -40,7 +40,9 @@ public class Robo2012 extends IterativeRobot {
         Timer.delay(10);
         //left front, left back, right front, right back
         drive = new RobotDrive(
-                RoboMap.MOTOR1, RoboMap.MOTOR2, RoboMap.MOTOR3, RoboMap.MOTOR4);
+                RoboMap.MOTOR1, RoboMap.MOTOR3, RoboMap.MOTOR2, RoboMap.MOTOR4);
+        drive.setInvertedMotor(RobotDrive.MotorType.kFrontRight, true);
+        drive.setInvertedMotor(RobotDrive.MotorType.kRearRight, true);
 
         stick = new Joystick(RoboMap.JOYSTICK1);
         controls = new Controls(stick);
@@ -49,12 +51,12 @@ public class Robo2012 extends IterativeRobot {
         camera.writeBrightness(30);
         camera.writeResolution(AxisCamera.ResolutionT.k640x480);
         imageProc = new ImageProcessing();
-        physics = new Physics();
+        physics = new Physics(6574);
         bridgeArm = new Jaguar(RoboMap.BRIDGE_MOTOR);
         launchTurn = new Jaguar(RoboMap.LAUNCH_TURN);
         collectMotor = new Jaguar(RoboMap.COLLECT_MOTOR);
         launcher = new Launcher();
-        gyro = new GyroX(RoboMap.GYRO, drive);
+        gyro = new GyroX(RoboMap.GYRO, launchTurn);
         autoPot = new AnalogChannel(RoboMap.AUTO_POT);
         telePot = new AnalogChannel(RoboMap.TELO_POT);
         msg.printLn("FRC 2012");
@@ -69,8 +71,10 @@ public class Robo2012 extends IterativeRobot {
             try {
                 imageProc.getTheParticles(camera);
                 target = imageProc.topTarget;
-                double angle = 
-                gyro.turnAngle(angle);
+                int img = 640;
+                double p = (640/2) - target.center_mass_x;
+                double angle = p/physics.LAMBDA;
+                gyro.turnToAngle(angle);
                 if(isShooting){
                     Timer.delay(3);
                     
@@ -91,11 +95,9 @@ public class Robo2012 extends IterativeRobot {
 
     public void teleopPeriodic() {
 
-        drive.mecanumDrive_Cartesian(
-                stick.getX(), stick.getY(), MathX.pow(stick.getZ(), 3), 0);
+        drive.mecanumDrive_Cartesian(stick.getX(), stick.getY(), MathX.pow(stick.getZ(), 3), 0);
         
         gyro.refreshGyro();
-             
         
         if (controls.button2()) {
             gyro.turnToAngle(0);
@@ -111,12 +113,11 @@ public class Robo2012 extends IterativeRobot {
             launchTurn.set(-.25);
         } else {
             launchTurn.set(0);
-        }
-        
+        }               
+
         // motor to lower bridge arm
         if (controls.button6()) {
             bridgeArm.set(.75);
-        } else if (controls.button7()) {
             bridgeArm.set(-.5);
         } else {
             bridgeArm.set(0);

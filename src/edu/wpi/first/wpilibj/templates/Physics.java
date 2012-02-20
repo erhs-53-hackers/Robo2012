@@ -18,7 +18,7 @@ public class Physics {
     
     private static final int FOV = 33;//Field of View
     private static final int MAXPIXEL = 480;//height
-    private static final double LAMBDA = MAXPIXEL / FOV;
+    double LAMBDA = MAXPIXEL / FOV;
     
     private static final float LAUNCH_HEIGHT = 4f;
 
