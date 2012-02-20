@@ -121,12 +121,11 @@ public class Robo2012 extends IterativeRobot {
             launchTurn.set(-.25);
         } else {
             launchTurn.set(0);
-        }
-        
+        }               
+
         // motor to lower bridge arm
         if (controls.button6()) {
             bridgeArm.set(.75);
-        } else if (controls.button7()) {
             bridgeArm.set(-.5);
         } else {
             bridgeArm.set(0);
