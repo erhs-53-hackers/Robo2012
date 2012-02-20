@@ -40,15 +40,9 @@ public class Robo2012 extends IterativeRobot {
     public void robotInit() {
         Timer.delay(10);
         //left front, left back, right front, right back
-<<<<<<< HEAD
         drive = new RobotDrive(
                 RoboMap.MOTOR1, RoboMap.MOTOR2, RoboMap.MOTOR3, RoboMap.MOTOR4);
-=======
-        drive = new RobotDrive(RoboMap.MOTOR1, RoboMap.MOTOR2, RoboMap.MOTOR3, RoboMap.MOTOR4);
-        //--only if magnum bot (mecanum drive)--
-        //drive.setInvertedMotor(RobotDrive.MotorType.kFrontRight, true);
-        //drive.setInvertedMotor(RobotDrive.MotorType.kRearRight, true);
->>>>>>> 73f732dc7835c4058656c0adba64d5f72da1d943
+
         stick = new Joystick(RoboMap.JOYSTICK1);
         controls = new Controls(stick);
         msg = new Messager();
@@ -79,17 +73,6 @@ public class Robo2012 extends IterativeRobot {
         if (camera.freshImage()) {
             try {
                 ParticleAnalysisReport[] parts = imageProc.getTheParticles(camera);
-<<<<<<< HEAD
-                ParticleAnalysisReport topTarget = ImageProcessing.getTopmost(parts);
-
-                msg.printLn("Pixels = " + topTarget.boundingRectHeight);
-                //turn code here
-                //
-                ColorImage img = camera.getImage();
-                double p = img.getWidth() / 2;
-                double angle = p / Physics.LAMBDA;
-                if (isShooting) {
-=======
                 ParticleAnalysisReport topTarget = ImageProcessing.getTopMost(parts);
                 
                 msg.printLn("Pixels = " + topTarget.boundingRectHeight);                
@@ -98,7 +81,6 @@ public class Robo2012 extends IterativeRobot {
                 double angle = p/Physics.LAMBDA;
                 gyro.turnAngle(angle);
                 if(isShooting){
->>>>>>> 73f732dc7835c4058656c0adba64d5f72da1d943
                     Timer.delay(3);
                     launcher.shoot(topTarget.boundingRectHeight);
                     //load and shoot again
