@@ -1,0 +1,7 @@
+*.class
+*.jar
+*.suite
+*.metadata
+*.sym
+*.nblh~
+/Physics/dist/
