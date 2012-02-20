@@ -37,6 +37,8 @@ public class Robo2012 extends IterativeRobot {
     double distanceFromTarget;
 
     public void robotInit() {
+        msg = new Messager();
+        msg.printLn("Loading Please Wait...");
         Timer.delay(10);
         //left front, left back, right front, right back
         drive = new RobotDrive(
@@ -46,7 +48,7 @@ public class Robo2012 extends IterativeRobot {
 
         stick = new Joystick(RoboMap.JOYSTICK1);
         controls = new Controls(stick);
-        msg = new Messager();
+        
         camera = AxisCamera.getInstance();
         camera.writeBrightness(30);
         camera.writeResolution(AxisCamera.ResolutionT.k640x480);
@@ -56,14 +58,14 @@ public class Robo2012 extends IterativeRobot {
         launchTurn = new Jaguar(RoboMap.LAUNCH_TURN);
         collectMotor = new Jaguar(RoboMap.COLLECT_MOTOR);
         launcher = new Launcher();
-        gyro = new GyroX(RoboMap.GYRO, launchTurn);
+        //gyro = new GyroX(RoboMap.GYRO, launchTurn);
         autoPot = new AnalogChannel(RoboMap.AUTO_POT);
         telePot = new AnalogChannel(RoboMap.TELO_POT);
         msg.printLn("FRC 2012");
     }
 
     public void autonomousInit() {
-        isShooting = true;
+        //isShooting = true;
     }
 
     public void autonomousPeriodic() {
@@ -74,7 +76,8 @@ public class Robo2012 extends IterativeRobot {
                 int img = 640;
                 double p = (640/2) - target.center_mass_x;
                 double angle = p/physics.LAMBDA;
-                gyro.turnToAngle(angle);
+                msg.printLn("" + angle);
+                //gyro.turnToAngle(angle);
                 if(isShooting){
                     Timer.delay(3);
                     
@@ -95,10 +98,10 @@ public class Robo2012 extends IterativeRobot {
     }
 
     public void teleopPeriodic() {
-
+/*
         drive.mecanumDrive_Cartesian(stick.getX(), stick.getY(), MathX.pow(stick.getZ(), 3), 0);
         
-        gyro.refreshGyro();
+       // gyro.refreshGyro();
         
         if (controls.button2()) {
             gyro.turnToAngle(0);
@@ -123,6 +126,8 @@ public class Robo2012 extends IterativeRobot {
         } else {
             bridgeArm.set(0);
         }
+        * 
+        */
 
         // Have the camera scan for targets
         if (camera.freshImage()) {
@@ -136,6 +141,7 @@ public class Robo2012 extends IterativeRobot {
                 msg.printLn("ERROR!!! Cannot Fetch Image");
             }
         }
+        /*
                //Select the target to aim at 
         if (controls.FOV_Left()) {
             target = imageProc.middleTarget;
@@ -149,6 +155,8 @@ public class Robo2012 extends IterativeRobot {
         } else if (controls.FOV_Bottom()) {
             target = imageProc.bottomTarget;
             isShooting = true;
-        }
+        
+        * */
+        
     }
 }

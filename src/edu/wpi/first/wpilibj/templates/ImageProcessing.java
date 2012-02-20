@@ -41,6 +41,7 @@ public class ImageProcessing {
         BinaryImage filteredImg = convexHullImg.particleFilter(criteriaCollection);//
         convexHullImg.free();
         particles = filteredImg.getOrderedParticleAnalysisReports();
+        organizeParticles(particles, getTotalXCenter(particles), getTotalYCenter(particles));
         filteredImg.free();
         
     }
