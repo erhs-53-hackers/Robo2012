@@ -5,6 +5,8 @@
 package edu.wpi.first.wpilibj.templates;
 
 import edu.wpi.first.wpilibj.camera.AxisCamera;
+import edu.wpi.first.wpilibj.image.BinaryImage;
+import edu.wpi.first.wpilibj.image.ColorImage;
 import edu.wpi.first.wpilibj.image.ParticleAnalysisReport;
 import edu.wpi.first.wpilibj.image.CriteriaCollection;
 import edu.wpi.first.wpilibj.image.NIVision.MeasurementType;
@@ -28,21 +30,29 @@ public class ImageProcessing {
         imageCalculations = new Physics();
     }
 
-    public void getTheParticles(AxisCamera camera)
-            throws Exception {
-        int erosionCount = 2;
-        // true means connectivity 8, false means connectivity 4
-        boolean connectivity8Or4 = false;
-
-        particles = camera.getImage()
-                //seperate the light and dark image
-                .thresholdRGB(0, 42, 71, 255, 0, 255)
-                .removeSmallObjects(connectivity8Or4, erosionCount)
-                //fill the rectangles that were created
-                .convexHull(connectivity8Or4)
-                .particleFilter(criteriaCollection)
-                .getOrderedParticleAnalysisReports();
-        organizeParticles(particles,getTotalXCenter(particles),getTotalYCenter(particles));
+    public void getTheParticles(AxisCamera cam) throws Exception {
+        ColorImage colorImg = cam.getImage(); //get image from the camera
+        BinaryImage binImg = colorImg.thresholdRGB(0, 42, 71, 255, 0, 255);//seperate the light and dark image
+        colorImg.free();
+        BinaryImage clnImg = binImg.removeSmallObjects(false, 2);//remove the small objects 
+        binImg.free();
+        BinaryImage convexHullImg = clnImg.convexHull(false);//fill the rectangles that were created
+        clnImg.free();
+        BinaryImage filteredImg = convexHullImg.particleFilter(criteriaCollection);//
+        convexHullImg.free();
+        particles = filteredImg.getOrderedParticleAnalysisReports();
+        filteredImg.free();
+        
+    }
+    
+    public static ParticleAnalysisReport getTopMost(ParticleAnalysisReport[] parts) {
+        ParticleAnalysisReport p = parts[0];
+        for (int i = 0; i < parts.length; i++) {
+            if (p.center_mass_y < parts[i].center_mass_y) {
+                p = parts[i];
+            }
+        }
+        return p;
     }
 
     public int getTotalXCenter(ParticleAnalysisReport[] particles) {

@@ -70,7 +70,7 @@ public class Robo2012 extends IterativeRobot {
         if (camera.freshImage()) {
             try {
                 imageProc.getTheParticles(camera);
-                target = imageProc.topTarget;
+                target = ImageProcessing.getTopMost(imageProc.particles);
                 int img = 640;
                 double p = (640/2) - target.center_mass_x;
                 double angle = p/physics.LAMBDA;
