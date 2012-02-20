@@ -34,7 +34,7 @@ public class Launcher {
         return RPM;
     }
     
-    public void shoot(int pixel) {
+    public void shoot(int pixel, double height) {
         double speed = 0.0;
         int launchSpeed = pixel * /* this can change to tested values later */1000;
         encoder.start();

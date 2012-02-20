@@ -68,12 +68,13 @@ public class Robo2012 extends IterativeRobot {
                 
                 msg.printLn("Pixels = " + topTarget.boundingRectHeight);                
                 ColorImage img = camera.getImage();
-                double p = img.getWidth()/2;
+                double p = (img.getWidth()/2) - topTarget.center_mass_y;
                 double angle = p/Physics.LAMBDA;
                 gyro.turnAngle(angle);
                 if(isShooting){
                     Timer.delay(3);
-                    launcher.shoot(topTarget.boundingRectHeight);
+                    
+                    launcher.shoot(topTarget.boundingRectHeight, 10);
                     //load and shoot again
                     shots++;
                     if(shots == 2) {
