@@ -41,7 +41,9 @@ public class Robo2012 extends IterativeRobot {
         Timer.delay(10);
         //left front, left back, right front, right back
         drive = new RobotDrive(
-                RoboMap.MOTOR1, RoboMap.MOTOR2, RoboMap.MOTOR3, RoboMap.MOTOR4);
+                RoboMap.MOTOR1, RoboMap.MOTOR3, RoboMap.MOTOR2, RoboMap.MOTOR4);
+        drive.setInvertedMotor(RobotDrive.MotorType.kFrontRight, true);
+        drive.setInvertedMotor(RobotDrive.MotorType.kRearRight, true);
 
         stick = new Joystick(RoboMap.JOYSTICK1);
         controls = new Controls(stick);
@@ -55,7 +57,7 @@ public class Robo2012 extends IterativeRobot {
         launchTurn = new Jaguar(RoboMap.LAUNCH_TURN);
         collectMotor = new Jaguar(RoboMap.COLLECT_MOTOR);
         launcher = new Launcher();
-        gyro = new GyroX(RoboMap.GYRO, drive);
+        gyro = new GyroX(RoboMap.GYRO, launchTurn);
         autoPot = new AnalogChannel(RoboMap.AUTO_POT);
         telePot = new AnalogChannel(RoboMap.TELO_POT);
         ultrasonic = new Ultrasonic(
@@ -79,7 +81,7 @@ public class Robo2012 extends IterativeRobot {
                 ColorImage img = camera.getImage();
                 double p = (img.getWidth()/2) - topTarget.center_mass_y;
                 double angle = p/Physics.LAMBDA;
-                gyro.turnAngle(angle);
+                gyro.turnToAngle(angle);
                 if(isShooting){
                     Timer.delay(3);
                     
@@ -100,12 +102,11 @@ public class Robo2012 extends IterativeRobot {
 
     public void teleopPeriodic() {
 
-        drive.mecanumDrive_Cartesian(
-                stick.getX(), stick.getY(), MathX.pow(stick.getZ(), 3), 0);
+        drive.mecanumDrive_Cartesian(stick.getX(), stick.getY(), MathX.pow(stick.getZ(), 3), 0);
         
         gyro.refreshGyro();
         
-        distanceFromTarget = ultrasonic.pidGet();        
+        distanceFromTarget = ultrasonic.pidGet();
         
         if (controls.button2()) {
             gyro.turnToAngle(0);
