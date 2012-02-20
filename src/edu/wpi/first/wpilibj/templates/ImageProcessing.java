@@ -5,157 +5,118 @@
 package edu.wpi.first.wpilibj.templates;
 
 import edu.wpi.first.wpilibj.camera.AxisCamera;
-import edu.wpi.first.wpilibj.image.ColorImage;
-import edu.wpi.first.wpilibj.image.BinaryImage;
 import edu.wpi.first.wpilibj.image.ParticleAnalysisReport;
 import edu.wpi.first.wpilibj.image.CriteriaCollection;
 import edu.wpi.first.wpilibj.image.NIVision.MeasurementType;
-
 /**
  *
  * @author Rajath
- *
- */
+ * find targets
+ */                                                     
 public class ImageProcessing {
 
-    ParticleAnalysisReport party[];
-    ParticleAnalysisReport topT;
-    ParticleAnalysisReport bottomT;
-    ParticleAnalysisReport leftT;
-    ParticleAnalysisReport rightT;
-    CriteriaCollection cc = new CriteriaCollection();
+    ParticleAnalysisReport particles[];
+    Physics imageCalculations;
+    CriteriaCollection criteriaCollection = new CriteriaCollection();
+    ParticleAnalysisReport bottomTarget, topTarget, middleTarget;
 
     public ImageProcessing() {
-        cc.addCriteria(MeasurementType.IMAQ_MT_BOUNDING_RECT_WIDTH, 30, 400, false);
-        cc.addCriteria(MeasurementType.IMAQ_MT_BOUNDING_RECT_HEIGHT, 40, 400, false);
+        criteriaCollection.addCriteria(
+                MeasurementType.IMAQ_MT_BOUNDING_RECT_WIDTH, 30, 400, false);
+        criteriaCollection.addCriteria(
+                MeasurementType.IMAQ_MT_BOUNDING_RECT_HEIGHT, 40, 400, false);
+        imageCalculations = new Physics();
     }
 
-    public ParticleAnalysisReport[] getTheParticles(AxisCamera cam) throws Exception {
-        ColorImage colorImg = cam.getImage(); //get image from the camera
+    public void getTheParticles(AxisCamera camera)
+            throws Exception {
+        int erosionCount = 2;
+        // true means connectivity 8, false means connectivity 4
+        boolean connectivity8Or4 = false;
 
-        BinaryImage binImg = colorImg.thresholdRGB(0, 42, 71, 255, 0, 255);//seperate the light and dark image
-        colorImg.free();
-        BinaryImage clnImg = binImg.removeSmallObjects(false, 2);//remove the small objects 
-        binImg.free();
-        BinaryImage convexHullImg = clnImg.convexHull(false);//fill the rectangles that were created
-        clnImg.free();
-        BinaryImage filteredImg = convexHullImg.particleFilter(cc);//
-        convexHullImg.free();
-        party = filteredImg.getOrderedParticleAnalysisReports();
-        filteredImg.free();
-        //orginizeParticles(party, getTotalXCenter(party), getTotalYCenter(party));
-        return party;
+        particles = camera.getImage()
+                //seperate the light and dark image
+                .thresholdRGB(0, 42, 71, 255, 0, 255)
+                .removeSmallObjects(connectivity8Or4, erosionCount)
+                //fill the rectangles that were created
+                .convexHull(connectivity8Or4)
+                .particleFilter(criteriaCollection)
+                .getOrderedParticleAnalysisReports();
+        organizeParticles(particles,getTotalXCenter(particles),getTotalYCenter(particles));
     }
 
-    public static ParticleAnalysisReport getTopMost(ParticleAnalysisReport[] parts) {
-        ParticleAnalysisReport p = parts[0];
-        for (int i = 0; i < parts.length; i++) {
-            if (p.center_mass_y < parts[i].center_mass_y) {
-                p = parts[i];
-            }
-        }
+    public int getTotalXCenter(ParticleAnalysisReport[] particles) {
+        int averageHeight = 0;
 
-        return p;
-    }
-    public static ParticleAnalysisReport getBottomMost(ParticleAnalysisReport[] parts) {
-        ParticleAnalysisReport p = parts[0];
-        for (int i = 0; i < parts.length; i++) {
-            if (p.center_mass_y > parts[i].center_mass_y) {
-                p = parts[i];
-            }
-        }
-
-        return p;
-    }
-    public static ParticleAnalysisReport getLeftMost(ParticleAnalysisReport[] parts) {
-        ParticleAnalysisReport p = parts[0];
-        for (int i = 0; i < parts.length; i++) {
-            if (p.center_mass_x > parts[i].center_mass_x) {
-                p = parts[i];
-            }
-        }
-
-        return p;
-    }
-    public static ParticleAnalysisReport getRightMost(ParticleAnalysisReport[] parts) {
-        ParticleAnalysisReport p = parts[0];
-        for (int i = 0; i < parts.length; i++) {
-            if (p.center_mass_x > parts[i].center_mass_x) {
-                p = parts[i];
-            }
-        }
-
-        return p;
-    }
-
-    public int getTotalXCenter(ParticleAnalysisReport[] part) {
-        int avgHeight = 0;
-        for (int i = 0; i < part.length; i++) {
-            ParticleAnalysisReport r = part[i];
-            avgHeight = avgHeight + r.center_mass_x;
-        }
-        if (part.length == 0) {
-            return 1234567890;
+        if (particles.length == 0) {
+            averageHeight = -1;
         } else {
-            avgHeight = avgHeight / part.length;
-            return avgHeight;
+            for (int i = 0; i < particles.length; i++) {
+                averageHeight += particles[i].center_mass_x;
+            }
+            averageHeight /= particles.length;
         }
+        return averageHeight;
     }
 
-    public int getTotalYCenter(ParticleAnalysisReport[] part) {
-        int avgHeight = 0;
-        for (int i = 0; i < part.length; i++) {
-            ParticleAnalysisReport r = part[i];
-            avgHeight = avgHeight + r.center_mass_y;
-        }
-        if (part.length == 0) {
-            return 1234567890;
+    public int getTotalYCenter(ParticleAnalysisReport[] particles) {
+        int averageWidth = 0;
+
+        if (particles.length == 0) {
+            averageWidth = -1;
         } else {
-            avgHeight = avgHeight / part.length;
-            return avgHeight;
+            for (int i = 0; i < particles.length; i++) {
+                averageWidth += particles[i].center_mass_y;
+            }
+            averageWidth /= particles.length;
         }
+        return averageWidth;
     }
 
-    public int getCurrentXCenter(ParticleAnalysisReport part) {
-        return part.center_mass_x;
-    }
-
-    public int getCurrentYCenter(ParticleAnalysisReport part) {
-        return part.center_mass_y;
-    }
-
-    public String orginizeParticles(ParticleAnalysisReport[] part, int cMx, int cMy) {
-        String s = " ";
-        if (cMx == 1234567890 || cMy == 1234567890) {
-            s = "No targets have been found";
-            return s;
+    public void organizeParticles(
+            ParticleAnalysisReport[] particles,
+            int centerMassHorizontal,
+            int centerMassVertical) {
+        double calculatedHeight;
+        // the following values are in pixels
+        double cameraOffset = 49;
+        double bottomHeight = 38;
+        double middleHeight = 71;
+        double topHeight = 108;
+        double errorRange = 3;
+        String display = "";
+        if (centerMassHorizontal == -1 || centerMassVertical == -1) {
+            display += "No targets have been found\n";
         } else {
-            System.out.println(part.length + " Report(s)");
-            for (int i = 0; i < part.length; i++) {
-                ParticleAnalysisReport r = part[i];
-
-                if (r.particleArea > 15000) {
-                    topT = r;
-                    System.out.println(i + ": " + r.particleArea);
-                    if (r.center_mass_x > cMx) {
-                        rightT = r;
-                        System.out.println("right target found");
-                    } else if (r.center_mass_x < cMx) {
-                        leftT = r;
-                        System.out.println("left target found");
-                    }
-
-                    if (r.center_mass_y < cMy) {
-                        topT = r;
-                        System.out.println("Top");
-                    } else if (r.center_mass_y > cMy) {
-                        bottomT = r;
-                        System.out.println("Bottom");
-                    }
+            display += particles.length + "Report"
+                    + ((particles.length == 1)? "":"s") + "\n";
+            for (int i = 0; i < particles.length; i++)
+            {
+                ParticleAnalysisReport particle = particles[i];
+                display += particle.imageHeight + "\n";
+                calculatedHeight =
+                        imageCalculations.getHeight(
+                            particle.imageHeight, particle.center_mass_y)
+                        + cameraOffset;
+                display += calculatedHeight + "\n";
+                if (Math.abs(bottomHeight - calculatedHeight) < errorRange)
+                {
+                    display += "Bottom\n";
+                    bottomTarget = particle;
+                }
+                else if (Math.abs(middleHeight - calculatedHeight) < errorRange)
+                {
+                    display += "Middle\n";
+                    middleTarget = particle;
+                }
+                else if(Math.abs(topHeight - calculatedHeight) < errorRange)
+                {
+                    display += "Top\n";
+                    topTarget = particle;
                 }
             }
-            System.out.println("----------------------");
-            return s;
         }
+        display += "----------------------\n";
+        System.out.print(display);
     }
 }
