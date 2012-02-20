@@ -179,12 +179,29 @@ public class Robo2012 extends IterativeRobot {
             bridgeArm.set(0);
         }
 
+
+
+         
+        
+
+
+       
+//Calculates looking at top target
+
         // Have the camera scan for targets
+        
+        
         if (camera.freshImage()) {
             try {
                 imageProc.getTheParticles(camera);
+                
+                imageProc.idTopTarget(imageProc.particles);
                 if (isShooting) {
+
                     launcher.shoot(target.boundingRectHeight, hoopHeight);
+
+          
+//Calculates looking at top target
                     isShooting = false;
                 }
             } catch (Exception e) {

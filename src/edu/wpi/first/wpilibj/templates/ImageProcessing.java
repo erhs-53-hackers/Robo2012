@@ -21,7 +21,17 @@ public class ImageProcessing {
     Physics imageCalculations;
     CriteriaCollection criteriaCollection = new CriteriaCollection();
     ParticleAnalysisReport bottomTarget, topTarget, middleTarget;
-
+    int numberOfDegreesInVerticalFieldOfView = 33;
+    final int numberOfPixelsVerticalInFieldOfView = 480;
+    final int numberOfPixelsHorizontalInFieldOfView = 640;
+    final int heightToTheTopOfTheTopTarget = 118;
+    final int heightToBottomOfTopTarget = 100;
+    int PixelsFromLevelToBottomOfTopTarget = 0;
+    int PixelsFromLevelToTopOfTopTarget = 0;
+    boolean isLookingAtTopTarget = false;
+    int cameraHeight = 49;
+    
+    
     public ImageProcessing() {
         criteriaCollection.addCriteria(
                 MeasurementType.IMAQ_MT_BOUNDING_RECT_WIDTH, 30, 400, false);
@@ -29,7 +39,79 @@ public class ImageProcessing {
                 MeasurementType.IMAQ_MT_BOUNDING_RECT_HEIGHT, 40, 400, false);
         imageCalculations = new Physics(true);
     }
-
+    
+    
+    public void getPixelsFromLevelToBottomOfTopTarget(ParticleAnalysisReport particle){
+      PixelsFromLevelToBottomOfTopTarget = numberOfPixelsVerticalInFieldOfView - particle.center_mass_y -
+             (particle.boundingRectHeight / 2);
+     
+    }
+    public void getPixelsFromLevelToTopOfTopTarget(
+            ParticleAnalysisReport particle){
+      PixelsFromLevelToTopOfTopTarget =
+              numberOfPixelsVerticalInFieldOfView - particle.center_mass_y -
+             (particle.boundingRectHeight / 2);
+     
+    }
+    public double getPhi(int PixelsFromLevelToTopOfTopTarget){
+    double phi = (PixelsFromLevelToTopOfTopTarget/numberOfPixelsVerticalInFieldOfView) 
+               * numberOfDegreesInVerticalFieldOfView;
+    return phi;
+    }
+    
+    public double getTheta(int PixelsFromLevelToBottomOfTopTarget){
+        double theta = (PixelsFromLevelToBottomOfTopTarget/numberOfPixelsVerticalInFieldOfView)
+                * numberOfDegreesInVerticalFieldOfView;
+        
+        return theta;
+        }
+    public double getHypotneuse1(double angle){
+        double opposite1 = heightToTheTopOfTheTopTarget - cameraHeight;
+        double hypotneuse_1 = (opposite1/MathX.sin(getPhi(PixelsFromLevelToTopOfTopTarget)));
+        return hypotneuse_1;
+        }
+    public double getHypotneuse0(double angle){
+        
+        double opposite0 = heightToBottomOfTopTarget - cameraHeight;
+        double hypotneuse_0 = (opposite0/MathX.sin(getTheta(PixelsFromLevelToBottomOfTopTarget)));
+        return hypotneuse_0;
+        
+    }
+    
+    public boolean isLookingAtTopTarget(){
+        double adjacent1 = MathX.cos(getPhi(PixelsFromLevelToTopOfTopTarget)) *
+                getHypotneuse1(getPhi(PixelsFromLevelToTopOfTopTarget));
+        double adjacent0 = MathX.cos(getTheta(PixelsFromLevelToBottomOfTopTarget)) *
+                getHypotneuse0(getTheta(PixelsFromLevelToBottomOfTopTarget));
+        System.out.println("Adjacent0 : " + adjacent0 );
+        System.out.println("Adjacent1 : " + adjacent1);
+        if (adjacent0 == adjacent1){
+            return true;
+            
+        } 
+        else{
+            return false;
+        }
+    }
+    
+    public void idTopTarget(ParticleAnalysisReport[] particles){
+        for(int i = 0;i<particles.length;i++){
+          ParticleAnalysisReport particle = particles[i];
+          
+          getPixelsFromLevelToTopOfTopTarget(particle);
+          getPixelsFromLevelToBottomOfTopTarget(particle);
+          
+           isLookingAtTopTarget = isLookingAtTopTarget();
+          
+          
+          
+          
+       }
+    }
+    
+    
+    
+    
     public void getTheParticles(AxisCamera cam) throws Exception {
         ColorImage colorImg = cam.getImage(); //get image from the camera
         BinaryImage binImg = colorImg.thresholdRGB(0, 42, 71, 255, 0, 255);//seperate the light and dark image
@@ -131,3 +213,5 @@ public class ImageProcessing {
         System.out.print(display);
     }
 }
+
+
