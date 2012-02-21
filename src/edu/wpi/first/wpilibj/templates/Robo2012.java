@@ -73,11 +73,15 @@ public class Robo2012 extends IterativeRobot {
             try {
                 imageProc.getTheParticles(camera);
                 target = ImageProcessing.getTopMost(imageProc.particles);
-                int img = 640;
-                double p = (640/2) - target.center_mass_x;
-                double angle = p/physics.LAMBDA;
-                msg.printLn("" + angle);
-                //gyro.turnToAngle(angle);
+                
+                double p = (Physics.MAXWIDTH / 2) - target.center_mass_x;
+                double angle = p / physics.LAMBDA;
+                //msg.printLn("" + angle);
+                while(MathX.abs(angle - gyro.modulatedAngle) > 1) {
+                    gyro.turnToAngle(angle);
+                    getWatchdog().feed();
+                }
+                
                 if(isShooting){
                     Timer.delay(3);
                     
@@ -95,6 +99,7 @@ public class Robo2012 extends IterativeRobot {
                 msg.printLn("ERROR!!! Cannot Fetch Image");
             }
         }
+        getWatchdog().feed();
     }
 
     public void teleopPeriodic() {
