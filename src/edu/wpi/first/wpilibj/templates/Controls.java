@@ -5,7 +5,6 @@
 package edu.wpi.first.wpilibj.templates;
 
 import edu.wpi.first.wpilibj.Joystick;
-import edu.wpi.first.wpilibj.buttons.JoystickButton;
 
 /**
  *
@@ -34,39 +33,39 @@ public class Controls {
     public boolean button4() {
         return joystick.getRawButton(4);
     }
-    
+
     public boolean button5() {
         return joystick.getRawButton(5);
     }
-    
+
     public boolean button6() {
         return joystick.getRawButton(6);
     }
-    
+
     public boolean button7() {
         return joystick.getRawButton(7);
     }
-    
+
     public boolean button8() {
         return joystick.getRawButton(8);
     }
-    
+
     public boolean button9() {
         return joystick.getRawButton(9);
     }
-    
+
     public boolean button10() {
         return joystick.getRawButton(10);
     }
-    
+
     public boolean button11() {
         return joystick.getRawButton(11);
     }
-    
+
     public boolean button12() {
         return joystick.getRawButton(12);
     }
-    
+
     public boolean FOV_Top() {
         if (joystick.getRawAxis(6) == -1) {
             return true;
@@ -74,7 +73,7 @@ public class Controls {
             return false;
         }
     }
-    
+
     public boolean FOV_Bottom() {
         if (joystick.getRawAxis(6) == 1) {
             return true;
@@ -82,7 +81,7 @@ public class Controls {
             return false;
         }
     }
-    
+
     public boolean FOV_Left() {
         if (joystick.getRawAxis(5) == -1) {
             return true;
@@ -90,7 +89,7 @@ public class Controls {
             return false;
         }
     }
-    
+
     public boolean FOV_Right() {
         if (joystick.getRawAxis(5) == 1) {
             return true;

@@ -9,18 +9,21 @@ import edu.wpi.first.wpilibj.Timer;
  * @author Nick, Michael
  */
 public class Launcher {
-    
+
     Jaguar launchMotor;
     Jaguar loadMotor;
     Encoder encoder;
-    
+
     /**
      * Default constructor for the launcher
      */
     public Launcher() {
         this.launchMotor = new Jaguar(RoboMap.LAUNCH_MOTOR);
         this.loadMotor = new Jaguar(RoboMap.LOAD_MOTOR);
-        this.encoder = new Encoder(RoboMap.LAUNCH_ENCODER1, RoboMap.LAUNCH_ENCODER2, false);
+        this.encoder = new Encoder(
+                RoboMap.LAUNCH_ENCODER1,
+                RoboMap.LAUNCH_ENCODER2,
+                false);
         this.encoder.setDistancePerPulse(1);
     }
 
@@ -35,6 +38,7 @@ public class Launcher {
         for(int i = 0; i < sampleNumber; i++) {
             encod1Array[i] = encoder.getRaw();
         }
+
         Timer.delay(deltaTime);
         for(int i = 0; i < sampleNumber; i++) {
             encod2Array[i] = encoder.getRaw();
@@ -51,10 +55,11 @@ public class Launcher {
         rate = deltaEncod / (deltaTime * 6) * 4.67;
         return rate;
     }
-    
+
     public void shoot(int pixel, double height) {
         double speed = 0.0;
-        int launchSpeed = pixel * /* this can change to tested values later */1000;
+        /* 1000 can change to tested values later */
+        int launchSpeed = pixel * 1000;
         encoder.start();
         while (MathX.abs(getRPM() - launchSpeed) >= 100) {
             launchMotor.set(speed);
@@ -74,5 +79,4 @@ public class Launcher {
         loadMotor.set(0);
         launchMotor.set(0);
     }
-   
 }

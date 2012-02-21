@@ -1,38 +1,31 @@
 package edu.wpi.first.wpilibj.templates;
 
-import edu.wpi.first.wpilibj.SensorBase;
 import edu.wpi.first.wpilibj.AnalogChannel;
-
 
 /**
  *
  * @author nick, michael
  */
 public class Physics {
-    
+
     public static final double HOOP1 = 2 + (1 / 3.0);//ft
     public static final double HOOP2 = 5 + (1 / 12.0);//ft
     public static final double HOOP3 = 8 + (1 / 6.0);//ft
-    private double currentHoop = 94/12;//HOOP3;//the current hoop
-    
-    
+    private double currentHoop = 94 / 12;//HOOP3;//the current hoop
     private static final int FOV = 33;//Field of View
     private static final int MAXPIXEL = 480;//height
     double LAMBDA = MAXPIXEL / FOV;
     public static final int MAXWIDTH = 640;
-    
     private static final float LAUNCH_HEIGHT = 4f;
-
-    private static final int CAMERA_OFFSET = 50/12;//height the camera is off the ground
+    //height the camera is off the ground
+    private static final int CAMERA_OFFSET = 50 / 12;
     private static final double RADIUS = 1.5;//half the width of the target
-    
     /** the acceleration due to gravity in ft/sec*/
     private static final int g = 32;
-    
     /** the observed pixel value from the camera*/
     private double p;
     /** the first approximation at the distance from the camera to the target*/
-    private double R;  
+    private double R;
     /** the pixel value, adjusted for fore-shortening*/
     private double pprime;
     /** the R value, calculated with the new pixel value*/
@@ -41,14 +34,12 @@ public class Physics {
     private double dprime;
     /** the adjustment for the angle the ball must enter the hoop at*/
     private double n;
-    
     AnalogChannel ultrasonic;
     UltraCalc calc;
     double distFromTarget = 137;
-    
     /** Include capabilities to push the information to the FRC Dashboard */
     Messager msg = new Messager();
-    
+
     /**
      * set the current height of the hoop
      * @param num the height of the hoop in inches
@@ -60,10 +51,10 @@ public class Physics {
         calc = new UltraCalc();
         }
     }
-    
     public void setCurrentHoop(final double num) {
         currentHoop = num;
     }
+
     /**
      * sets the vertical height of the target from the center, in pixels
      * @param p height of the target, in pixels
@@ -71,7 +62,7 @@ public class Physics {
     public void setP(int p) {
         this.p = p;
     }
-    
+
     /**
      * calculate distance from camera to center of hoop
      * @return distance in feet
@@ -82,7 +73,7 @@ public class Physics {
         this.R = distance;
         return distance;
     }
-    
+
     /**
      * calculate the vertical height of the target in pixels
      * @return height of target in pixels
@@ -94,7 +85,7 @@ public class Physics {
         this.pprime = pp;
         return pp;
     }
-    
+
     /**
      * calculate the final distance from the camera to the hoop, adjusted for
      * foreshortening
@@ -105,18 +96,19 @@ public class Physics {
         this.rprime = rp;
         return rp;
     }
-    
+
     /**
      * calculate the final horizontal distance from the targets
      * @return the distance in feet
      */
     protected double calculateFinalD() {
         double dp = MathX.sqrt(
-                MathX.pow(rprime, 2) - MathX.pow((currentHoop - CAMERA_OFFSET), 2));
+                MathX.pow(rprime, 2)
+                - MathX.pow((currentHoop - CAMERA_OFFSET), 2));
         this.dprime = dp;
         return dp;
     }
-    
+
     /**
      * @return the possible error of R
      */
@@ -137,17 +129,18 @@ public class Physics {
         this.n = result;
         return result;
     }
-    public double getHeight(int tHeight, int centerMass)
-    {
-        double height  = 240 - centerMass;
+
+    public double getHeight(int tHeight, int centerMass) {
+        double height = 240 - centerMass;
         System.out.println("The raw height is " + height);
-        height  =  height / LAMBDA;
-        height =  calc.distance(ultrasonic.getVoltage()) * (MathX.tan(height) + MathX.tan(11.5));
+        height = height / LAMBDA;
+        height = calc.distance(ultrasonic.getVoltage()) * (MathX.tan(height) + MathX.tan(11.5));
         System.out.println("The ulrasonic sensor says " + calc.distance(ultrasonic.getVoltage()));
         System.out.println(height + "");
-        return  height; 
+        return height;
     }
-   /**
+
+    /**
      * calculate the launch velocity needed to launch the ball into the hoop
      * @return the launch velocity in ft./sec
      */
@@ -158,7 +151,7 @@ public class Physics {
         double launchVelocity = MathX.sqrt(num / denom);
         return launchVelocity;
     }
-    
+
     public void calculateInfo() {
         calculateR();
         calculateCorrection();
@@ -168,13 +161,14 @@ public class Physics {
         calculateN();
         calculateLaunchVelocity();
     }
+
     /**
      * push calculations to the console
      */
     public void pushInfo() {
         calculateInfo();
         System.out.println("P = " + p);
-        System.out.println("R = " + R);        
+        System.out.println("R = " + R);
         System.out.println("Correction = " + pprime);
         System.out.println("Final R = " + rprime);
         System.out.println("Final D = " + dprime);
@@ -182,7 +176,7 @@ public class Physics {
         System.out.println("N = " + n);
         System.out.println("V = " + calculateLaunchVelocity() + " ft./sec");
     }
-    
+
     public void pushInfoToDashboard() {
         calculateInfo();
         msg.printLn("P = " + p);
@@ -194,5 +188,4 @@ public class Physics {
         //msg.printLn("N = " + n);
         //msg.printLn("V = " + calculateLaunchVelocity() + " ft./sec");
     }
-    
 }

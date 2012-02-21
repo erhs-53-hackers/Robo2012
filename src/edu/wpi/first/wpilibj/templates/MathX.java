@@ -8,24 +8,24 @@ import com.sun.squawk.util.MathUtils;
  * For use in Physics class, specifically
  * @author Nick
  */
-public class MathX{
-    
+public class MathX {
+
     public static double round(double input) {
         double result = MathUtils.round(input);
         return result;
     }
-    
+
     public static double abs(double input) {
         double result = java.lang.Math.abs(input);
         return result;
     }
-    
+
     public static double tan(double input) {
         double result = java.lang.Math.tan(
                 java.lang.Math.toRadians(input));
         return result;
     }
-    
+
     public static double atan(double input) {
         double result = java.lang.Math.toDegrees(
                 MathUtils.atan(input));
@@ -49,19 +49,18 @@ public class MathX{
                 java.lang.Math.toRadians(input));
         return result;
     }
-    
+
     public static double asin(double input) {
         double result = java.lang.Math.toDegrees(
                 MathUtils.asin(input));
         return result;
     }
-    
-    public static double pow(double a, double b) { 
-            return MathUtils.pow(a, b);
+
+    public static double pow(double a, double b) {
+        return MathUtils.pow(a, b);
     }
 
     public static double sqrt(double d) {
         return java.lang.Math.sqrt(d);
     }
-    
 }
