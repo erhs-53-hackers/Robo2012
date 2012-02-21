@@ -25,11 +25,22 @@ public class ImageProcessing {
     int numberOfDegreesInVerticalFieldOfView = 33;
     final int numberOfPixelsVerticalInFieldOfView = 480;
     final int numberOfPixelsHorizontalInFieldOfView = 640;
+    /*TODO instead of calculating the top target's height and then
+     * writing down the result of your calculation,
+     * code the calculation itself.  the compiler will generate the same
+     * bytecode.  the only difference will be clearer code.  for one target,
+     * this doesn't make much difference, but for 3 it will be clearer.
+     * and there will be code repetition, which is a chance to refactor.
+     */
     final int heightToTheTopOfTheTopTarget = 118;
     final int heightToBottomOfTopTarget = 100;
+    /*TODO none of these three should be global varaibles
+     * instead, use parameters, local variables and return values
+     */
     int PixelsFromLevelToBottomOfTopTarget = 0;
     int PixelsFromLevelToTopOfTopTarget = 0;
     boolean isLookingAtTopTarget = false;
+
     int cameraHeight = 49;
 
     public ImageProcessing() {
@@ -42,6 +53,12 @@ public class ImageProcessing {
 
     public void getPixelsFromLevelToBottomOfTopTarget(
             ParticleAnalysisReport particle) {
+        /*TODO take into account the fact that level is not
+         * always at the bottom of the field of view
+         */
+        /*TODO don't use global variable PixelsFromLevelToBottomOfTopTarget,
+         * instead use local variables, return values, and parameters
+         */
         PixelsFromLevelToBottomOfTopTarget =
                 numberOfPixelsVerticalInFieldOfView - particle.center_mass_y
                 - (particle.boundingRectHeight / 2);
@@ -49,20 +66,37 @@ public class ImageProcessing {
 
     public void getPixelsFromLevelToTopOfTopTarget(
             ParticleAnalysisReport particle) {
+        /*TODO take into account the fact that level is not
+         * always at the bottom of the field of view
+         */
+        /*TODO don't use global variable PixelsFromLevelToBottomOfTopTarget,
+         * instead use local variables, return values, and parameters
+         */
         PixelsFromLevelToTopOfTopTarget =
                 numberOfPixelsVerticalInFieldOfView - particle.center_mass_y
                 - (particle.boundingRectHeight / 2);
     }
 
     public double getPhi(int PixelsFromLevelToTopOfTopTarget) {
+        /* TODO: consider simply returning the calculated value,
+         * instead of assigning it to a variable and then returning that
+         * variable
+         */
         double phi =
-                (PixelsFromLevelToTopOfTopTarget /
-                    numberOfPixelsVerticalInFieldOfView)
+                (PixelsFromLevelToTopOfTopTarget
+                    / numberOfPixelsVerticalInFieldOfView)
                 * numberOfDegreesInVerticalFieldOfView;
         return phi;
     }
 
+    /* this is a good function.  nice and short, easy to reason about,
+     * no non-constant global usage.
+     */
     public double getTheta(int PixelsFromLevelToBottomOfTopTarget) {
+        /* TODO: consider simply returning the calculated value,
+         * instead of assigning it to a variable and then returning that
+         * variable
+         */
         double theta =
                 (PixelsFromLevelToBottomOfTopTarget /
                     numberOfPixelsVerticalInFieldOfView)
@@ -71,6 +105,14 @@ public class ImageProcessing {
         return theta;
     }
 
+    /* this is a really good function.  nice and short,
+     * takes a parameter for the values it uses, doesn't use a bad global,
+     * doesn't set a bad global, and returns the calculated value.
+     * it's really easy to see exactly what it does and reason about its
+     * correctness.
+     *
+     * kudos.
+     */
     public double getHypotneuse1(double angle) {
         double opposite1 = heightToTheTopOfTheTopTarget - cameraHeight;
         double hypotneuse_1 =
@@ -80,23 +122,31 @@ public class ImageProcessing {
     }
 
     public double getHypotneuse0(double angle) {
-
         double opposite0 = heightToBottomOfTopTarget - cameraHeight;
-        double hypotneuse_0 =
-                opposite0
+        double hypotneuse_0 = opposite0
                 / MathX.sin(getTheta(PixelsFromLevelToBottomOfTopTarget));
         return hypotneuse_0;
     }
 
+    /* this is nice and short.
+     */
     public boolean isLookingAtTopTarget() {
+        /*TODO don't use the globals PixelsFromLevelToTopOfTopTarget
+         * instead, those should be parameters, or the functions that generate
+         * those values should be called from here and the results saved
+         * to local variables.  same with PixelsFromLevelToBottomOfTopTarget.
+         */
         double adjacent1 =
                 MathX.cos(getPhi(PixelsFromLevelToTopOfTopTarget))
                 * getHypotneuse1(getPhi(PixelsFromLevelToTopOfTopTarget));
         double adjacent0 =
                 MathX.cos(getTheta(PixelsFromLevelToBottomOfTopTarget))
                 * getHypotneuse0(getTheta(PixelsFromLevelToBottomOfTopTarget));
+        /* TODO remove these print statements after testing */
         System.out.println("Adjacent0 : " + adjacent0);
         System.out.println("Adjacent1 : " + adjacent1);
+        /* TODO turn the next 5 lines into 1 line.
+         */
         if (adjacent0 == adjacent1) {
             return true;
         } else {
@@ -111,6 +161,9 @@ public class ImageProcessing {
             getPixelsFromLevelToTopOfTopTarget(particle);
             getPixelsFromLevelToBottomOfTopTarget(particle);
 
+            /*
+             * TODO change this so a variable isn't set and not used.
+             */
             isLookingAtTopTarget = isLookingAtTopTarget();
         }
     }

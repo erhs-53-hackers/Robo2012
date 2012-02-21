@@ -183,55 +183,6 @@ public class Robo2012 extends IterativeRobot {
         } else if (controls.button12()) {
             bridgeArm.set(-.75);
 
-        /*
-        drive.mecanumDrive_Cartesian(
-            stick.getX(),
-            stick.getY(),
-            MathX.pow(stick.getZ(), 3),
-            0);
-        
-        // gyro.refreshGyro();
-        
-        if (controls.button2()) {
-        gyro.turnToAngle(0);
-        }
-        
-        //motor to collect the balls off the ground
-        collectMotor.set(.5);
-        
-        //motor to control lazy susan for launcher
-        if (controls.button10()) {
-        launchTurn.set(.25);
-        } else if (controls.button11()) {
-        launchTurn.set(-.25);
-        } else {
-        launchTurn.set(0);
-        }               
-
-        // motor to lower bridge arm
-        if (controls.button6()) {
-        bridgeArm.set(.75);
-        bridgeArm.set(-.5);
->>>>>>> reformat to 80 characters, remove unused imports
-        } else {
-        bridgeArm.set(0);
-        }
-
-<<<<<<< HEAD
-
-
-         
-        
-
-
-       
-//Calculates looking at top target
-=======
-         *
-        
-
-
-         */
          //reformat to 80 characters, remove unused imports
 
         // Have the camera scan for targets
@@ -241,42 +192,21 @@ public class Robo2012 extends IterativeRobot {
             try {
                 imageProc.getTheParticles(camera);
 
+                /*TODO don't set a variable in the class (particles) and
+                 * then call a method of the class passing in that same
+                 * variable.  instead put that logic into a method in the
+                 * class itself and call that method from here.
+                 */
                 imageProc.idTopTarget(imageProc.particles);
                 if (isShooting) {
-
-
-                    launcher.shoot(target.boundingRectHeight, hoopHeight);
-
-          
-//Calculates looking at top target
-
-//reformat to 80 characters, remove unused imports
-                    isShooting = false;
+                  launcher.shoot(target.boundingRectHeight, hoopHeight);
+                  isShooting = false;
                 }
             } catch (Exception e) {
                 e.printStackTrace();
                 msg.printLn("ERROR!!! Cannot Fetch Image");
             }
         }
-
-        /*
-        //Select the target to aim at
-        if (controls.FOV_Left()) {
-        target = imageProc.middleTarget;
-        isShooting = true;
-        } else if (controls.FOV_Right()) {
-        target = imageProc.middleTarget;
-        isShooting = true;
-        } else if (controls.FOV_Top()) {
-        target = imageProc.topTarget;
-        isShooting = true;
-        } else if (controls.FOV_Bottom()) {
-        target = imageProc.bottomTarget;
-        isShooting = true;
-        
-         * */
-
-//reformat to 80 characters, remove unused imports
     }
-}
+ }
 }
