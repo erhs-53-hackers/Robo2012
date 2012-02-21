@@ -115,26 +115,33 @@ public class ImageProcessing {
         }
     }
 
-    public void getTheParticles(AxisCamera cam) throws Exception {
-         //get image from the camera
-        ColorImage colorImg = cam.getImage();
+    public void getTheParticles(AxisCamera camera) throws Exception {
+        int erosionCount = 2;
+        // true means use connectivity 8, true means connectivity 4
+        boolean connectivity8Or4 = false;
+        ColorImage colorImage;
+        BinaryImage binaryImage;
+        BinaryImage cleanImage;
+        BinaryImage convexHullImage;
+        BinaryImage filteredImage;
+
+        colorImage = camera.getImage();
         //seperate the light and dark image
-        BinaryImage binImg = colorImg.thresholdRGB(0, 42, 71, 255, 0, 255);
-        colorImg.free();
-        //remove the small objects
-        BinaryImage clnImg = binImg.removeSmallObjects(false, 2);
+        binaryImage = colorImage.thresholdRGB(0, 42, 71, 255, 0, 255);
+        cleanImage = binaryImage.removeSmallObjects(
+                connectivity8Or4, erosionCount);
         //fill the rectangles that were created
-        BinaryImage convexHullImg =
-                clnImg.convexHull(false);
-        BinaryImage filteredImg =
-                convexHullImg.particleFilter(criteriaCollection);
-        particles = filteredImg.getOrderedParticleAnalysisReports();
+        convexHullImage = cleanImage.convexHull(connectivity8Or4);
+        filteredImage = convexHullImage.particleFilter(criteriaCollection);
+        particles = filteredImage.getOrderedParticleAnalysisReports();
         organizeParticles(particles, getTotalXCenter(particles),
                 getTotalYCenter(particles));
-        binImg.free();
-        clnImg.free();
-        convexHullImg.free();
-        filteredImg.free();
+
+        colorImage.free();
+        binaryImage.free();
+        cleanImage.free();
+        convexHullImage.free();
+        filteredImage.free();
     }
 
     public static ParticleAnalysisReport getTopMost(
