@@ -6,25 +6,32 @@ package edu.wpi.first.wpilibj.templates;
 
 import edu.wpi.first.wpilibj.Gyro;
 import edu.wpi.first.wpilibj.Jaguar;
+import edu.wpi.first.wpilibj.PWM;
+import edu.wpi.first.wpilibj.RobotDrive;
 
 /**
  *
- * @author Nick, Alex
+ * @author Nick, Alex, Michael
  */
 public class GyroX {
 
-    Jaguar drive;
+    PWM drive;
+    
+    RobotDrive driveTrain;
     Gyro gyro;
     double modulatedAngle;
     double targetAngle = 0;
 
-    public GyroX(final int gyroInit, Jaguar drive) {
+    public GyroX(final int gyroInit, PWM drive, RobotDrive robo) {
         this.gyro = new Gyro(gyroInit);
         this.drive = drive;
+        this.driveTrain = robo;
+        
     }
 
     public void turnToAngle(double newAngle) {
         refreshGyro();
+
         double nowAngle = newAngle - modulatedAngle;
 
         if (nowAngle > 180) {
@@ -36,9 +43,31 @@ public class GyroX {
         int multi = (nowAngle > 0 ? 1 : -1);
         if (Math.abs(nowAngle) > 1.5) {
             if (Math.abs(nowAngle) < 10) {
-                drive.set(.45 * multi);
+                drive.setRaw((int)(.45 * multi * 255));
             } else {
-                drive.set(.75 * multi);
+                drive.setRaw((int)(.75 * multi * 255));
+            }
+
+        }
+
+    }
+    public void turnRobotToAngle(double newAngle) {
+        refreshGyro();
+
+        double nowAngle = newAngle - modulatedAngle;
+
+        if (nowAngle > 180) {
+            nowAngle -= 360;
+        }
+        if (nowAngle < -180) {
+            nowAngle += 360;
+        }
+        int multi = (nowAngle > 0 ? 1 : -1);
+        if (Math.abs(nowAngle) > 1.5) {
+            if (Math.abs(nowAngle) < 10) {
+                driveTrain.mecanumDrive_Polar(0, 0, .45 * multi);
+            } else {
+                driveTrain.mecanumDrive_Polar(0, 0, .75 * multi);
             }
 
         }
@@ -51,7 +80,7 @@ public class GyroX {
     }
 
     public double refreshGyro() {
-        this.gyro.reset();
+        //this.gyro.reset();
         modulatedAngle = modAngle(gyro.getAngle() * 4.14015366);
         return modulatedAngle;
     }
@@ -65,6 +94,8 @@ public class GyroX {
 
     public void turnAngle(double turnAmount) {
         double newAngle = modulatedAngle + turnAmount;
-        turnToAngle(newAngle);
+        while (MathX.abs(newAngle - modulatedAngle) > 2) {
+            turnToAngle(newAngle);
+        }
     }
 }

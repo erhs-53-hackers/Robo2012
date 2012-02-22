@@ -31,10 +31,11 @@ public class Robo2012 extends IterativeRobot {
     GyroX gyro;
     Messager msg;
     Controls controls;
-    
+    boolean isManual = false;
     boolean isShooting = false;
     int shots = 0;
     double distanceFromTarget;
+    double hoopHeight = Physics.HOOP1;
 
     public void robotInit() {
         msg = new Messager();
@@ -48,7 +49,7 @@ public class Robo2012 extends IterativeRobot {
 
         stick = new Joystick(RoboMap.JOYSTICK1);
         controls = new Controls(stick);
-        
+
         camera = AxisCamera.getInstance();
         camera.writeBrightness(30);
         camera.writeResolution(AxisCamera.ResolutionT.k640x480);
@@ -58,7 +59,7 @@ public class Robo2012 extends IterativeRobot {
         launchTurn = new Jaguar(RoboMap.LAUNCH_TURN);
         collectMotor = new Jaguar(RoboMap.COLLECT_MOTOR);
         launcher = new Launcher();
-        //gyro = new GyroX(RoboMap.GYRO, launchTurn);
+        gyro = new GyroX(RoboMap.GYRO, launchTurn, drive);
         autoPot = new AnalogChannel(RoboMap.AUTO_POT);
         telePot = new AnalogChannel(RoboMap.TELO_POT);
         msg.printLn("FRC 2012");
@@ -73,21 +74,21 @@ public class Robo2012 extends IterativeRobot {
             try {
                 imageProc.getTheParticles(camera);
                 target = ImageProcessing.getTopMost(imageProc.particles);
-                
+
                 double p = (Physics.MAXWIDTH / 2) - target.center_mass_x;
                 double angle = p / physics.LAMBDA;
                 //msg.printLn("" + angle);
-                while(MathX.abs(angle - gyro.modulatedAngle) > 1) {
+                //gyro.gyro.reset();
+                while (MathX.abs(angle - gyro.modulatedAngle) > 2) {
                     gyro.turnToAngle(angle);
                     getWatchdog().feed();
                 }
-                
-                if(isShooting){
+
+                if (isShooting) {
                     Timer.delay(3);
-                    
+
                     launcher.shoot(target.boundingRectHeight, Physics.HOOP3);
 
-                    //load and shoot again
                     shots++;
                     if (shots == 2) {
                         isShooting = false;
@@ -102,43 +103,84 @@ public class Robo2012 extends IterativeRobot {
         getWatchdog().feed();
     }
 
+    public void teleopInit() {
+    }
+
     public void teleopPeriodic() {
-/*
-        drive.mecanumDrive_Cartesian(stick.getX(), stick.getY(), MathX.pow(stick.getZ(), 3), 0);
-        
-       // gyro.refreshGyro();
-        
-        if (controls.button2()) {
-            gyro.turnToAngle(0);
+        if (controls.button8()) {
+            isManual = true;
+        } else if (controls.button7()) {
+            isManual = false;
         }
-        
-        //motor to collect the balls off the ground
-        collectMotor.set(.5);
-        
-        //motor to control lazy susan for launcher
-        if (controls.button10()) {
-            launchTurn.set(.25);
-        } else if (controls.button11()) {
-            launchTurn.set(-.25);
+        if (controls.button1()) {//trigger reverses drive
+            drive.mecanumDrive_Cartesian(stick.getX() * -1, stick.getY() * -1, MathX.pow(stick.getTwist(), 3) * -1, 0);
         } else {
-            launchTurn.set(0);
-        }               
+            drive.mecanumDrive_Cartesian(stick.getX(), stick.getY(), MathX.pow(stick.getTwist(), 3), 0);
+        }
+
+        if (!isManual) {
+            //motor to collect the balls off the ground
+            collectMotor.set((stick.getThrottle() + 1) / 2);
+            if (controls.FOV_Left()) {
+                target = imageProc.middleTarget;
+                hoopHeight = Physics.HOOP2;
+            } else if (controls.FOV_Right()) {
+                target = imageProc.middleTarget;
+                hoopHeight = Physics.HOOP2;
+            } else if (controls.FOV_Top()) {
+                target = imageProc.topTarget;
+                hoopHeight = Physics.HOOP3;
+            } else if (controls.FOV_Bottom()) {
+                target = imageProc.bottomTarget;
+                hoopHeight = Physics.HOOP1;
+            }
+            if (controls.button2()) {
+                isShooting = true;
+            }
+        } else {
+            collectMotor.set(0);
+            double power = (stick.getThrottle() + 1) / 2;
+            launcher.launchMotor.set(power);
+            if (controls.button2()) {
+                launcher.manualShoot();
+            }
+        }
+
+
+        if (controls.button3()) {
+            gyro.turnRobotToAngle(0);
+        } else if (controls.button4()) {
+            gyro.turnRobotToAngle(180);
+        } else if (controls.button5()) {
+            gyro.turnRobotToAngle(-90);
+        } else if (controls.button6()) {
+            gyro.turnRobotToAngle(90);
+        }
+
+
+
+        //motor to control lazy susan for launcher
+        if (controls.button9()) {
+            gyro.turnAngle(5);
+        } else if (controls.button10()) {
+            gyro.turnAngle(-5);
+        }
 
         // motor to lower bridge arm
-        if (controls.button6()) {
-            bridgeArm.set(.75);
-            bridgeArm.set(-.5);
+        if (controls.button11()) {
+            bridgeArm.set(1);
+        } else if (controls.button12()) {
+            bridgeArm.set(-.75);
         } else {
             bridgeArm.set(0);
         }
-        * 
-        */
 
         // Have the camera scan for targets
         if (camera.freshImage()) {
             try {
                 imageProc.getTheParticles(camera);
                 if (isShooting) {
+                    launcher.shoot(target.boundingRectHeight, hoopHeight);
                     isShooting = false;
                 }
             } catch (Exception e) {
@@ -146,22 +188,11 @@ public class Robo2012 extends IterativeRobot {
                 msg.printLn("ERROR!!! Cannot Fetch Image");
             }
         }
-        /*
-               //Select the target to aim at 
-        if (controls.FOV_Left()) {
-            target = imageProc.middleTarget;
-            isShooting = true;
-        } else if (controls.FOV_Right()) {
-            target = imageProc.middleTarget;
-            isShooting = true;
-        } else if (controls.FOV_Top()) {
-            target = imageProc.topTarget;
-            isShooting = true;
-        } else if (controls.FOV_Bottom()) {
-            target = imageProc.bottomTarget;
-            isShooting = true;
-        
-        * */
-        
+
+        //Select the target to aim at 
+
+
+
+
     }
 }
