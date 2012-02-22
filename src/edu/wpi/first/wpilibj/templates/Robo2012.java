@@ -94,28 +94,28 @@ public class Robo2012 extends IterativeRobot {
                         isShooting = false;
                     }
                 }
-
             } catch (Exception e) {
                 e.printStackTrace();
                 msg.printLn("ERROR!!! Cannot Fetch Image");
             }
         }
         getWatchdog().feed();
-    }
-
-    public void teleopInit() {
-    }
+    }   
 
     public void teleopPeriodic() {
         if (controls.button8()) {
             isManual = true;
+            
         } else if (controls.button7()) {
             isManual = false;
+            
         }
         if (controls.button1()) {//trigger reverses drive
             drive.mecanumDrive_Cartesian(stick.getX() * -1, stick.getY() * -1, MathX.pow(stick.getTwist(), 3) * -1, 0);
+            
         } else {
             drive.mecanumDrive_Cartesian(stick.getX(), stick.getY(), MathX.pow(stick.getTwist(), 3), 0);
+            
         }
 
         if (!isManual) {
@@ -124,15 +124,19 @@ public class Robo2012 extends IterativeRobot {
             if (controls.FOV_Left()) {
                 target = imageProc.middleTarget;
                 hoopHeight = Physics.HOOP2;
+                
             } else if (controls.FOV_Right()) {
                 target = imageProc.middleTarget;
                 hoopHeight = Physics.HOOP2;
+                
             } else if (controls.FOV_Top()) {
                 target = imageProc.topTarget;
                 hoopHeight = Physics.HOOP3;
+                
             } else if (controls.FOV_Bottom()) {
                 target = imageProc.bottomTarget;
                 hoopHeight = Physics.HOOP1;
+                
             }
             if (controls.button2()) {
                 isShooting = true;
@@ -141,23 +145,26 @@ public class Robo2012 extends IterativeRobot {
             collectMotor.set(0);
             double power = (stick.getThrottle() + 1) / 2;
             launcher.launchMotor.set(power);
+            
             if (controls.button2()) {
                 launcher.manualShoot();
+                
             }
         }
 
-
         if (controls.button3()) {
             gyro.turnRobotToAngle(0);
+            
         } else if (controls.button4()) {
             gyro.turnRobotToAngle(180);
+            
         } else if (controls.button5()) {
             gyro.turnRobotToAngle(-90);
+            
         } else if (controls.button6()) {
             gyro.turnRobotToAngle(90);
+            
         }
-
-
 
         //motor to control lazy susan for launcher
         if (controls.button9()) {
@@ -188,11 +195,5 @@ public class Robo2012 extends IterativeRobot {
                 msg.printLn("ERROR!!! Cannot Fetch Image");
             }
         }
-
-        //Select the target to aim at 
-
-
-
-
     }
 }
