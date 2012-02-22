@@ -111,7 +111,7 @@ public class Robo2012 extends IterativeRobot {
             
         }
         if (controls.button1()) {//trigger reverses drive
-            drive.mecanumDrive_Cartesian(stick.getX() * -1, stick.getY() * -1, MathX.pow(stick.getTwist(), 3) * -1, 0);
+            drive.mecanumDrive_Cartesian(-stick.getX(), -stick.getY(), -MathX.pow(stick.getTwist(), 3), 0);
             
         } else {
             drive.mecanumDrive_Cartesian(stick.getX(), stick.getY(), MathX.pow(stick.getTwist(), 3), 0);
