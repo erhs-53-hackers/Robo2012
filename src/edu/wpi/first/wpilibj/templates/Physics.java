@@ -53,15 +53,14 @@ public class Physics {
      * set the current height of the hoop
      * @param num the height of the hoop in inches
      */
-    public Physics()
-    {
+    public Physics(boolean uSonic)
+    { 
+        if(uSonic) {
         ultrasonic = new AnalogChannel(7);
         calc = new UltraCalc();
+        }
     }
-    public Physics(int c)
-    {
-        
-    }
+    
     public void setCurrentHoop(final double num) {
         currentHoop = num;
     }

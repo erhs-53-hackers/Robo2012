@@ -27,7 +27,7 @@ public class ImageProcessing {
                 MeasurementType.IMAQ_MT_BOUNDING_RECT_WIDTH, 30, 400, false);
         criteriaCollection.addCriteria(
                 MeasurementType.IMAQ_MT_BOUNDING_RECT_HEIGHT, 40, 400, false);
-        imageCalculations = new Physics();
+        imageCalculations = new Physics(true);
     }
 
     public void getTheParticles(AxisCamera cam) throws Exception {

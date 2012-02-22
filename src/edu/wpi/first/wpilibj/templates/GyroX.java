@@ -22,9 +22,9 @@ public class GyroX {
     double modulatedAngle;
     double targetAngle = 0;
 
-    public GyroX(final int gyroInit, PWM drive, RobotDrive robo) {
+    public GyroX(final int gyroInit, final int port, RobotDrive robo) {
         this.gyro = new Gyro(gyroInit);
-        this.drive = drive;
+        this.drive = new PWM(port);
         this.driveTrain = robo;
         
     }

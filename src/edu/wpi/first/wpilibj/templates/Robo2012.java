@@ -23,11 +23,10 @@ public class Robo2012 extends IterativeRobot {
     ParticleAnalysisReport target;
     Physics physics;
     Launcher launcher;
-    Jaguar bridgeArm;
-    Jaguar launchTurn;
+    Jaguar bridgeArm;    
     Jaguar collectMotor;
-    AnalogChannel autoPot;
-    AnalogChannel telePot;
+    //AnalogChannel autoPot;
+    //AnalogChannel telePot;
     GyroX gyro;
     Messager msg;
     Controls controls;
@@ -54,19 +53,18 @@ public class Robo2012 extends IterativeRobot {
         camera.writeBrightness(30);
         camera.writeResolution(AxisCamera.ResolutionT.k640x480);
         imageProc = new ImageProcessing();
-        physics = new Physics(6574);
-        bridgeArm = new Jaguar(RoboMap.BRIDGE_MOTOR);
-        launchTurn = new Jaguar(RoboMap.LAUNCH_TURN);
+        physics = new Physics(false);
+        bridgeArm = new Jaguar(RoboMap.BRIDGE_MOTOR);        
         collectMotor = new Jaguar(RoboMap.COLLECT_MOTOR);
         launcher = new Launcher();
-        gyro = new GyroX(RoboMap.GYRO, launchTurn, drive);
-        autoPot = new AnalogChannel(RoboMap.AUTO_POT);
-        telePot = new AnalogChannel(RoboMap.TELO_POT);
+        gyro = new GyroX(RoboMap.GYRO, RoboMap.LAUNCH_TURN, drive);
+        //autoPot = new AnalogChannel(RoboMap.AUTO_POT);
+        //telePot = new AnalogChannel(RoboMap.TELO_POT);
         msg.printLn("FRC 2012");
     }
 
     public void autonomousInit() {
-        //isShooting = true;
+        isShooting = true;
     }
 
     public void autonomousPeriodic() {
@@ -77,8 +75,8 @@ public class Robo2012 extends IterativeRobot {
 
                 double p = (Physics.MAXWIDTH / 2) - target.center_mass_x;
                 double angle = p / physics.LAMBDA;
-                //msg.printLn("" + angle);
-                //gyro.gyro.reset();
+                msg.printLn("" + angle);
+                
                 while (MathX.abs(angle - gyro.modulatedAngle) > 2) {
                     gyro.turnToAngle(angle);
                     getWatchdog().feed();
