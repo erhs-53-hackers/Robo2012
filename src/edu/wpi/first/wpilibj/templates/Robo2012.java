@@ -71,9 +71,11 @@ public class Robo2012 extends IterativeRobot {
         if (camera.freshImage()) {
             try {
                 imageProc.getTheParticles(camera);
+
                 target = ImageProcessing.getTopMost(imageProc.particles);
 
                 double p = (Physics.MAXWIDTH / 2) - target.center_mass_x;
+
                 double angle = p / physics.LAMBDA;
                 msg.printLn("" + angle);
                 
@@ -197,7 +199,8 @@ public class Robo2012 extends IterativeRobot {
                  * variable.  instead put that logic into a method in the
                  * class itself and call that method from here.
                  */
-                imageProc.idTopTarget(imageProc.particles);
+               imageProc.idTopTarget(imageProc.getBottomMost(imageProc.particles));
+                
                 if (isShooting) {
                   launcher.shoot(target.boundingRectHeight, hoopHeight);
                   isShooting = false;

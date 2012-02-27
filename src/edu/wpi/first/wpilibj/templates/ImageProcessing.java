@@ -22,26 +22,20 @@ public class ImageProcessing {
     Physics imageCalculations;
     CriteriaCollection criteriaCollection = new CriteriaCollection();
     ParticleAnalysisReport bottomTarget, topTarget, middleTarget;
-    int numberOfDegreesInVerticalFieldOfView = 33;
-    final int numberOfPixelsVerticalInFieldOfView = 480;
+    
+    final int numberOfDegreesInVerticalFieldOfView = 33;
+    final int numberOfPixelsVerticalInFieldOfView = 240;
     final int numberOfPixelsHorizontalInFieldOfView = 640;
-    /*TODO instead of calculating the top target's height and then
-     * writing down the result of your calculation,
-     * code the calculation itself.  the compiler will generate the same
-     * bytecode.  the only difference will be clearer code.  for one target,
-     * this doesn't make much difference, but for 3 it will be clearer.
-     * and there will be code repetition, which is a chance to refactor.
-     */
+
     final int heightToTheTopOfTheTopTarget = 118;
     final int heightToBottomOfTopTarget = 100;
-    /*TODO none of these three should be global varaibles
-     * instead, use parameters, local variables and return values
-     */
-    int PixelsFromLevelToBottomOfTopTarget = 0;
-    int PixelsFromLevelToTopOfTopTarget = 0;
-    boolean isLookingAtTopTarget = false;
+    
+    final int heightToTheTopOfTheBottomTarget = 118;
+    final int heightToBottomOfBottomTarget = 100;
+    
+    final double cameraAngleOffset = 12;
 
-    int cameraHeight = 49;
+    final double cameraHeight = 47.5;
 
     public ImageProcessing() {
         criteriaCollection.addCriteria(
@@ -51,7 +45,15 @@ public class ImageProcessing {
         imageCalculations = new Physics(true);
     }
 
-    public void getPixelsFromLevelToBottomOfTopTarget(
+    public double getPixelsFromLevelToBottomOfTopTarget(
+            ParticleAnalysisReport particle) {
+        double PixelsFromLevelToBottomOfTopTarget =
+                numberOfPixelsVerticalInFieldOfView - particle.center_mass_y
+                - (particle.boundingRectHeight / 2);
+        System.out.println("PixelsFromLevelToBottomOfTopTarget"+PixelsFromLevelToBottomOfTopTarget);
+        return PixelsFromLevelToBottomOfTopTarget;
+    }
+    public double getPixelsFromLevelToTopOfTopTarget(
             ParticleAnalysisReport particle) {
         /*TODO take into account the fact that level is not
          * always at the bottom of the field of view
@@ -59,113 +61,124 @@ public class ImageProcessing {
         /*TODO don't use global variable PixelsFromLevelToBottomOfTopTarget,
          * instead use local variables, return values, and parameters
          */
-        PixelsFromLevelToBottomOfTopTarget =
+        double PixelsFromLevelToTopOfTopTarget =
                 numberOfPixelsVerticalInFieldOfView - particle.center_mass_y
-                - (particle.boundingRectHeight / 2);
+                + (particle.boundingRectHeight / 2);
+        System.out.println("PixelsFromLevelToTopOfTopTarget" + PixelsFromLevelToTopOfTopTarget);
+        return PixelsFromLevelToTopOfTopTarget;
     }
-
-    public void getPixelsFromLevelToTopOfTopTarget(
-            ParticleAnalysisReport particle) {
-        /*TODO take into account the fact that level is not
-         * always at the bottom of the field of view
-         */
-        /*TODO don't use global variable PixelsFromLevelToBottomOfTopTarget,
-         * instead use local variables, return values, and parameters
-         */
-        PixelsFromLevelToTopOfTopTarget =
-                numberOfPixelsVerticalInFieldOfView - particle.center_mass_y
-                - (particle.boundingRectHeight / 2);
-    }
-
-    public double getPhi(int PixelsFromLevelToTopOfTopTarget) {
+    public double getPhi(double PixelsFromLevelToTopOfTopTarget) {
         /* TODO: consider simply returning the calculated value,
          * instead of assigning it to a variable and then returning that
          * variable
          */
-        double phi =
-                (PixelsFromLevelToTopOfTopTarget
+        System.out.print(PixelsFromLevelToTopOfTopTarget
+                    / numberOfPixelsVerticalInFieldOfView
+                * numberOfDegreesInVerticalFieldOfView);
+        return (PixelsFromLevelToTopOfTopTarget
                     / numberOfPixelsVerticalInFieldOfView)
-                * numberOfDegreesInVerticalFieldOfView;
-        return phi;
+                * numberOfDegreesInVerticalFieldOfView + 12;   
     }
-
-    /* this is a good function.  nice and short, easy to reason about,
-     * no non-constant global usage.
-     */
-    public double getTheta(int PixelsFromLevelToBottomOfTopTarget) {
-        /* TODO: consider simply returning the calculated value,
-         * instead of assigning it to a variable and then returning that
-         * variable
-         */
-        double theta =
-                (PixelsFromLevelToBottomOfTopTarget /
-                    numberOfPixelsVerticalInFieldOfView)
-                * numberOfDegreesInVerticalFieldOfView;
-
-        return theta;
+    public double getTheta(double PixelsFromLevelToBottomOfTopTarget) {
+        System.out.println(PixelsFromLevelToBottomOfTopTarget / numberOfPixelsVerticalInFieldOfView * numberOfDegreesInVerticalFieldOfView);
+        return  (PixelsFromLevelToBottomOfTopTarget /
+                numberOfPixelsVerticalInFieldOfView)
+                * numberOfDegreesInVerticalFieldOfView  + 12;        
     }
-
-    /* this is a really good function.  nice and short,
-     * takes a parameter for the values it uses, doesn't use a bad global,
-     * doesn't set a bad global, and returns the calculated value.
-     * it's really easy to see exactly what it does and reason about its
-     * correctness.
-     *
-     * kudos.
-     */
     public double getHypotneuse1(double angle) {
-        double opposite1 = heightToTheTopOfTheTopTarget - cameraHeight;
+        double opposite1 = heightToTheTopOfTheBottomTarget - cameraHeight;
         double hypotneuse_1 =
                 opposite1
-                / MathX.sin(getPhi(PixelsFromLevelToTopOfTopTarget));
+                / MathX.sin(getPhi(angle));
+       System.out.println("Phi " + getPhi(angle));
         return hypotneuse_1;
     }
-
+    public static ParticleAnalysisReport getTopMost(ParticleAnalysisReport[] particles)
+    {
+        ParticleAnalysisReport greatest = particles[0];
+        for (int i=0;i < particles.length; i++)
+        {
+            ParticleAnalysisReport particle = particles[i];
+            
+            if(particle.center_mass_y < greatest.center_mass_y){
+                greatest = particle;
+            }       
+        }
+        return greatest;
+    }
+    public ParticleAnalysisReport getBottomMost(ParticleAnalysisReport[] particles)
+    {
+       ParticleAnalysisReport lowest = particles[0];
+        for (int i=0;i < particles.length; i++)
+        {
+            ParticleAnalysisReport particle = particles[i];
+            
+            if(particle.center_mass_y < lowest.center_mass_y){
+                lowest = particle;
+            }       
+        }
+        return lowest;
+    }
+        public ParticleAnalysisReport getLeftMost(ParticleAnalysisReport[] particles)
+    {
+        ParticleAnalysisReport leftist = particles[0];
+        for (int i=0;i < particles.length; i++)
+        {
+            ParticleAnalysisReport particle = particles[i];
+            
+            if(particle.center_mass_x < leftist.center_mass_x){
+                leftist = particle;
+            }       
+        }
+        return leftist;
+    }
+    public ParticleAnalysisReport getRightMost(ParticleAnalysisReport[] particles)
+    {
+       ParticleAnalysisReport rightist = particles[0];
+        for (int i=0;i < particles.length; i++)
+        {
+            ParticleAnalysisReport particle = particles[i];
+            
+            if(particle.center_mass_x > rightist.center_mass_x){
+                rightist = particle;
+            }       
+        }
+        return rightist;
+    }
+    public void setTargets(ParticleAnalysisReport[] particles)
+    {
+        topTarget = getTopMost(particles);
+        bottomTarget = getBottomMost(particles);//iamraaththealien
+        
+    }
     public double getHypotneuse0(double angle) {
-        double opposite0 = heightToBottomOfTopTarget - cameraHeight;
+        double opposite0 = heightToBottomOfBottomTarget - cameraHeight;
         double hypotneuse_0 = opposite0
-                / MathX.sin(getTheta(PixelsFromLevelToBottomOfTopTarget));
+                / MathX.sin(getTheta(angle));
+        System.out.println("Phi " + getTheta(angle));
         return hypotneuse_0;
     }
-
-    /* this is nice and short.
-     */
-    public boolean isLookingAtTopTarget() {
-        /*TODO don't use the globals PixelsFromLevelToTopOfTopTarget
-         * instead, those should be parameters, or the functions that generate
-         * those values should be called from here and the results saved
-         * to local variables.  same with PixelsFromLevelToBottomOfTopTarget.
-         */
-        double adjacent1 =
-                MathX.cos(getPhi(PixelsFromLevelToTopOfTopTarget))
-                * getHypotneuse1(getPhi(PixelsFromLevelToTopOfTopTarget));
-        double adjacent0 =
-                MathX.cos(getTheta(PixelsFromLevelToBottomOfTopTarget))
-                * getHypotneuse0(getTheta(PixelsFromLevelToBottomOfTopTarget));
-        /* TODO remove these print statements after testing */
-        System.out.println("Adjacent0 : " + adjacent0);
-        System.out.println("Adjacent1 : " + adjacent1);
-        /* TODO turn the next 5 lines into 1 line.
-         */
-        if (adjacent0 == adjacent1) {
-            return true;
-        } else {
-            return false;
-        }
+    public double getAdjacent1(double phiAngle,double hypotneuse){
+        return MathX.cos(phiAngle) * hypotneuse;
     }
-
-    public void idTopTarget(ParticleAnalysisReport[] particles) {
-        for (int i = 0; i < particles.length; i++) {
-            ParticleAnalysisReport particle = particles[i];
-
-            getPixelsFromLevelToTopOfTopTarget(particle);
-            getPixelsFromLevelToBottomOfTopTarget(particle);
-
-            /*
-             * TODO change this so a variable isn't set and not used.
-             */
-            isLookingAtTopTarget = isLookingAtTopTarget();
-        }
+    public double getAdjacent0(double thetaAngle,double hypotneuse){
+        return MathX.cos(thetaAngle) * hypotneuse;   
+    }
+    public void idTopTarget(ParticleAnalysisReport particles) {                  
+            double phi = getPhi(getPixelsFromLevelToTopOfTopTarget(particles));
+            double theta = getTheta(getPixelsFromLevelToBottomOfTopTarget(particles));
+        
+            double hypotneuse1 = getHypotneuse1(phi);
+            double hypotneuse0 = getHypotneuse0(theta);
+        
+            double adjacent1 = getAdjacent1(phi,hypotneuse1);
+            double adjacent0 = getAdjacent0(theta,hypotneuse0);
+            double averageDistance = (adjacent1 + adjacent0)/2;
+            
+            System.out.println("Adjacent0 : " + adjacent0);
+            System.out.println("Adjacent1 : " + adjacent1);
+            System.out.println("Average height is " + averageDistance);
+            System.out.println("----------------------------------------------");
     }
 
     public void getTheParticles(AxisCamera camera) throws Exception {
@@ -187,95 +200,10 @@ public class ImageProcessing {
         convexHullImage = cleanImage.convexHull(connectivity8Or4);
         filteredImage = convexHullImage.particleFilter(criteriaCollection);
         particles = filteredImage.getOrderedParticleAnalysisReports();
-        organizeParticles(particles, getTotalXCenter(particles),
-                getTotalYCenter(particles));
-
         colorImage.free();
         binaryImage.free();
         cleanImage.free();
         convexHullImage.free();
         filteredImage.free();
-    }
-
-    public static ParticleAnalysisReport getTopMost(
-            ParticleAnalysisReport[] particles) {
-        ParticleAnalysisReport particle = particles[0];
-        for (int i = 0; i < particles.length; i++) {
-            if (particle.center_mass_y < particles[i].center_mass_y) {
-                particle = particles[i];
-            }
-        }
-        return particle;
-    }
-
-    public int getTotalXCenter(ParticleAnalysisReport[] particles) {
-        int averageHeight = 0;
-
-        if (particles.length == 0) {
-            averageHeight = -1;
-        } else {
-            for (int i = 0; i < particles.length; i++) {
-                averageHeight += particles[i].center_mass_x;
-            }
-            averageHeight /= particles.length;
-        }
-        return averageHeight;
-    }
-
-    public int getTotalYCenter(ParticleAnalysisReport[] particles) {
-        int averageWidth = 0;
-
-        if (particles.length == 0) {
-            averageWidth = -1;
-        } else {
-            for (int i = 0; i < particles.length; i++) {
-                averageWidth += particles[i].center_mass_y;
-            }
-            averageWidth /= particles.length;
-        }
-        return averageWidth;
-    }
-
-    public void organizeParticles(
-            ParticleAnalysisReport[] particles,
-            int centerMassHorizontal,
-            int centerMassVertical) {
-        double calculatedHeight;
-        // the following values are in pixels
-        double cameraOffset = 49;
-        double bottomHeight = 38;
-        double middleHeight = 71;
-        double topHeight = 108;
-        double errorRange = 3;
-        String display = "";
-        if (centerMassHorizontal == -1 || centerMassVertical == -1) {
-            display += "No targets have been found\n";
-        } else {
-            display += particles.length + "Report"
-                    + ((particles.length == 1) ? "" : "s") + "\n";
-            for (int i = 0; i < particles.length; i++) {
-                ParticleAnalysisReport particle = particles[i];
-                display += particle.imageHeight + "\n";
-                calculatedHeight =
-                        imageCalculations.getHeight(
-                        particle.imageHeight, particle.center_mass_y)
-                        + cameraOffset;
-                display += calculatedHeight + "\n";
-                if (Math.abs(bottomHeight - calculatedHeight) < errorRange) {
-                    display += "Bottom\n";
-                    bottomTarget = particle;
-                } else if (Math.abs(middleHeight - calculatedHeight)
-                        < errorRange) {
-                    display += "Middle\n";
-                    middleTarget = particle;
-                } else if (Math.abs(topHeight - calculatedHeight)
-                        < errorRange) {
-                    display += "Top\n";
-                    topTarget = particle;
-                }
-            }
-        }
-        display += "----------------------\n";
-        System.out.print(display);
     }
 }
