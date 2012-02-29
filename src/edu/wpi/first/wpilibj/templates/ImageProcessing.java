@@ -49,7 +49,8 @@ public class ImageProcessing {
         double PixelsFromLevelToBottomOfTopTarget =
                 numberOfPixelsVerticalInFieldOfView - particle.center_mass_y
                 - (particle.boundingRectHeight / 2);
-        System.out.println("PixelsFromLevelToBottomOfTopTarget"+PixelsFromLevelToBottomOfTopTarget);
+        System.out.println("PixelsFromLevelToBottomOfTopTarget"+
+                PixelsFromLevelToBottomOfTopTarget);
         return PixelsFromLevelToBottomOfTopTarget;
     }
     public double getPixelsFromLevelToTopOfTopTarget(
@@ -63,7 +64,8 @@ public class ImageProcessing {
         double PixelsFromLevelToTopOfTopTarget =
                 numberOfPixelsVerticalInFieldOfView - particle.center_mass_y
                 + (particle.boundingRectHeight / 2);
-        System.out.println("PixelsFromLevelToTopOfTopTarget" + PixelsFromLevelToTopOfTopTarget);
+        System.out.println("PixelsFromLevelToTopOfTopTarget" + 
+                PixelsFromLevelToTopOfTopTarget);
         return PixelsFromLevelToTopOfTopTarget;
     }
     public double getPhi(double PixelsFromLevelToTopOfTopTarget) {
@@ -79,7 +81,9 @@ public class ImageProcessing {
                 * numberOfDegreesInVerticalFieldOfView + cameraAngleOffset;   
     }
     public double getTheta(double PixelsFromLevelToBottomOfTopTarget) {
-        System.out.println(PixelsFromLevelToBottomOfTopTarget / numberOfPixelsVerticalInFieldOfView * numberOfDegreesInVerticalFieldOfView);
+        System.out.println(PixelsFromLevelToBottomOfTopTarget / 
+                numberOfPixelsVerticalInFieldOfView * 
+                numberOfDegreesInVerticalFieldOfView);
         return  (PixelsFromLevelToBottomOfTopTarget /
                 numberOfPixelsVerticalInFieldOfView)
                 * numberOfDegreesInVerticalFieldOfView  + cameraAngleOffset;        
@@ -105,7 +109,8 @@ public class ImageProcessing {
         }
         return greatest;
     }
-    public ParticleAnalysisReport getBottomMost(ParticleAnalysisReport[] particles)
+    public ParticleAnalysisReport getBottomMost
+            (ParticleAnalysisReport[] particles)
     {
        ParticleAnalysisReport lowest = particles[0];
         for (int i=0;i < particles.length; i++)
@@ -118,7 +123,8 @@ public class ImageProcessing {
         }
         return lowest;
     }
-        public ParticleAnalysisReport getLeftMost(ParticleAnalysisReport[] particles)
+        public ParticleAnalysisReport getLeftMost
+                (ParticleAnalysisReport[] particles)
     {
         ParticleAnalysisReport leftist = particles[0];
         for (int i=0;i < particles.length; i++)
@@ -131,7 +137,8 @@ public class ImageProcessing {
         }
         return leftist;
     }
-    public ParticleAnalysisReport getRightMost(ParticleAnalysisReport[] particles)
+    public ParticleAnalysisReport getRightMost
+            (ParticleAnalysisReport[] particles)
     {
        ParticleAnalysisReport rightist = particles[0];
         for (int i=0;i < particles.length; i++)
@@ -165,7 +172,8 @@ public class ImageProcessing {
     }
     public void idTopTarget(ParticleAnalysisReport particle) {                  
             double phi = getPhi(getPixelsFromLevelToTopOfTopTarget(particle));
-            double theta = getTheta(getPixelsFromLevelToBottomOfTopTarget(particle));
+            double theta = getTheta
+                    (getPixelsFromLevelToBottomOfTopTarget(particle));
         
             double hypotneuse1 = getHypotneuse1(phi);
             double hypotneuse0 = getHypotneuse0(theta);
@@ -177,7 +185,7 @@ public class ImageProcessing {
             System.out.println("Adjacent0 : " + adjacent0);
             System.out.println("Adjacent1 : " + adjacent1);
             System.out.println("Average of Adjacents is " + averageDistance);
-            System.out.println("----------------------------------------------");
+            System.out.println("---------------------------------------------");
     }
 
     public void getTheParticles(AxisCamera camera) throws Exception {
