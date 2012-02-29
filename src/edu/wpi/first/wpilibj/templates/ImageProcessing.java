@@ -32,10 +32,9 @@ public class ImageProcessing {
     
     final int heightToTheTopOfTheBottomTarget = 118;
     final int heightToBottomOfBottomTarget = 100;
-    
     final double cameraAngleOffset = 12;
 
-    final double cameraHeight = 47.5;
+    final double cameraHeight = 46.5;
 
     public ImageProcessing() {
         criteriaCollection.addCriteria(
@@ -77,13 +76,13 @@ public class ImageProcessing {
                 * numberOfDegreesInVerticalFieldOfView);
         return (PixelsFromLevelToTopOfTopTarget
                     / numberOfPixelsVerticalInFieldOfView)
-                * numberOfDegreesInVerticalFieldOfView + 12;   
+                * numberOfDegreesInVerticalFieldOfView + cameraAngleOffset;   
     }
     public double getTheta(double PixelsFromLevelToBottomOfTopTarget) {
         System.out.println(PixelsFromLevelToBottomOfTopTarget / numberOfPixelsVerticalInFieldOfView * numberOfDegreesInVerticalFieldOfView);
         return  (PixelsFromLevelToBottomOfTopTarget /
                 numberOfPixelsVerticalInFieldOfView)
-                * numberOfDegreesInVerticalFieldOfView  + 12;        
+                * numberOfDegreesInVerticalFieldOfView  + cameraAngleOffset;        
     }
     public double getHypotneuse1(double angle) {
         double opposite1 = heightToTheTopOfTheBottomTarget - cameraHeight;
@@ -164,9 +163,9 @@ public class ImageProcessing {
     public double getAdjacent0(double thetaAngle,double hypotneuse){
         return MathX.cos(thetaAngle) * hypotneuse;   
     }
-    public void idTopTarget(ParticleAnalysisReport particles) {                  
-            double phi = getPhi(getPixelsFromLevelToTopOfTopTarget(particles));
-            double theta = getTheta(getPixelsFromLevelToBottomOfTopTarget(particles));
+    public void idTopTarget(ParticleAnalysisReport particle) {                  
+            double phi = getPhi(getPixelsFromLevelToTopOfTopTarget(particle));
+            double theta = getTheta(getPixelsFromLevelToBottomOfTopTarget(particle));
         
             double hypotneuse1 = getHypotneuse1(phi);
             double hypotneuse0 = getHypotneuse0(theta);
@@ -177,7 +176,7 @@ public class ImageProcessing {
             
             System.out.println("Adjacent0 : " + adjacent0);
             System.out.println("Adjacent1 : " + adjacent1);
-            System.out.println("Average height is " + averageDistance);
+            System.out.println("Average of Adjacents is " + averageDistance);
             System.out.println("----------------------------------------------");
     }
 
