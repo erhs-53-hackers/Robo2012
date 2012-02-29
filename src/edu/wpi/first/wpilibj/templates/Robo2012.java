@@ -29,8 +29,10 @@ public class Robo2012 extends IterativeRobot {
     GyroX gyro;
     Messager msg;
     Controls controls;
+
     boolean isManual = false;
-//reformat to 80 characters, remove unused imports
+    String idTarget = "top";
+
     boolean isShooting = false;
     int shots = 0;
     double distanceFromTarget;
@@ -199,8 +201,10 @@ public class Robo2012 extends IterativeRobot {
                  * variable.  instead put that logic into a method in the
                  * class itself and call that method from here.
                  */
-               imageProc.idTopTarget(imageProc.getBottomMost(imageProc.particles));
-                
+              // imageProc.idTopTarget(imageProc.getBottomMost(imageProc.particles));
+             double Distance =  imageProc.CameraCorrection(target,idTarget);
+             System.out.println("Look at Top Target,  Distance (inches) = " 
+                     + Distance );
                 if (isShooting) {
                   launcher.shoot(target.boundingRectHeight, hoopHeight);
                   isShooting = false;
