@@ -222,4 +222,43 @@ public class ImageProcessing {
         convexHullImage.free();
         filteredImage.free();
     }
+
+
+    public double CameraCorrection(ParticleAnalysisReport particle,String target){
+        
+        double targetHeight = 0;
+        
+        if(target == "top"){
+           targetHeight = 109;
+        }
+        
+        if(target == "middle"){
+           targetHeight = 72;
+        }
+        if(target == "bottom"){
+            targetHeight = 39;
+        }
+        double delta =  targetHeight  - cameraHeight;
+        double lambda = numberOfPixelsVerticalInFieldOfView/
+                numberOfDegreesInVerticalFieldOfView;
+        double pixelHeightBetweenReflectiveTape = 
+                getPixelsFromLevelToTopOfTopTarget(particle) - 
+                getPixelsFromLevelToBottomOfTopTarget(particle);
+        double ph_fixed = pixelHeightBetweenReflectiveTape;
+        
+        double R = 18/MathX.tan(ph_fixed/lambda);
+        
+        double Distance = 0;
+        for(int i =1; i<= 4; i++)
+        {
+            double theta = MathX.asin(delta/R);
+            double ph_new = ph_fixed/MathX.cos(theta);
+            R = 18/MathX.tan(ph_new/lambda);
+            Distance = MathX.sqrt(R*R-delta*delta);
+        }
+        
+        return Distance;
+        
+       }
+
 }
