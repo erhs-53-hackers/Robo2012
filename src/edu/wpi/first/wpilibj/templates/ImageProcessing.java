@@ -30,11 +30,11 @@ public class ImageProcessing {
     final int heightToTheTopOfTheTopTarget = 118;
     final int heightToBottomOfTopTarget = 100;
     
-    final int heightToTheTopOfTheBottomTarget = 118;
-    final int heightToBottomOfBottomTarget = 100;
+    final int heightToTheTopOfTheBottomTarget = 48;
+    final int heightToBottomOfBottomTarget = 30;
     final double cameraAngleOffset = 12;
 
-    final double cameraHeight = 46.5;
+    final double cameraHeight = 45.25;
 
     public ImageProcessing() {
         criteriaCollection.addCriteria(
@@ -89,7 +89,7 @@ public class ImageProcessing {
                 * numberOfDegreesInVerticalFieldOfView  + cameraAngleOffset;        
     }
     public double getHypotneuse1(double angle) {
-        double opposite1 = heightToTheTopOfTheBottomTarget - cameraHeight;
+        double opposite1 = heightToTheTopOfTheTopTarget - cameraHeight;
         double hypotneuse_1 =
                 opposite1
                 / MathX.sin(getPhi(angle));
@@ -158,7 +158,7 @@ public class ImageProcessing {
         
     }
     public double getHypotneuse0(double angle) {
-        double opposite0 = heightToBottomOfBottomTarget - cameraHeight;
+        double opposite0 = heightToBottomOfTopTarget + cameraHeight;
         double hypotneuse_0 = opposite0
                 / MathX.sin(getTheta(angle));
         System.out.println("Phi " + getTheta(angle));
