@@ -43,7 +43,16 @@ public class ImageProcessing {
                 MeasurementType.IMAQ_MT_BOUNDING_RECT_HEIGHT, 40, 400, false);
         imageCalculations = new Physics(true);
     }
-
+    public double pixlesToAngles(double pixles)
+    {
+        return pixles*numberOfDegreesInVerticalFieldOfView
+                /numberOfPixelsVerticalInFieldOfView;
+    }
+    public double anglesToPixles(double angle)
+    {
+        return angle*numberOfDegreesInVerticalFieldOfView
+                /numberOfPixelsVerticalInFieldOfView;
+    }
     public double getPixelsFromLevelToBottomOfTopTarget(
             ParticleAnalysisReport particle) {
         double PixelsFromLevelToBottomOfTopTarget =
