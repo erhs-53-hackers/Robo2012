@@ -119,10 +119,12 @@ public class Robo2012 extends IterativeRobot {
             
         }
         if (controls.button1()) {//trigger reverses drive
-            drive.mecanumDrive_Cartesian(-stick.getX(), -stick.getY(), -MathX.pow(stick.getTwist(), 3), 0);
+            drive.mecanumDrive_Cartesian(-stick.getX(), -stick.getY(),
+                    -MathX.pow(stick.getTwist(), 3), 0);
             
         } else {
-            drive.mecanumDrive_Cartesian(stick.getX(), stick.getY(), MathX.pow(stick.getTwist(), 3), 0);
+            drive.mecanumDrive_Cartesian(stick.getX(), stick.getY(),
+                    MathX.pow(stick.getTwist(), 3), 0);
             
         }
 
@@ -195,7 +197,7 @@ public class Robo2012 extends IterativeRobot {
         if (camera.freshImage()) {
             try {
                 imageProc.getTheParticles(camera);
-
+                imageProc.idTopTarget(imageProc.getBottomMost(imageProc.particles));
                 /*TODO don't set a variable in the class (particles) and
                  * then call a method of the class passing in that same
                  * variable.  instead put that logic into a method in the
