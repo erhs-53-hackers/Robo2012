@@ -26,7 +26,8 @@ public class Robo2012 extends IterativeRobot {
     Jaguar collectMotor;
     //AnalogChannel autoPot;
     //AnalogChannel telePot;
-    GyroX gyro;
+    
+    //GyroX gyro;
     Messager msg;
     Controls controls;
 
@@ -59,7 +60,7 @@ public class Robo2012 extends IterativeRobot {
         bridgeArm = new Jaguar(RoboMap.BRIDGE_MOTOR);        
         collectMotor = new Jaguar(RoboMap.COLLECT_MOTOR);
         launcher = new Launcher();
-        gyro = new GyroX(RoboMap.GYRO, RoboMap.LAUNCH_TURN, drive);
+        //gyro = new GyroX(RoboMap.GYRO, RoboMap.LAUNCH_TURN, drive);
         //autoPot = new AnalogChannel(RoboMap.AUTO_POT);
         //telePot = new AnalogChannel(RoboMap.TELO_POT);
         msg.printLn("FRC 2012");
@@ -81,11 +82,12 @@ public class Robo2012 extends IterativeRobot {
                 double angle = p / physics.LAMBDA;
                 msg.printLn("" + angle);
                 
-                while (MathX.abs(angle - gyro.modulatedAngle) > 2) {
+                /*while (MathX.abs(angle - gyro.modulatedAngle) > 2) {
                     gyro.turnToAngle(angle);
                     getWatchdog().feed();
                 }
-
+                 * 
+                 */
                 int img = 640;
                 //double p = (640 / 2) - target.center_mass_x;
                 //double angle = p / physics.LAMBDA;
@@ -160,7 +162,7 @@ public class Robo2012 extends IterativeRobot {
             }
         }
 
-        if (controls.button3()) {
+        /*if (controls.button3()) {
             gyro.turnRobotToAngle(0);
             
         } else if (controls.button4()) {
@@ -173,13 +175,17 @@ public class Robo2012 extends IterativeRobot {
             gyro.turnRobotToAngle(90);
             
         }
+         * 
+         */
 
         //motor to control lazy susan for launcher
-        if (controls.button9()) {
+        /*if (controls.button9()) {
             gyro.turnAngle(5);
         } else if (controls.button10()) {
             gyro.turnAngle(-5);
         }
+         * 
+         */
 
         // motor to lower bridge arm
         if (controls.button11()) {
@@ -193,7 +199,7 @@ public class Robo2012 extends IterativeRobot {
 
 
         if (camera.freshImage()) {
-            try {
+            try {                                                                                                     
                 imageProc.getTheParticles(camera);
 
                 /*TODO don't set a variable in the class (particles) and
@@ -201,7 +207,7 @@ public class Robo2012 extends IterativeRobot {
                  * variable.  instead put that logic into a method in the
                  * class itself and call that method from here.
                  */
-              // imageProc.idTopTarget(imageProc.getBottomMost(imageProc.particles));
+               imageProc.idTopTarget(imageProc.getBottomMost(imageProc.particles));
              double Distance =  imageProc.CameraCorrection(target,idTarget);
              System.out.println("Look at Top Target,  Distance (inches) = " 
                      + Distance );
@@ -215,5 +221,5 @@ public class Robo2012 extends IterativeRobot {
             }
         }
     }
- }
+ }  
 }
