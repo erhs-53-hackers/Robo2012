@@ -163,7 +163,7 @@ public class ImageProcessing {
     public void setTargets(ParticleAnalysisReport[] particles)
     {
         topTarget = getTopMost(particles);
-        bottomTarget = getBottomMost(particles);//iamraaththealien
+        bottomTarget = getBottomMost(particles);
         
     }
     public double getHypotneuse0(double angle) {
