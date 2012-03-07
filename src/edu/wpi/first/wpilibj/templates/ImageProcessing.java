@@ -32,9 +32,13 @@ public class ImageProcessing {
     
     final int heightToTheTopOfTheBottomTarget = 48;
     final int heightToBottomOfBottomTarget = 30;
+    
+    final int heightToTheTopOfTheMiddleTarget = 74;
+    final int heightToBottomOfMiddleTarget = 56;
+    
     final double cameraAngleOffset = 12;
 
-    final double cameraHeight = 45.25;
+    final double cameraHeight = 45;
 
     public ImageProcessing() {
         criteriaCollection.addCriteria(
@@ -97,22 +101,14 @@ public class ImageProcessing {
                 numberOfPixelsVerticalInFieldOfView)
                 * numberOfDegreesInVerticalFieldOfView  + cameraAngleOffset;        
     }
-    public double getHypotneuse1(double angle) {
-        double opposite1 = heightToTheTopOfTheTopTarget - cameraHeight;
-        double hypotneuse_1 =
-                opposite1
-                / MathX.sin(getPhi(angle));
-       System.out.println("Phi " + getPhi(angle));
-        return hypotneuse_1;
-    }
-    public static ParticleAnalysisReport getTopMost(ParticleAnalysisReport[] particles)
+    public ParticleAnalysisReport getTopMost(ParticleAnalysisReport[] particles)
     {
         ParticleAnalysisReport greatest = particles[0];
         for (int i=0;i < particles.length; i++)
         {
             ParticleAnalysisReport particle = particles[i];
             
-            if(particle.center_mass_y < greatest.center_mass_y){
+            if(particle.center_mass_y > greatest.center_mass_y){
                 greatest = particle;
             }       
         }
@@ -166,37 +162,63 @@ public class ImageProcessing {
         bottomTarget = getBottomMost(particles);
         
     }
-    public double getHypotneuse0(double angle) {
-        double opposite0 = heightToBottomOfTopTarget + cameraHeight;
+    public double getHypotneuse0(double angle, int ref) { //ref-reference number
+                                                          //1 Top
+                                                          //2 Middle
+        double opposite0 = 0;                             //3 Bottom
+        switch (ref){
+            case 1: opposite0 = heightToTheTopOfTheTopTarget - cameraHeight;
+                break;
+            case 2: opposite0 = heightToTheTopOfTheMiddleTarget - cameraHeight;
+                break;
+            case 3: opposite0 = heightToTheTopOfTheBottomTarget - cameraHeight;
+                break;
+        }
         double hypotneuse_0 = opposite0
                 / MathX.sin(getTheta(angle));
         System.out.println("Phi " + getTheta(angle));
         return hypotneuse_0;
     }
+    public double getHypotneuse1(double angle, int targetSelector) { //ref-reference number
+                                                          //1 Top
+                                                          //2 Middle
+        double opposite1 = 0;                             //3 Bottom
+        switch (targetSelector){
+            case 1: opposite1 = heightToTheTopOfTheTopTarget - cameraHeight;
+                break;
+            case 2: opposite1 = heightToTheTopOfTheMiddleTarget - cameraHeight;
+                break;
+            case 3: opposite1 = heightToTheTopOfTheBottomTarget - cameraHeight;
+                break;
+        }
+        double hypotneuse_1 =
+                opposite1
+                / MathX.sin(getPhi(angle));
+       System.out.println("Phi " + getPhi(angle));
+        return hypotneuse_1;
+    }
     public double getAdjacent1(double phiAngle,double hypotneuse){
         return MathX.cos(phiAngle) * hypotneuse;
     }
+    
+    
     public double getAdjacent0(double thetaAngle,double hypotneuse){
         return MathX.cos(thetaAngle) * hypotneuse;   
     }
-    public void idTopTarget(ParticleAnalysisReport particle) {                  
+    public void idTarget(ParticleAnalysisReport particle) {                  
             double phi = getPhi(getPixelsFromLevelToTopOfTopTarget(particle));
             double theta = getTheta
                     (getPixelsFromLevelToBottomOfTopTarget(particle));
-        
-            double hypotneuse1 = getHypotneuse1(phi);
-            double hypotneuse0 = getHypotneuse0(theta);
-        
-            double adjacent1 = getAdjacent1(phi,hypotneuse1);
-            double adjacent0 = getAdjacent0(theta,hypotneuse0);
-            double averageDistance = (adjacent1 + adjacent0)/2;
+                
+            double adjacent1 = getAdjacent1(phi,getHypotneuse1(phi,1));
+            double adjacent0 = getAdjacent0(theta,getHypotneuse0(theta,1));
+            double disparity = Math.abs(adjacent1 - adjacent0);
             
-            System.out.println("Adjacent0 : " + adjacent0);
-            System.out.println("Adjacent1 : " + adjacent1);
-            System.out.println("Average of Adjacents is " + averageDistance);
+            System.out.println("Bottom Adjacent0 : " + adjacent0);
+            System.out.println("Bottom Adjacent1 : " + adjacent1);
+            System.out.println("The disperity is " + disparity);
             System.out.println("---------------------------------------------");
     }
-
     public void getTheParticles(AxisCamera camera) throws Exception {
         int erosionCount = 2;
         // true means use connectivity 8, true means connectivity 4

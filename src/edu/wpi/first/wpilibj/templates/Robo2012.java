@@ -75,7 +75,7 @@ public class Robo2012 extends IterativeRobot {
             try {
                 imageProc.getTheParticles(camera);
 
-                target = ImageProcessing.getTopMost(imageProc.particles);
+                //target = ImageProcessing.getTopMost(imageProc.particles);
 
                 double p = (Physics.MAXWIDTH / 2) - target.center_mass_x;
 
@@ -111,8 +111,9 @@ public class Robo2012 extends IterativeRobot {
         }
         getWatchdog().feed();
     }   
-
     public void teleopPeriodic() {
+        System.out.println("I'm in teleop");
+        
         if (controls.button8()) {
             isManual = true;
             
@@ -186,33 +187,36 @@ public class Robo2012 extends IterativeRobot {
         } else if (controls.button10()) {
             gyro.turnAngle(-5);
         }
-         * 
-         */
+
 
         // motor to lower bridge arm
         if (controls.button11()) {
             bridgeArm.set(1);
         } else if (controls.button12()) {
             bridgeArm.set(-.75);
-
+        }
          //reformat to 80 characters, remove unused imports
 
         // Have the camera scan for targets
+         * 
+         */
 
-
+        System.out.println("iN TELEoP" + camera.freshImage());
+        
         if (camera.freshImage()) {
             try {                                                                                                     
                 imageProc.getTheParticles(camera);
-                imageProc.idTopTarget(imageProc.getBottomMost(imageProc.particles));
+                System.out.println("In try");
+                imageProc.idTarget(imageProc.getTopMost(imageProc.particles));
                 /*TODO don't set a variable in the class (particles) and
                  * then call a method of the class passing in that same
                  * variable.  instead put that logic into a method in the
                  * class itself and call that method from here.
                  */
-               imageProc.idTopTarget(imageProc.getBottomMost(imageProc.particles));
-             double Distance =  imageProc.CameraCorrection(target,idTarget);
-             System.out.println("Look at Top Target,  Distance (inches) = " 
-                     + Distance );
+              // imageProc.idTopTarget(imageProc.getBottomMost(imageProc.particles));
+             //double Distance =  imageProc.CameraCorrection(target,idTarget);
+            // System.out.println("Look at Top Target,  Distance (inches) = " 
+              //       + Distance );
                 if (isShooting) {
                   launcher.shoot(target.boundingRectHeight, hoopHeight);
                   isShooting = false;
@@ -222,6 +226,6 @@ public class Robo2012 extends IterativeRobot {
                 msg.printLn("ERROR!!! Cannot Fetch Image");
             }
         }
-    }
+    
  }  
 }
