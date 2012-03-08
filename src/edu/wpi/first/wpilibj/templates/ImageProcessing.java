@@ -23,6 +23,7 @@ public class ImageProcessing {
     CriteriaCollection criteriaCollection = new CriteriaCollection();
     ParticleAnalysisReport bottomTarget, topTarget, middleTargetLeft, 
             middleTargetRight;
+    Messager msg = new Messager();
     
     final double numberOfDegreesInVerticalFieldOfView = 33;
     final double numberOfPixelsVerticalInFieldOfView = 240;
@@ -206,9 +207,9 @@ public class ImageProcessing {
             double adjacent0 = getAdjacent0(theta,getHypotneuse0(theta,iterator));
             double disparity = Math.abs(adjacent1 - adjacent0);
             
-            System.out.println("Bottom Adjacent0 : " + adjacent0);
-            System.out.println("Bottom Adjacent1 : " + adjacent1);
-            System.out.println("The disperity is " + disparity);
+            msg.printLn("Bottom Adjacent0 : " + adjacent0);
+            msg.printLn("Bottom Adjacent1 : " + adjacent1);
+            msg.printLn("The disperity is " + disparity);
             System.out.println("---------------------------------------------");
             return disparity;
     }
@@ -239,6 +240,8 @@ public class ImageProcessing {
     }
     public void orginizeTheParticles (ParticleAnalysisReport[] particles)
     {
+        ParticleAnalysisReport midTargetTemp1 = particles[0], 
+                midTargetTemp2 = particles[1];
         for (int i=0;i < particles.length; i++)
         {
             ParticleAnalysisReport particle = particles[i];
@@ -248,28 +251,35 @@ public class ImageProcessing {
                 if (j == 1 && currentDisperity < 100)
                 {
                     topTarget = particle;
+                    msg.printLn("Top target found");
                 }
                 else if (j == 2 && currentDisperity < 100)
                 {
                     if (middleTargetLeft == null)
                     {
                         middleTargetLeft = particle;
+                        midTargetTemp1 = particle;
+                        msg.printLn("left target found");
+                        
                     }
                     else
                     {
                         middleTargetRight = particle;
+                        midTargetTemp2 = particle;
+                        msg.printLn("right target found");
                     }
                 }
                 else if (j == 3 && currentDisperity < 100)
                 {
                     bottomTarget = particle;
+                    msg.printLn("bottom target found");
                 }
             }
             
         }
         if(middleTargetLeft != null && middleTargetRight != null) {
             middleTargetRight = getRightMost(new ParticleAnalysisReport[] 
-                         {middleTargetLeft,middleTargetRight});
+                         {midTargetTemp1,midTargetTemp2});
         middleTargetLeft = getLeftMost(new ParticleAnalysisReport[] 
                          {middleTargetLeft,middleTargetRight});
             
