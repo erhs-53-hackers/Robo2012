@@ -21,7 +21,8 @@ public class ImageProcessing {
     ParticleAnalysisReport particles[];
     Physics imageCalculations;
     CriteriaCollection criteriaCollection = new CriteriaCollection();
-    ParticleAnalysisReport bottomTarget, topTarget, middleTargetLeft, middleTargetRight;
+    ParticleAnalysisReport bottomTarget, topTarget, middleTargetLeft, 
+            middleTargetRight;
     
     final double numberOfDegreesInVerticalFieldOfView = 33;
     final double numberOfPixelsVerticalInFieldOfView = 240;
@@ -119,33 +120,33 @@ public class ImageProcessing {
         }
         return lowest;
     }
-        public static ParticleAnalysisReport getLeftMost
-                (ParticleAnalysisReport[] particles)
-    {
-        ParticleAnalysisReport leftist = particles[0];
-        for (int i=0;i < particles.length; i++)
-        {
-            ParticleAnalysisReport particle = particles[i];
-            
-            if(particle.center_mass_x < leftist.center_mass_x){
-                leftist = particle;
-            }       
-        }
-        return leftist;
-    }
     public static ParticleAnalysisReport getRightMost
             (ParticleAnalysisReport[] particles)
     {
-       ParticleAnalysisReport rightist = particles[0];
+       ParticleAnalysisReport rightistTarget = particles[0];
         for (int i=0;i < particles.length; i++)
         {
             ParticleAnalysisReport particle = particles[i];
             
-            if(particle.center_mass_x > rightist.center_mass_x){
-                rightist = particle;
+            if(particle.center_mass_x > rightistTarget.center_mass_x){
+                rightistTarget = particle;
             }       
         }
-        return rightist;
+        return rightistTarget;
+    }
+    public static ParticleAnalysisReport getLeftMost
+            (ParticleAnalysisReport[] particles)
+    {
+       ParticleAnalysisReport leftistTarget = particles[0];
+        for (int i=0;i < particles.length; i++)
+        {
+            ParticleAnalysisReport particle = particles[i];
+            
+            if(particle.center_mass_x < leftistTarget.center_mass_x){
+                leftistTarget = particle;
+            }       
+        }
+        return leftistTarget;
     }
     public void setTargets(ParticleAnalysisReport[] particles)
     {
@@ -196,19 +197,20 @@ public class ImageProcessing {
     public double getAdjacent0(double thetaAngle,double hypotneuse){
         return MathX.cos(thetaAngle) * hypotneuse;   
     }
-    public void idTarget(ParticleAnalysisReport particle) {                  
+    public double idTarget(ParticleAnalysisReport particle, int iterator) {                  
             double phi = getPhi(getPixelsFromLevelToTopOfATarget(particle));
             double theta = getTheta
                     (getPixelsFromLevelToBottomOfATarget(particle));
                 
-            double adjacent1 = getAdjacent1(phi,getHypotneuse1(phi,1));
-            double adjacent0 = getAdjacent0(theta,getHypotneuse0(theta,1));
+            double adjacent1 = getAdjacent1(phi,getHypotneuse1(phi,iterator));
+            double adjacent0 = getAdjacent0(theta,getHypotneuse0(theta,iterator));
             double disparity = Math.abs(adjacent1 - adjacent0);
             
             System.out.println("Bottom Adjacent0 : " + adjacent0);
             System.out.println("Bottom Adjacent1 : " + adjacent1);
             System.out.println("The disperity is " + disparity);
             System.out.println("---------------------------------------------");
+            return disparity;
     }
     public void getTheParticles(AxisCamera camera) throws Exception {
         int erosionCount = 2;
@@ -235,7 +237,46 @@ public class ImageProcessing {
         convexHullImage.free();
         filteredImage.free();
     }
-
+    public void orginizeTheParticles (ParticleAnalysisReport[] particles)
+    {
+        for (int i=0;i < particles.length; i++)
+        {
+            ParticleAnalysisReport particle = particles[i];
+            for(int j=1;j < 4; j++)
+            {
+                double currentDisperity = idTarget(particle,j);
+                if (j == 1 && currentDisperity < 100)
+                {
+                    topTarget = particle;
+                }
+                else if (j == 2 && currentDisperity < 100)
+                {
+                    if (middleTargetLeft == null)
+                    {
+                        middleTargetLeft = particle;
+                    }
+                    else
+                    {
+                        middleTargetRight = particle;
+                    }
+                }
+                else if (j == 3 && currentDisperity < 100)
+                {
+                    bottomTarget = particle;
+                }
+            }
+            
+        }
+        if(middleTargetLeft != null && middleTargetRight != null) {
+            middleTargetRight = getRightMost(new ParticleAnalysisReport[] 
+                         {middleTargetLeft,middleTargetRight});
+        middleTargetLeft = getLeftMost(new ParticleAnalysisReport[] 
+                         {middleTargetLeft,middleTargetRight});
+            
+        }
+        
+        
+    }
 
     public double CameraCorrection(ParticleAnalysisReport particle,String target){
         
