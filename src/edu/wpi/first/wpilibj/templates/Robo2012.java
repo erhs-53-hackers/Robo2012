@@ -190,6 +190,8 @@ public class Robo2012 extends IterativeRobot {
         if (camera.freshImage()) {
             try {
                 imageProc.getTheParticles(camera);
+                imageProc.orginizeTheParticles(imageProc.particles);
+                
                 if (isShooting) {
                     launcher.shoot(target.boundingRectHeight, hoopHeight);
                     isShooting = false;
