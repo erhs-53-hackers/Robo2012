@@ -86,6 +86,11 @@ public class Messager {
      *
      * @param s The String to be printed on the Driver Station
      */
+    public void printOnLn(String s, DriverStationLCD.Line line) {
+        driverLCD.println(line, 1, "                             ");
+        driverLCD.println(line, 1, s);
+        driverLCD.updateLCD();
+    }
     public void printLn(String s) {
         String time = "" + (int) Timer.getFPGATimestamp();
         post("[" + time + "]: " + s);

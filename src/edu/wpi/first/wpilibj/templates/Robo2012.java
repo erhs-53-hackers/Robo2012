@@ -24,8 +24,6 @@ public class Robo2012 extends IterativeRobot {
     Launcher launcher;
     Jaguar bridgeArm;    
     Jaguar collectMotor;
-    //AnalogChannel autoPot;
-    //AnalogChannel telePot;
     GyroX gyro;
     Messager msg;
     Controls controls;
@@ -56,9 +54,7 @@ public class Robo2012 extends IterativeRobot {
         bridgeArm = new Jaguar(RoboMap.BRIDGE_MOTOR);        
         collectMotor = new Jaguar(RoboMap.COLLECT_MOTOR);
         launcher = new Launcher();
-        gyro = new GyroX(RoboMap.GYRO, RoboMap.LAUNCH_TURN, drive);
-        //autoPot = new AnalogChannel(RoboMap.AUTO_POT);
-        //telePot = new AnalogChannel(RoboMap.TELO_POT);
+        //gyro = new GyroX(RoboMap.GYRO, RoboMap.LAUNCH_TURN, drive);
         msg.printLn("FRC 2012");
     }
 
@@ -75,11 +71,13 @@ public class Robo2012 extends IterativeRobot {
                 double p = (Physics.MAXWIDTH / 2) - target.center_mass_x;
                 double angle = p / physics.LAMBDA;
                 msg.printLn("" + angle);
-                
+                /*
                 while (MathX.abs(angle - gyro.modulatedAngle) > 2) {
                     gyro.turnToAngle(angle);
                     getWatchdog().feed();
                 }
+                * */
+                
 
                 if (isShooting) {
                     Timer.delay(3);
@@ -97,7 +95,12 @@ public class Robo2012 extends IterativeRobot {
             }
         }
         getWatchdog().feed();
-    }   
+    }
+
+    public void teleopInit() {
+        msg.clearConsole();
+    }
+    
 
     public void teleopPeriodic() {
         if (controls.button8()) {
@@ -117,6 +120,7 @@ public class Robo2012 extends IterativeRobot {
 
         if (!isManual) {
             //motor to collect the balls off the ground
+            msg.printOnLn("Mode: Auto", DriverStationLCD.Line.kMain6);
             collectMotor.set((stick.getThrottle() + 1) / 2);
             if (controls.FOV_Left()) {
                 target = imageProc.middleTarget;
@@ -139,6 +143,7 @@ public class Robo2012 extends IterativeRobot {
                 isShooting = true;
             }
         } else {
+            msg.printOnLn("Mode: Manual", DriverStationLCD.Line.kMain6);
             collectMotor.set(0);
             double power = (stick.getThrottle() + 1) / 2;
             launcher.launchMotor.set(power);
