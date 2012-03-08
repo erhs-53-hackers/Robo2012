@@ -24,8 +24,8 @@ public class Robo2012 extends IterativeRobot {
     Launcher launcher;
     Jaguar bridgeArm;    
     Jaguar collectMotor;
-    //AnalogChannel autoPot;
-    //AnalogChannel telePot;
+    AnalogChannel autoPot;
+    AnalogChannel telePot;
     
     //GyroX gyro;
     Messager msg;
@@ -61,8 +61,8 @@ public class Robo2012 extends IterativeRobot {
         collectMotor = new Jaguar(RoboMap.COLLECT_MOTOR);
         launcher = new Launcher();
         //gyro = new GyroX(RoboMap.GYRO, RoboMap.LAUNCH_TURN, drive);
-        //autoPot = new AnalogChannel(RoboMap.AUTO_POT);
-        //telePot = new AnalogChannel(RoboMap.TELO_POT);
+        autoPot = new AnalogChannel(RoboMap.AUTO_POT);
+        telePot = new AnalogChannel(RoboMap.TELO_POT);
         msg.printLn("FRC 2012");
     }
 
@@ -86,14 +86,13 @@ public class Robo2012 extends IterativeRobot {
                     gyro.turnToAngle(angle);
                     getWatchdog().feed();
                 }
-                 * 
+                  
                  */
                 int img = 640;
                 //double p = (640 / 2) - target.center_mass_x;
                 //double angle = p / physics.LAMBDA;
                 msg.printLn("" + angle);
                 //gyro.turnToAngle(angle);
-// reformat to 80 characters, remove unused imports
                 if (isShooting) {
                     Timer.delay(3);
 
@@ -174,18 +173,16 @@ public class Robo2012 extends IterativeRobot {
         } else if (controls.button6()) {
             gyro.turnRobotToAngle(90);
             
-        }
-         * 
-         */
+        }*/
 
         //motor to control lazy susan for launcher
         /*if (controls.button9()) {
             gyro.turnAngle(5);
         } else if (controls.button10()) {
             gyro.turnAngle(-5);
-        }
-         * 
-         */
+        }*/
+          
+         
 
         // motor to lower bridge arm
         if (controls.button11()) {
