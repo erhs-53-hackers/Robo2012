@@ -23,8 +23,8 @@ public class ImageProcessing {
     CriteriaCollection criteriaCollection = new CriteriaCollection();
     ParticleAnalysisReport bottomTarget, topTarget, middleTarget;
     
-    final int numberOfDegreesInVerticalFieldOfView = 33;
-    final int numberOfPixelsVerticalInFieldOfView = 240;
+    final int numberOfDegreesInVerticalFieldOfView = 35;
+    final int numberOfPixelsVerticalInFieldOfView = 480;
     final int numberOfPixelsHorizontalInFieldOfView = 640;
 
     final int heightToTheTopOfTheTopTarget = 118;
@@ -33,8 +33,8 @@ public class ImageProcessing {
     final int heightToTheTopOfTheBottomTarget = 48;
     final int heightToBottomOfBottomTarget = 30;
     final double cameraAngleOffset = 12;
-
-    final double cameraHeight = 45.25;
+    final double pixelsPerDegree = 13.61;
+    final double cameraHeight = 54;
 
     public ImageProcessing() {
         criteriaCollection.addCriteria(
@@ -82,20 +82,15 @@ public class ImageProcessing {
          * instead of assigning it to a variable and then returning that
          * variable
          */
-        System.out.print(PixelsFromLevelToTopOfTopTarget
-                    / numberOfPixelsVerticalInFieldOfView
-                * numberOfDegreesInVerticalFieldOfView);
+        System.out.print("Phi is" + PixelsFromLevelToTopOfTopTarget
+                    / pixelsPerDegree);
         return (PixelsFromLevelToTopOfTopTarget
-                    / numberOfPixelsVerticalInFieldOfView)
-                * numberOfDegreesInVerticalFieldOfView + cameraAngleOffset;   
+                    / pixelsPerDegree)/* there are 13.61 pixels/degree*/;   
     }
     public double getTheta(double PixelsFromLevelToBottomOfTopTarget) {
-        System.out.println(PixelsFromLevelToBottomOfTopTarget / 
-                numberOfPixelsVerticalInFieldOfView * 
-                numberOfDegreesInVerticalFieldOfView);
+        System.out.println("Theta is" + PixelsFromLevelToBottomOfTopTarget / pixelsPerDegree);
         return  (PixelsFromLevelToBottomOfTopTarget /
-                numberOfPixelsVerticalInFieldOfView)
-                * numberOfDegreesInVerticalFieldOfView  + cameraAngleOffset;        
+                pixelsPerDegree)/* there are 13.61 pixels/degree*/;        
     }
     public double getHypotneuse1(double angle) {
         double opposite1 = heightToTheTopOfTheTopTarget - cameraHeight;
@@ -163,21 +158,21 @@ public class ImageProcessing {
     public void setTargets(ParticleAnalysisReport[] particles)
     {
         topTarget = getTopMost(particles);
-        bottomTarget = getBottomMost(particles);//iamraaththealien
+        bottomTarget = getBottomMost(particles);
         
     }
     public double getHypotneuse0(double angle) {
-        double opposite0 = heightToBottomOfTopTarget + cameraHeight;
+        double opposite0 = heightToBottomOfTopTarget - cameraHeight;
         double hypotneuse_0 = opposite0
                 / MathX.sin(getTheta(angle));
         System.out.println("Phi " + getTheta(angle));
         return hypotneuse_0;
     }
-    public double getAdjacent1(double phiAngle,double hypotneuse){
-        return MathX.cos(phiAngle) * hypotneuse;
+    public double getAdjacent1(double phiAngle, double opposite1 ){
+        return (opposite1/MathX.tan(phiAngle));
     }
-    public double getAdjacent0(double thetaAngle,double hypotneuse){
-        return MathX.cos(thetaAngle) * hypotneuse;   
+    public double getAdjacent0(double thetaAngle, double opposite0){
+        return (opposite0/MathX.tan(thetaAngle)) ;   
     }
     public void idTopTarget(ParticleAnalysisReport particle) {                  
             double phi = getPhi(getPixelsFromLevelToTopOfTopTarget(particle));
@@ -238,22 +233,21 @@ public class ImageProcessing {
         if(target == "bottom"){
             targetHeight = 39;
         }
-        double delta =  targetHeight  - cameraHeight;
-        double lambda = numberOfPixelsVerticalInFieldOfView/
-                numberOfDegreesInVerticalFieldOfView;
+        double delta =  targetHeight  - cameraHeight; //offset target height height
         double pixelHeightBetweenReflectiveTape = 
                 getPixelsFromLevelToTopOfTopTarget(particle) - 
                 getPixelsFromLevelToBottomOfTopTarget(particle);
         double ph_fixed = pixelHeightBetweenReflectiveTape;
         
-        double R = 18/MathX.tan(ph_fixed/lambda);
+        double R = 18/MathX.tan(ph_fixed/pixelsPerDegree);// gets the degree 
         
         double Distance = 0;
+        double Distance2 = 0;
         for(int i =1; i<= 4; i++)
         {
             double theta = MathX.asin(delta/R);
             double ph_new = ph_fixed/MathX.cos(theta);
-            R = 18/MathX.tan(ph_new/lambda);
+            R = 18/MathX.tan(ph_new/pixelsPerDegree);
             Distance = MathX.sqrt(R*R-delta*delta);
         }
         
