@@ -7,9 +7,9 @@ package edu.wpi.first.wpilibj.templates;
 import edu.wpi.first.wpilibj.camera.AxisCamera;
 import edu.wpi.first.wpilibj.image.BinaryImage;
 import edu.wpi.first.wpilibj.image.ColorImage;
-import edu.wpi.first.wpilibj.image.ParticleAnalysisReport;
 import edu.wpi.first.wpilibj.image.CriteriaCollection;
 import edu.wpi.first.wpilibj.image.NIVision.MeasurementType;
+import edu.wpi.first.wpilibj.image.ParticleAnalysisReport;
 
 /**
  *
@@ -17,16 +17,27 @@ import edu.wpi.first.wpilibj.image.NIVision.MeasurementType;
  * find targets
  */
 public class ImageProcessing {
-
     ParticleAnalysisReport particles[];
     Physics imageCalculations;
     CriteriaCollection criteriaCollection = new CriteriaCollection();
     ParticleAnalysisReport bottomTarget, topTarget, middleTarget;
-    
+
+    /* TODO
+     * use doubles here since they'll just be converted to double
+     * when used with doubles in the math later.
+     */
     final int numberOfDegreesInVerticalFieldOfView = 33;
     final int numberOfPixelsVerticalInFieldOfView = 240;
     final int numberOfPixelsHorizontalInFieldOfView = 640;
 
+    /* TODO
+     * set heightOfTarget = 18.0;
+     */
+    /* TODO
+     * use heightToBottomOfTopTarget = 100.0;
+     * then set heightToTopOfTopTarget = heightToBottomOfTopTarget +
+     *            heightOfTarget;
+     */
     final int heightToTheTopOfTheTopTarget = 118;
     final int heightToBottomOfTopTarget = 100;
     
@@ -43,11 +54,27 @@ public class ImageProcessing {
                 MeasurementType.IMAQ_MT_BOUNDING_RECT_HEIGHT, 40, 400, false);
         imageCalculations = new Physics(true);
     }
+    /* TODO
+     * change the name of this to pixelsToDegrees
+     * NOTE: pixels is spelled ending in "e" then "l" and not "l" then "e"
+     */
+    /* TODO
+     * use this method instead in the code instead of making this calculation
+     *   by hand everywhere
+     */
     public double pixlesToAngles(double pixles)
     {
-        return pixles*numberOfDegreesInVerticalFieldOfView
-                /numberOfPixelsVerticalInFieldOfView;
+        return pixles * numberOfDegreesInVerticalFieldOfView
+                / numberOfPixelsVerticalInFieldOfView;
     }
+    /* TODO
+     * change the name of this to degreesToPixels
+     * NOTE: Pixels is spelled ending in "e" then "l" and not "l" then "e"
+     */
+    /* TODO
+     * use this method instead in the code instead of making this calculation
+     *   by hand everywhere
+     */
     public double anglesToPixles(double angle)
     {
         return angle*numberOfDegreesInVerticalFieldOfView
@@ -228,13 +255,21 @@ public class ImageProcessing {
         
         double targetHeight = 0;
         
+        /* TODO
+         * use .equals() string method instead of ==
+         */
         if(target == "top"){
            targetHeight = 109;
         }
-        
+        /* TODO
+         * use .equals() string method instead of ==
+         */
         if(target == "middle"){
            targetHeight = 72;
         }
+        /* TODO
+         * use .equals() string method instead of ==
+         */
         if(target == "bottom"){
             targetHeight = 39;
         }
@@ -258,7 +293,5 @@ public class ImageProcessing {
         }
         
         return Distance;
-        
        }
-
 }
