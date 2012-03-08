@@ -13,7 +13,7 @@ import edu.wpi.first.wpilibj.image.ParticleAnalysisReport;
  *
  * @author Team53
  */
-public class Robo2012 extends IterativeRobot {
+public class RobotTemplate extends IterativeRobot {
 
     RobotDrive drive;
     Joystick stick1;
@@ -36,8 +36,9 @@ public class Robo2012 extends IterativeRobot {
 
     public void robotInit() {
         msg = new Messager();
+        
         msg.printLn("Loading Please Wait...");
-        Timer.delay(5);
+        Timer.delay(4);
         //left front, left back, right front, right back
         drive = new RobotDrive(
                 RoboMap.MOTOR1, RoboMap.MOTOR2, RoboMap.MOTOR3, RoboMap.MOTOR4);
@@ -57,6 +58,8 @@ public class Robo2012 extends IterativeRobot {
         collectMotor = new Jaguar(RoboMap.COLLECT_MOTOR);
         launcher = new Launcher();
         //gyro = new GyroX(RoboMap.GYRO, RoboMap.LAUNCH_TURN, drive);
+        
+        
         msg.printLn("Done: FRC 2012");
     }
 
@@ -106,7 +109,7 @@ public class Robo2012 extends IterativeRobot {
     }
     
 
-    public void teleopPeriodic() {
+    public void teleopPeriodic() {       
         if (controls.button8()) {
             isManual = true;
             
@@ -148,7 +151,7 @@ public class Robo2012 extends IterativeRobot {
             }
         } else {
             msg.printOnLn("Mode: Manual", DriverStationLCD.Line.kMain6);
-            //collectMotor.set(1);
+            collectMotor.set(-1);
             
             double power = (stick2.getThrottle() + 1) / 2;
             launcher.launchMotor.set(power);
@@ -181,7 +184,9 @@ public class Robo2012 extends IterativeRobot {
         } else if (controls.button10()) {
             gyro.turnAngle(-5);
         }
-        * */
+        * 
+        */
+        
         
 
         // motor to lower bridge arm
@@ -193,8 +198,9 @@ public class Robo2012 extends IterativeRobot {
             bridgeArm.set(0);
         }
 
+
         // Have the camera scan for targets
-        
+       
         if (camera.freshImage()) {
             try {
                 imageProc.getTheParticles(camera);
@@ -211,5 +217,8 @@ public class Robo2012 extends IterativeRobot {
         } 
         
         
+        
+        
+        Timer.delay(0.01f);
     }
 }
