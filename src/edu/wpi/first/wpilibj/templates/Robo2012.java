@@ -56,7 +56,7 @@ public class Robo2012 extends IterativeRobot {
         bridgeArm = new Jaguar(RoboMap.BRIDGE_MOTOR);        
         collectMotor = new Jaguar(RoboMap.COLLECT_MOTOR);
         launcher = new Launcher();
-        gyro = new GyroX(RoboMap.GYRO, RoboMap.LAUNCH_TURN, drive);
+        //gyro = new GyroX(RoboMap.GYRO, RoboMap.LAUNCH_TURN, drive);
         msg.printLn("Done: FRC 2012");
     }
 
@@ -111,7 +111,7 @@ public class Robo2012 extends IterativeRobot {
             isManual = true;
             
         } else if (controls.button7()) {
-            isManual = false;
+            //isManual = false; REMOVE ME!!!!!
             
         }
         if (controls.button1()) {//trigger reverses drive
@@ -148,7 +148,7 @@ public class Robo2012 extends IterativeRobot {
             }
         } else {
             msg.printOnLn("Mode: Manual", DriverStationLCD.Line.kMain6);
-            collectMotor.set(0);
+            collectMotor.set(1);
             double power = (stick2.getThrottle() + 1) / 2;
             launcher.launchMotor.set(power);
             
