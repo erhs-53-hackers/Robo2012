@@ -40,7 +40,7 @@ public class Robo2012 extends IterativeRobot {
         Timer.delay(10);
         //left front, left back, right front, right back
         drive = new RobotDrive(
-                RoboMap.MOTOR1, RoboMap.MOTOR3, RoboMap.MOTOR2, RoboMap.MOTOR4);
+                RoboMap.MOTOR1, RoboMap.MOTOR2, RoboMap.MOTOR3, RoboMap.MOTOR4);
         drive.setInvertedMotor(RobotDrive.MotorType.kFrontRight, true);
         drive.setInvertedMotor(RobotDrive.MotorType.kRearRight, true);
 

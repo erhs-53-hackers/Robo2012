@@ -270,7 +270,7 @@ public class ImageProcessing {
         if(middleTargetLeft != null && middleTargetRight != null) {
             middleTargetRight = getRightMost(new ParticleAnalysisReport[] 
                          {middleTargetLeft,middleTargetRight});
-        middleTargetLeft = getLeftMost(new ParticleAnalysisReport[] 
+            middleTargetLeft = getLeftMost(new ParticleAnalysisReport[] 
                          {middleTargetLeft,middleTargetRight});
             
         }
