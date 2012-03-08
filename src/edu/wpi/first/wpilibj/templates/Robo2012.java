@@ -57,7 +57,7 @@ public class Robo2012 extends IterativeRobot {
         collectMotor = new Jaguar(RoboMap.COLLECT_MOTOR);
         launcher = new Launcher();
         gyro = new GyroX(RoboMap.GYRO, RoboMap.LAUNCH_TURN, drive);
-        msg.printLn("FRC 2012");
+        msg.printLn("Done: FRC 2012");
     }
 
     public void autonomousInit() {
