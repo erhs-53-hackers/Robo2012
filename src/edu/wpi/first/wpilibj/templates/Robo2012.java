@@ -28,7 +28,7 @@ public class Robo2012 extends IterativeRobot {
     GyroX gyro;
     Messager msg;
     Controls controls;
-    boolean isManual = false;
+    boolean isManual = true;
     boolean isShooting = false;
     int shots = 0;
     double distanceFromTarget;
@@ -61,11 +61,11 @@ public class Robo2012 extends IterativeRobot {
     }
 
     public void autonomousInit() {
-        isShooting = true;
+        isShooting = false;//change me!!!!!
     }
 
     public void autonomousPeriodic() {
-        if (camera.freshImage()) {
+        if (camera.freshImage() && false) {
             try {
                 imageProc.getTheParticles(camera);
                 target = ImageProcessing.getTopMost(imageProc.particles);
@@ -73,11 +73,13 @@ public class Robo2012 extends IterativeRobot {
                 double p = (Physics.MAXWIDTH / 2) - target.center_mass_x;
                 double angle = p / physics.LAMBDA;
                 msg.printLn("" + angle);
-                
+                /*
                 while (MathX.abs(angle - gyro.modulatedAngle) > 2) {
                     gyro.turnToAngle(angle);
                     getWatchdog().feed();
                 }
+                * */
+                
                 
                 
 
@@ -155,7 +157,7 @@ public class Robo2012 extends IterativeRobot {
                 
             }
         }
-
+/*
         if (controls.button3()) {
             gyro.turnRobotToAngle(0);
             
@@ -169,13 +171,17 @@ public class Robo2012 extends IterativeRobot {
             gyro.turnRobotToAngle(90);
             
         }
-
+        * */
+        
+/*
         //motor to control lazy susan for launcher
         if (controls.button9()) {
             gyro.turnAngle(5);
         } else if (controls.button10()) {
             gyro.turnAngle(-5);
         }
+        * */
+        
 
         // motor to lower bridge arm
         if (controls.button11()) {
