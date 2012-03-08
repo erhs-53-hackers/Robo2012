@@ -16,18 +16,18 @@ import edu.wpi.first.wpilibj.image.ParticleAnalysisReport;
 public class Robo2012 extends IterativeRobot {
 
     RobotDrive drive;
-    Joystick stick;
+    Joystick stick1;
+    Joystick stick2;
     AxisCamera camera;
     ImageProcessing imageProc;
     ParticleAnalysisReport target;
     Physics physics;
     Launcher launcher;
-    Jaguar bridgeArm;    
+    Jaguar bridgeArm;
     Jaguar collectMotor;
-    //AnalogChannel autoPot;
-    //AnalogChannel telePot;
-    
-    //GyroX gyro;
+
+    GyroX gyro;
+
     Messager msg;
     Controls controls;
 
@@ -49,8 +49,9 @@ public class Robo2012 extends IterativeRobot {
         drive.setInvertedMotor(RobotDrive.MotorType.kFrontRight, true);
         drive.setInvertedMotor(RobotDrive.MotorType.kRearRight, true);
 
-        stick = new Joystick(RoboMap.JOYSTICK1);
-        controls = new Controls(stick);
+        stick1 = new Joystick(RoboMap.JOYSTICK1);
+        stick2 = new Joystick(RoboMap.JOYSTICK2);
+        controls = new Controls(stick2);
 
         camera = AxisCamera.getInstance();
         camera.writeBrightness(30);
@@ -60,10 +61,10 @@ public class Robo2012 extends IterativeRobot {
         bridgeArm = new Jaguar(RoboMap.BRIDGE_MOTOR);        
         collectMotor = new Jaguar(RoboMap.COLLECT_MOTOR);
         launcher = new Launcher();
-        //gyro = new GyroX(RoboMap.GYRO, RoboMap.LAUNCH_TURN, drive);
-        //autoPot = new AnalogChannel(RoboMap.AUTO_POT);
-        //telePot = new AnalogChannel(RoboMap.TELO_POT);
-        msg.printLn("FRC 2012");
+
+        gyro = new GyroX(RoboMap.GYRO, RoboMap.LAUNCH_TURN, drive);
+        msg.printLn("Done: FRC 2012");
+
     }
 
     public void autonomousInit() {
@@ -94,6 +95,7 @@ public class Robo2012 extends IterativeRobot {
                 msg.printLn("" + angle);
                 //gyro.turnToAngle(angle);
 // reformat to 80 characters, remove unused imports
+
                 if (isShooting) {
                     Timer.delay(3);
 
@@ -110,7 +112,15 @@ public class Robo2012 extends IterativeRobot {
             }
         }
         getWatchdog().feed();
-    }   
+
+    }
+
+    public void teleopInit() {
+        msg.clearConsole();
+    }
+    
+
+
     public void teleopPeriodic() {
         System.out.println("I'm in teleop");
         
@@ -122,18 +132,19 @@ public class Robo2012 extends IterativeRobot {
             
         }
         if (controls.button1()) {//trigger reverses drive
-            drive.mecanumDrive_Cartesian(-stick.getX(), -stick.getY(),
-                    -MathX.pow(stick.getTwist(), 3), 0);
-            
+            drive.mecanumDrive_Cartesian(-stick1.getX(), -stick1.getY(),
+                    -MathX.pow(stick1.getTwist(), 3), 0);
         } else {
-            drive.mecanumDrive_Cartesian(stick.getX(), stick.getY(),
-                    MathX.pow(stick.getTwist(), 3), 0);
+            drive.mecanumDrive_Cartesian(stick1.getX(), stick1.getY(),
+                    MathX.pow(stick1.getTwist(), 3), 0);
+
             
         }
 
         if (!isManual) {
             //motor to collect the balls off the ground
-            collectMotor.set((stick.getThrottle() + 1) / 2);
+            msg.printOnLn("Mode: Auto", DriverStationLCD.Line.kMain6);
+            collectMotor.set((stick2.getThrottle() + 1) / 2);
             if (controls.FOV_Left()) {
                 target = imageProc.middleTarget;
                 hoopHeight = Physics.HOOP2;
@@ -155,8 +166,9 @@ public class Robo2012 extends IterativeRobot {
                 isShooting = true;
             }
         } else {
+            msg.printOnLn("Mode: Manual", DriverStationLCD.Line.kMain6);
             collectMotor.set(0);
-            double power = (stick.getThrottle() + 1) / 2;
+            double power = (stick2.getThrottle() + 1) / 2;
             launcher.launchMotor.set(power);
             
             if (controls.button2()) {

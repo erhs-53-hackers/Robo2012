@@ -5,3 +5,5 @@
 *.sym
 *.nblh~
 /Physics/dist/
+/build/
+/suite/
