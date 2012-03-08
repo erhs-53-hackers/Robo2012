@@ -4,6 +4,7 @@
  */
 package edu.wpi.first.wpilibj.templates;
 
+import edu.wpi.first.wpilibj.DriverStationLCD;
 import edu.wpi.first.wpilibj.camera.AxisCamera;
 import edu.wpi.first.wpilibj.image.BinaryImage;
 import edu.wpi.first.wpilibj.image.ColorImage;
@@ -52,7 +53,7 @@ public class ImageProcessing {
                 MeasurementType.IMAQ_MT_BOUNDING_RECT_WIDTH, 30, 400, false);
         criteriaCollection.addCriteria(
                 MeasurementType.IMAQ_MT_BOUNDING_RECT_HEIGHT, 40, 400, false);
-        imageCalculations = new Physics(true);
+        imageCalculations = new Physics();
     }
     public double pixlesToAngles(double pixles)
     {
@@ -207,10 +208,10 @@ public class ImageProcessing {
             double adjacent0 = getAdjacent0(theta,getHypotneuse0(theta,iterator));
             double disparity = Math.abs(adjacent1 - adjacent0);
             
-            msg.printLn("Bottom Adjacent0 : " + adjacent0);
-            msg.printLn("Bottom Adjacent1 : " + adjacent1);
-            msg.printLn("The disperity is " + disparity);
-            System.out.println("---------------------------------------------");
+            msg.printOnLn("Bottom Adjacent0 : " + adjacent0,DriverStationLCD.Line.kUser2);
+            msg.printOnLn("Bottom Adjacent1 : " + adjacent1,DriverStationLCD.Line.kUser3);
+            //msg.printLn("The disperity is " + disparity);
+            //System.out.println("---------------------------------------------");
             return disparity;
     }
     public void getTheParticles(AxisCamera camera) throws Exception {
@@ -251,7 +252,8 @@ public class ImageProcessing {
                 if (j == 1 && currentDisperity < 100)
                 {
                     topTarget = particle;
-                    msg.printLn("Top target found");
+                    msg.printOnLn("Top target found",
+                            DriverStationLCD.Line.kUser4);
                 }
                 else if (j == 2 && currentDisperity < 100)
                 {
@@ -259,20 +261,28 @@ public class ImageProcessing {
                     {
                         middleTargetLeft = particle;
                         midTargetTemp1 = particle;
-                        msg.printLn("left target found");
+                        msg.printOnLn("left target found",
+                                DriverStationLCD.Line.kUser5);
                         
                     }
                     else
                     {
                         middleTargetRight = particle;
                         midTargetTemp2 = particle;
-                        msg.printLn("right target found");
+                        msg.printOnLn("right target found",
+                                DriverStationLCD.Line.kUser5);
                     }
                 }
                 else if (j == 3 && currentDisperity < 100)
                 {
                     bottomTarget = particle;
-                    msg.printLn("bottom target found");
+                    msg.printOnLn("bottom target found",
+                            DriverStationLCD.Line.kUser4);
+                }
+                else
+                {
+                    msg.printOnLn("OMFG i cant find any targets",
+                            DriverStationLCD.Line.kUser5);
                 }
             }
             

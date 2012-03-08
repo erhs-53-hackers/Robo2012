@@ -37,7 +37,7 @@ public class Robo2012 extends IterativeRobot {
     public void robotInit() {
         msg = new Messager();
         msg.printLn("Loading Please Wait...");
-        Timer.delay(10);
+        Timer.delay(5);
         //left front, left back, right front, right back
         drive = new RobotDrive(
                 RoboMap.MOTOR1, RoboMap.MOTOR2, RoboMap.MOTOR3, RoboMap.MOTOR4);
@@ -52,7 +52,7 @@ public class Robo2012 extends IterativeRobot {
         camera.writeBrightness(30);
         camera.writeResolution(AxisCamera.ResolutionT.k640x480);
         imageProc = new ImageProcessing();
-        physics = new Physics(false);
+        physics = new Physics();
         bridgeArm = new Jaguar(RoboMap.BRIDGE_MOTOR);        
         collectMotor = new Jaguar(RoboMap.COLLECT_MOTOR);
         launcher = new Launcher();
@@ -148,7 +148,8 @@ public class Robo2012 extends IterativeRobot {
             }
         } else {
             msg.printOnLn("Mode: Manual", DriverStationLCD.Line.kMain6);
-            collectMotor.set(1);
+            //collectMotor.set(1);
+            
             double power = (stick2.getThrottle() + 1) / 2;
             launcher.launchMotor.set(power);
             
@@ -193,6 +194,7 @@ public class Robo2012 extends IterativeRobot {
         }
 
         // Have the camera scan for targets
+        
         if (camera.freshImage()) {
             try {
                 imageProc.getTheParticles(camera);
@@ -206,6 +208,8 @@ public class Robo2012 extends IterativeRobot {
                 e.printStackTrace();
                 msg.printLn("ERROR!!! Cannot Fetch Image");
             }
-        }
+        } 
+        
+        
     }
 }
