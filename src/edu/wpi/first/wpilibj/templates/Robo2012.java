@@ -54,7 +54,7 @@ public class Robo2012 extends IterativeRobot {
         bridgeArm = new Jaguar(RoboMap.BRIDGE_MOTOR);        
         collectMotor = new Jaguar(RoboMap.COLLECT_MOTOR);
         launcher = new Launcher();
-        //gyro = new GyroX(RoboMap.GYRO, RoboMap.LAUNCH_TURN, drive);
+        gyro = new GyroX(RoboMap.GYRO, RoboMap.LAUNCH_TURN, drive);
         msg.printLn("FRC 2012");
     }
 
@@ -71,12 +71,12 @@ public class Robo2012 extends IterativeRobot {
                 double p = (Physics.MAXWIDTH / 2) - target.center_mass_x;
                 double angle = p / physics.LAMBDA;
                 msg.printLn("" + angle);
-                /*
+                
                 while (MathX.abs(angle - gyro.modulatedAngle) > 2) {
                     gyro.turnToAngle(angle);
                     getWatchdog().feed();
                 }
-                * */
+                
                 
 
                 if (isShooting) {
