@@ -27,7 +27,7 @@ public class ImageProcessing {
     final double numberOfPixelsVerticalInFieldOfView = 240;
     final double numberOfPixelsHorizontalInFieldOfView = 640;
     
-    final double targetHeight = 18;
+    double targetHeight = 18;
 
     final double heightToTopOfTopTarget = 100;
     final double heightToBottomOfTopTarget = heightToTopOfTopTarget 
@@ -239,16 +239,16 @@ public class ImageProcessing {
 
     public double CameraCorrection(ParticleAnalysisReport particle,String target){
         
-        double targetHeight = 0;
+       
         
-        if(target == "top"){
+        if("top".equals(target)){
            targetHeight = 109;
         }
         
-        if(target == "middle"){
+        if("middle".equals(target)){
            targetHeight = 72;
         }
-        if(target == "bottom"){
+        if("bottom".equals(target)){
             targetHeight = 39;
         }
         double delta =  targetHeight  - cameraHeight;
