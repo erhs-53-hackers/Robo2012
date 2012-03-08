@@ -26,8 +26,7 @@ public class Robo2012 extends IterativeRobot {
     Jaguar bridgeArm;
     Jaguar collectMotor;
 
-    GyroX gyro;
-
+    GyroX gyro;  
     Messager msg;
     Controls controls;
 
@@ -61,10 +60,8 @@ public class Robo2012 extends IterativeRobot {
         bridgeArm = new Jaguar(RoboMap.BRIDGE_MOTOR);        
         collectMotor = new Jaguar(RoboMap.COLLECT_MOTOR);
         launcher = new Launcher();
-
         gyro = new GyroX(RoboMap.GYRO, RoboMap.LAUNCH_TURN, drive);
         msg.printLn("Done: FRC 2012");
-
     }
 
     public void autonomousInit() {
@@ -87,14 +84,13 @@ public class Robo2012 extends IterativeRobot {
                     gyro.turnToAngle(angle);
                     getWatchdog().feed();
                 }
-                 * 
+                  
                  */
                 int img = 640;
                 //double p = (640 / 2) - target.center_mass_x;
                 //double angle = p / physics.LAMBDA;
                 msg.printLn("" + angle);
                 //gyro.turnToAngle(angle);
-// reformat to 80 characters, remove unused imports
 
                 if (isShooting) {
                     Timer.delay(3);
@@ -177,7 +173,7 @@ public class Robo2012 extends IterativeRobot {
             }
         }
 
-        /*if (controls.button3()) {
+        if (controls.button3()) {
             gyro.turnRobotToAngle(0);
             
         } else if (controls.button4()) {
@@ -190,15 +186,16 @@ public class Robo2012 extends IterativeRobot {
             gyro.turnRobotToAngle(90);
             
         }
-         * 
-         */
 
         //motor to control lazy susan for launcher
-        /*if (controls.button9()) {
+        if (controls.button9()) {
             gyro.turnAngle(5);
         } else if (controls.button10()) {
             gyro.turnAngle(-5);
+
         }
+          
+         
 
 
         // motor to lower bridge arm
@@ -210,8 +207,7 @@ public class Robo2012 extends IterativeRobot {
          //reformat to 80 characters, remove unused imports
 
         // Have the camera scan for targets
-         * 
-         */
+        
 
         System.out.println("iN TELEoP" + camera.freshImage());
         
