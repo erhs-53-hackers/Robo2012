@@ -78,12 +78,18 @@ public class ImageProcessing {
      * use this method instead in the code instead of making this calculation
      *   by hand everywhere
      */
+    /* TODO
+     * this algorithm is wrong.  fix it.  look at pixlesToAngles
+     */
     public double anglesToPixles(double angle)
     {
-        return angle*numberOfDegreesInVerticalFieldOfView
-                /numberOfPixelsVerticalInFieldOfView;
+        return angle * numberOfDegreesInVerticalFieldOfView
+                / numberOfPixelsVerticalInFieldOfView;
     }
-
+    /* TODO
+     * create a method called bottomOfParticle(ParticleAnalysisReport particle)
+     * {...}
+     */
     public double getPixelsFromLevelToBottomOfATarget(
             ParticleAnalysisReport particle) {
         double PixelsFromLevelToBottomOfTopTarget =
