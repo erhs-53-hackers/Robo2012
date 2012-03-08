@@ -16,13 +16,14 @@ import edu.wpi.first.wpilibj.image.ParticleAnalysisReport;
 public class Robo2012 extends IterativeRobot {
 
     RobotDrive drive;
-    Joystick stick;
+    Joystick stick1;
+    Joystick stick2;
     AxisCamera camera;
     ImageProcessing imageProc;
     ParticleAnalysisReport target;
     Physics physics;
     Launcher launcher;
-    Jaguar bridgeArm;    
+    Jaguar bridgeArm;
     Jaguar collectMotor;
     GyroX gyro;
     Messager msg;
@@ -43,8 +44,9 @@ public class Robo2012 extends IterativeRobot {
         drive.setInvertedMotor(RobotDrive.MotorType.kFrontRight, true);
         drive.setInvertedMotor(RobotDrive.MotorType.kRearRight, true);
 
-        stick = new Joystick(RoboMap.JOYSTICK1);
-        controls = new Controls(stick);
+        stick1 = new Joystick(RoboMap.JOYSTICK1);
+        stick2 = new Joystick(RoboMap.JOYSTICK2);
+        controls = new Controls(stick2);
 
         camera = AxisCamera.getInstance();
         camera.writeBrightness(30);
@@ -111,17 +113,17 @@ public class Robo2012 extends IterativeRobot {
             
         }
         if (controls.button1()) {//trigger reverses drive
-            drive.mecanumDrive_Cartesian(-stick.getX(), -stick.getY(), -MathX.pow(stick.getTwist(), 3), 0);
+            drive.mecanumDrive_Cartesian(-stick1.getX(), -stick1.getY(), -MathX.pow(stick1.getTwist(), 3), 0);
             
         } else {
-            drive.mecanumDrive_Cartesian(stick.getX(), stick.getY(), MathX.pow(stick.getTwist(), 3), 0);
+            drive.mecanumDrive_Cartesian(stick1.getX(), stick1.getY(), MathX.pow(stick1.getTwist(), 3), 0);
             
         }
 
         if (!isManual) {
             //motor to collect the balls off the ground
             msg.printOnLn("Mode: Auto", DriverStationLCD.Line.kMain6);
-            collectMotor.set((stick.getThrottle() + 1) / 2);
+            collectMotor.set((stick2.getThrottle() + 1) / 2);
             if (controls.FOV_Left()) {
                 target = imageProc.middleTarget;
                 hoopHeight = Physics.HOOP2;
@@ -145,7 +147,7 @@ public class Robo2012 extends IterativeRobot {
         } else {
             msg.printOnLn("Mode: Manual", DriverStationLCD.Line.kMain6);
             collectMotor.set(0);
-            double power = (stick.getThrottle() + 1) / 2;
+            double power = (stick2.getThrottle() + 1) / 2;
             launcher.launchMotor.set(power);
             
             if (controls.button2()) {
