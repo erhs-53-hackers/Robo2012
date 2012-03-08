@@ -4,6 +4,7 @@
 *.metadata
 *.sym
 *.nblh~
+*.MF
 /Physics/dist/
 /build/
 /suite/
