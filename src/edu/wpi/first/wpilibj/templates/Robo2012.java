@@ -25,14 +25,10 @@ public class Robo2012 extends IterativeRobot {
     Launcher launcher;
     Jaguar bridgeArm;
     Jaguar collectMotor;
-
-    GyroX gyro;  
+    GyroX gyro;
     Messager msg;
     Controls controls;
-
     boolean isManual = false;
-    String idTarget = "top";
-
     boolean isShooting = false;
     int shots = 0;
     double distanceFromTarget;
@@ -72,25 +68,18 @@ public class Robo2012 extends IterativeRobot {
         if (camera.freshImage()) {
             try {
                 imageProc.getTheParticles(camera);
-
-                //target = ImageProcessing.getTopMost(imageProc.particles);
+                target = ImageProcessing.getTopMost(imageProc.particles);
 
                 double p = (Physics.MAXWIDTH / 2) - target.center_mass_x;
-
                 double angle = p / physics.LAMBDA;
                 msg.printLn("" + angle);
                 
-                /*while (MathX.abs(angle - gyro.modulatedAngle) > 2) {
+                while (MathX.abs(angle - gyro.modulatedAngle) > 2) {
                     gyro.turnToAngle(angle);
                     getWatchdog().feed();
                 }
-                  
-                 */
-                int img = 640;
-                //double p = (640 / 2) - target.center_mass_x;
-                //double angle = p / physics.LAMBDA;
-                msg.printLn("" + angle);
-                //gyro.turnToAngle(angle);
+                
+                
 
                 if (isShooting) {
                     Timer.delay(3);
@@ -108,7 +97,6 @@ public class Robo2012 extends IterativeRobot {
             }
         }
         getWatchdog().feed();
-
     }
 
     public void teleopInit() {
@@ -116,10 +104,7 @@ public class Robo2012 extends IterativeRobot {
     }
     
 
-
     public void teleopPeriodic() {
-        System.out.println("I'm in teleop");
-        
         if (controls.button8()) {
             isManual = true;
             
@@ -128,12 +113,10 @@ public class Robo2012 extends IterativeRobot {
             
         }
         if (controls.button1()) {//trigger reverses drive
-            drive.mecanumDrive_Cartesian(-stick1.getX(), -stick1.getY(),
-                    -MathX.pow(stick1.getTwist(), 3), 0);
+            drive.mecanumDrive_Cartesian(-stick1.getX(), -stick1.getY(), -MathX.pow(stick1.getTwist(), 3), 0);
+            
         } else {
-            drive.mecanumDrive_Cartesian(stick1.getX(), stick1.getY(),
-                    MathX.pow(stick1.getTwist(), 3), 0);
-
+            drive.mecanumDrive_Cartesian(stick1.getX(), stick1.getY(), MathX.pow(stick1.getTwist(), 3), 0);
             
         }
 
@@ -142,11 +125,11 @@ public class Robo2012 extends IterativeRobot {
             msg.printOnLn("Mode: Auto", DriverStationLCD.Line.kMain6);
             collectMotor.set((stick2.getThrottle() + 1) / 2);
             if (controls.FOV_Left()) {
-                target = imageProc.middleTarget;
+                target = imageProc.middleTargetLeft;
                 hoopHeight = Physics.HOOP2;
                 
             } else if (controls.FOV_Right()) {
-                target = imageProc.middleTarget;
+                target = imageProc.middleTargetRight;
                 hoopHeight = Physics.HOOP2;
                 
             } else if (controls.FOV_Top()) {
@@ -192,48 +175,29 @@ public class Robo2012 extends IterativeRobot {
             gyro.turnAngle(5);
         } else if (controls.button10()) {
             gyro.turnAngle(-5);
-
         }
-          
-         
-
 
         // motor to lower bridge arm
         if (controls.button11()) {
             bridgeArm.set(1);
         } else if (controls.button12()) {
             bridgeArm.set(-.75);
+        } else {
+            bridgeArm.set(0);
         }
-         //reformat to 80 characters, remove unused imports
 
         // Have the camera scan for targets
-        
-
-        System.out.println("iN TELEoP" + camera.freshImage());
-        
         if (camera.freshImage()) {
-            try {                                                                                                     
+            try {
                 imageProc.getTheParticles(camera);
-                System.out.println("In try");
-                imageProc.idTarget(imageProc.getTopMost(imageProc.particles));
-                /*TODO don't set a variable in the class (particles) and
-                 * then call a method of the class passing in that same
-                 * variable.  instead put that logic into a method in the
-                 * class itself and call that method from here.
-                 */
-              // imageProc.idTopTarget(imageProc.getBottomMost(imageProc.particles));
-             //double Distance =  imageProc.CameraCorrection(target,idTarget);
-            // System.out.println("Look at Top Target,  Distance (inches) = " 
-              //       + Distance );
                 if (isShooting) {
-                  launcher.shoot(target.boundingRectHeight, hoopHeight);
-                  isShooting = false;
+                    launcher.shoot(target.boundingRectHeight, hoopHeight);
+                    isShooting = false;
                 }
             } catch (Exception e) {
                 e.printStackTrace();
                 msg.printLn("ERROR!!! Cannot Fetch Image");
             }
         }
-    
- }  
+    }
 }

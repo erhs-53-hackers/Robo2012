@@ -21,7 +21,7 @@ public class ImageProcessing {
     ParticleAnalysisReport particles[];
     Physics imageCalculations;
     CriteriaCollection criteriaCollection = new CriteriaCollection();
-    ParticleAnalysisReport bottomTarget, topTarget, middleTarget;
+    ParticleAnalysisReport bottomTarget, topTarget, middleTargetLeft, middleTargetRight;
     
     final double numberOfDegreesInVerticalFieldOfView = 33;
     final double numberOfPixelsVerticalInFieldOfView = 240;
@@ -92,7 +92,7 @@ public class ImageProcessing {
     public double getTheta(double PixelsFromLevelToBottomOfATarget) {
         return  pixlesToAngles(PixelsFromLevelToBottomOfATarget)  + cameraAngleOffset;        
     }
-    public ParticleAnalysisReport getTopMost(ParticleAnalysisReport[] particles)
+    public static ParticleAnalysisReport getTopMost(ParticleAnalysisReport[] particles)
     {
         ParticleAnalysisReport greatest = particles[0];
         for (int i=0;i < particles.length; i++)
@@ -105,7 +105,7 @@ public class ImageProcessing {
         }
         return greatest;
     }
-    public ParticleAnalysisReport getBottomMost
+    public static ParticleAnalysisReport getBottomMost
             (ParticleAnalysisReport[] particles)
     {
        ParticleAnalysisReport lowest = particles[0];
@@ -119,7 +119,7 @@ public class ImageProcessing {
         }
         return lowest;
     }
-        public ParticleAnalysisReport getLeftMost
+        public static ParticleAnalysisReport getLeftMost
                 (ParticleAnalysisReport[] particles)
     {
         ParticleAnalysisReport leftist = particles[0];
@@ -133,7 +133,7 @@ public class ImageProcessing {
         }
         return leftist;
     }
-    public ParticleAnalysisReport getRightMost
+    public static ParticleAnalysisReport getRightMost
             (ParticleAnalysisReport[] particles)
     {
        ParticleAnalysisReport rightist = particles[0];
