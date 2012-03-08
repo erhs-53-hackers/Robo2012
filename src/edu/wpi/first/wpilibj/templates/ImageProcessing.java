@@ -8,16 +8,15 @@ import edu.wpi.first.wpilibj.DriverStationLCD;
 import edu.wpi.first.wpilibj.camera.AxisCamera;
 import edu.wpi.first.wpilibj.image.BinaryImage;
 import edu.wpi.first.wpilibj.image.ColorImage;
-import edu.wpi.first.wpilibj.image.ParticleAnalysisReport;
 import edu.wpi.first.wpilibj.image.CriteriaCollection;
 import edu.wpi.first.wpilibj.image.NIVision.MeasurementType;
+import edu.wpi.first.wpilibj.image.ParticleAnalysisReport;
 
 /**
  *
  * @author Rajath, Michael
  */
 public class ImageProcessing {
-
     ParticleAnalysisReport particles[];
     Physics imageCalculations;
     CriteriaCollection criteriaCollection = new CriteriaCollection();
@@ -25,20 +24,29 @@ public class ImageProcessing {
             middleTargetRight;
     Messager msg = new Messager();
     final double numberOfDegreesInVerticalFieldOfView = 35.25;
+
     final double numberOfPixelsVerticalInFieldOfView = 240;
     final double numberOfPixelsHorizontalInFieldOfView = 640;
-    double targetHeight = 18;
-    final double heightToTopOfTopTarget = 118;
-    final double heightToBottomOfTopTarget = 100; /*heightToTopOfTopTarget
-            - targetHeight*/ 
+
+    final double targetHeight = 18.0;
+
+    final double heightToBottomOfTopTarget = 100;
+    final double heightToTopOfTopTarget =
+            heightToBottomOfTopTarget + targetHeight;
+
     final double heightToBottomOfBottomTarget = 30;
-    final double heightToTopOfBottomTarget = heightToBottomOfBottomTarget
-            + targetHeight;
+    final double heightToTopOfBottomTarget =
+            heightToBottomOfBottomTarget + targetHeight;
+
     final double heightToBottomOfMiddleTarget = 56;
-    final double heightToTopOfMiddleTarget = heightToBottomOfMiddleTarget
-            + targetHeight;
+    final double heightToTopOfMiddleTarget =
+            heightToBottomOfMiddleTarget + targetHeight;
+
     final double cameraAngleOffset = 12;
     final double cameraHeight = 54;
+    /* TODO
+     * this should be MAX, not MIN.  this is the most disparity we expect to see
+     */
     final double minAcceptableDisparity = .5;
 
     public ImageProcessing() {
@@ -49,9 +57,31 @@ public class ImageProcessing {
         imageCalculations = new Physics();
     }
 
-    public double pixlesToAngles(double pixles) {
+    /* TODO
+     * change the name of this to pixelsToDegrees
+     * NOTE: pixels is spelled ending in "e" then "l" and not "l" then "e"
+     */
+    /* TODO
+     * use this method instead in the code instead of making this calculation
+     *   by hand everywhere
+     */
+    public double pixlesToAngles(double pixles)
+    {
         return pixles * numberOfDegreesInVerticalFieldOfView
                 / numberOfPixelsVerticalInFieldOfView;
+    }
+    /* TODO
+     * change the name of this to degreesToPixels
+     * NOTE: Pixels is spelled ending in "e" then "l" and not "l" then "e"
+     */
+    /* TODO
+     * use this method instead in the code instead of making this calculation
+     *   by hand everywhere
+     */
+    public double anglesToPixles(double angle)
+    {
+        return angle*numberOfDegreesInVerticalFieldOfView
+                /numberOfPixelsVerticalInFieldOfView;
     }
 
     public double getPixelsFromLevelToBottomOfATarget(
@@ -372,19 +402,18 @@ public class ImageProcessing {
     public double CameraCorrection
             (ParticleAnalysisReport particle, String target) {
 
-
+        double targetMiddleHeight = 0.0;
 
         if ("top".equals(target)) {
-            targetHeight = 109;
+            targetMiddleHeight = 109;
         }
-
         if ("middle".equals(target)) {
-            targetHeight = 72;
+            targetMiddleHeight = 72;
         }
         if ("bottom".equals(target)) {
-            targetHeight = 39;
+            targetMiddleHeight = 39;
         }
-        double delta = targetHeight - cameraHeight;
+        double delta = targetMiddleHeight - cameraHeight;
         double lambda = numberOfPixelsVerticalInFieldOfView
                 / numberOfDegreesInVerticalFieldOfView;
         double pixelHeightBetweenReflectiveTape =
@@ -403,6 +432,5 @@ public class ImageProcessing {
         }
 
         return Distance;
-
     }
 }
