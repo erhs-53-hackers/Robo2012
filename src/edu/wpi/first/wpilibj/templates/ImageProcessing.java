@@ -279,8 +279,13 @@ public class ImageProcessing {
         }
         if(middleTargetLeft != null && middleTargetRight != null) {
             middleTargetRight = getRightMost(new ParticleAnalysisReport[] 
+<<<<<<< HEAD
                          {midTargetTemp1,midTargetTemp2});
         middleTargetLeft = getLeftMost(new ParticleAnalysisReport[] 
+=======
+                         {middleTargetLeft,middleTargetRight});
+            middleTargetLeft = getLeftMost(new ParticleAnalysisReport[] 
+>>>>>>> 81282233cc0ab376870c6587db47f2da57fa8bdf
                          {middleTargetLeft,middleTargetRight});
             
         }
