@@ -56,7 +56,7 @@ public class RobotTemplate extends IterativeRobot {
         stick1 = new Joystick(RoboMap.JOYSTICK1);
         stick2 = new Joystick(RoboMap.JOYSTICK2);
         stick3 = new Joystick(RoboMap.JOYSTICK3);
-        controls = new Controls(stick2);
+        controls = new Controls(stick3);
         msg.printLn("3");
         
 
@@ -153,7 +153,7 @@ public class RobotTemplate extends IterativeRobot {
         if (!isManual) {
             //motor to collect the balls off the ground
             msg.printOnLn("Mode: Auto", DriverStationLCD.Line.kMain6);
-            collectMotor.set((stick2.getThrottle() + 1) / 2);
+            collectMotor.set((stick3.getThrottle() + 1) / 2);
             if (controls.FOV_Left()) {
                 target = imageProc.middleTargetLeft;
                 hoopHeight = Physics.HOOP2;
@@ -178,7 +178,7 @@ public class RobotTemplate extends IterativeRobot {
             msg.printOnLn("Mode: Manual", DriverStationLCD.Line.kMain6);
             collectMotor.set(-1);
 
-            double power = (stick2.getThrottle() + 1) / 2;
+            double power = (stick3.getThrottle() + 1) / 2;
             launcher.launchMotor.set(power);
 
             if (controls.button1()) {
@@ -211,9 +211,9 @@ public class RobotTemplate extends IterativeRobot {
 
 
         // motor to lower bridge arm
-        if (stick1.getRawButton(3)) {
+        if (stick1.getRawButton(2)) {
             bridgeArm.set(1);
-        } else if (stick1.getRawButton(2)) {
+        } else if (stick1.getRawButton(3)) {
             bridgeArm.set(-1);
         } else {
             bridgeArm.set(0);
