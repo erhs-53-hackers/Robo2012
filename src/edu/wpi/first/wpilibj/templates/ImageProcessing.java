@@ -315,11 +315,42 @@ public class ImageProcessing {
             middleTargetLeft = getLeftMost(new ParticleAnalysisReport[]{midLeftTargetTemp, midRightTargetTemp});
 
         } else {
-            if(topTarget != null) {
-                
+            if(topTarget != null && midRightTargetTemp != null) {
+                ParticleAnalysisReport[] array = new ParticleAnalysisReport[]{topTarget, midRightTargetTemp};
+                ParticleAnalysisReport p = getRightMost(array);
+                if(p == midRightTargetTemp) {
+                    middleTargetRight = midRightTargetTemp;
+                } else {
+                    middleTargetLeft = midRightTargetTemp;
+                }                
+            } else if(topTarget != null && midLeftTargetTemp != null) {
+                ParticleAnalysisReport[] array = new ParticleAnalysisReport[]{topTarget, midLeftTargetTemp};
+                ParticleAnalysisReport p = getLeftMost(array);
+                if(p == midRightTargetTemp) {
+                    middleTargetLeft = midLeftTargetTemp;
+                } else {
+                    middleTargetRight = midLeftTargetTemp;
+                }                
             }
-            middleTargetLeft = midLeftTargetTemp;
-            middleTargetRight = midRightTargetTemp;
+            else if(bottomTarget != null && midRightTargetTemp != null) {
+                ParticleAnalysisReport[] array = new ParticleAnalysisReport[]{bottomTarget, midRightTargetTemp};
+                ParticleAnalysisReport p = getRightMost(array);
+                if(p == midRightTargetTemp) {
+                    middleTargetRight = midRightTargetTemp;
+                } else {
+                    middleTargetLeft = midRightTargetTemp;
+                }              
+            }else if(bottomTarget != null && midLeftTargetTemp != null) {
+                ParticleAnalysisReport[] array = new ParticleAnalysisReport[]{bottomTarget, midLeftTargetTemp};
+                ParticleAnalysisReport p = getLeftMost(array);
+                if(p == midRightTargetTemp) {
+                    middleTargetLeft= midLeftTargetTemp;
+                } else {
+                    middleTargetRight = midLeftTargetTemp;
+                }              
+            } else {
+                msg.printOnLn("Not 2 targets!!!", DriverStationLCD.Line.kMain6);
+            }
         }
 
 
