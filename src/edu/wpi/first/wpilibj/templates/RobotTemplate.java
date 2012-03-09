@@ -35,6 +35,7 @@ public class RobotTemplate extends IterativeRobot {
     int shots = 0;
     double distanceFromTarget;
     double hoopHeight = Physics.HOOP1;
+    boolean collecting = false;
 
     public void robotInit() {
         msg = new Messager();
@@ -132,8 +133,52 @@ public class RobotTemplate extends IterativeRobot {
         msg.clearConsole();
     }
 
+    public void teleopContinuous() {
+        // Have the camera scan for targets
+/*
+        if (camera.freshImage()) {
+            try {
+                imageProc.getTheParticles(camera);
+                imageProc.organizeTheParticles(imageProc.particles);
+
+                if (isShooting) {
+                    double angle = ImageProcessing.getHorizontalAngle(target);
+                    //msg.printLn("" + angle);
+
+                    while (MathX.abs(angle - gyro.modulatedAngle) > 2) {
+                        gyro.turnToAngle(angle);
+                        getWatchdog().feed();
+                    }
+                    launcher.shoot(target.boundingRectHeight, hoopHeight);
+                    isShooting = false;
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+                //msg.printLn("ERROR!!! Cannot Fetch Image");
+            }
+        }
+        * 
+        */
+    }
+    
+    
+
     public void teleopPeriodic() {
         System.out.println("Hello");
+        
+        if(controls.button7()) {       
+          collecting = true;
+          
+        } else if(controls.button8()) {
+            collecting = false;
+        }
+        
+        if(collecting) {
+            collectMotor.set(-1);
+        } else {
+            collectMotor.set(0);
+        }
+        
         if (controls.button8()) {
             isManual = true;
 
@@ -176,7 +221,7 @@ public class RobotTemplate extends IterativeRobot {
             }
         } else {
             msg.printOnLn("Mode: Manual", DriverStationLCD.Line.kMain6);
-            collectMotor.set(-1);
+            
 
             double power = (stick3.getThrottle() + 1) / 2;
             launcher.launchMotor.set(power);
@@ -218,37 +263,7 @@ public class RobotTemplate extends IterativeRobot {
         } else {
             bridgeArm.set(0);
         }
-
-
-        // Have the camera scan for targets
-/*
-        if (camera.freshImage()) {
-            try {
-                imageProc.getTheParticles(camera);
-                imageProc.organizeTheParticles(imageProc.particles);
-
-                if (isShooting) {
-                    double angle = ImageProcessing.getHorizontalAngle(target);
-                    //msg.printLn("" + angle);
-
-                    while (MathX.abs(angle - gyro.modulatedAngle) > 2) {
-                        gyro.turnToAngle(angle);
-                        getWatchdog().feed();
-                    }
-                    launcher.shoot(target.boundingRectHeight, hoopHeight);
-                    isShooting = false;
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-                //msg.printLn("ERROR!!! Cannot Fetch Image");
-            }
-        }
-        * 
-        */
-
-
-
-
-        Timer.delay(0.01f);
+        
+        
     }
 }
