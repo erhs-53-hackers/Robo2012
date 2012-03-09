@@ -60,9 +60,9 @@ public class RobotTemplate extends IterativeRobot {
         msg.printLn("3");
         
 
-        camera = AxisCamera.getInstance();
-        camera.writeBrightness(30);
-        camera.writeResolution(AxisCamera.ResolutionT.k640x480);
+       // camera = AxisCamera.getInstance();
+        //camera.writeBrightness(30);
+        //camera.writeResolution(AxisCamera.ResolutionT.k640x480);
         
         
         msg.printLn("4");
