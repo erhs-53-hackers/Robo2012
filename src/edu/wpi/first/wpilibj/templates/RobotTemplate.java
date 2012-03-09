@@ -64,7 +64,7 @@ public class RobotTemplate extends IterativeRobot {
         
         
         msg.printLn("4");
-        imageProc = new ImageProcessing();
+        //imageProc = new ImageProcessing();
         msg.printLn("5");
         physics = new Physics();
         msg.printLn("6");
@@ -78,7 +78,7 @@ public class RobotTemplate extends IterativeRobot {
         
         
         
-        System.out.println("Done: FRC 2012");
+        msg.printLn("Done: FRC 2012");
     }
     
     public void autonomousInit() {
@@ -114,33 +114,14 @@ public class RobotTemplate extends IterativeRobot {
     }
     
     public void teleopInit() {
-        //camera = AxisCamera.getInstance();
-        //camera.writeBrightness(30);
-        //camera.writeResolution(AxisCamera.ResolutionT.k640x480);
+        camera = AxisCamera.getInstance();
+        camera.writeBrightness(30);
+        camera.writeResolution(AxisCamera.ResolutionT.k640x480);
         msg.clearConsole();
     }
     
     public void teleopContinuous() {
-        // Have the camera scan for targets
-/*
-         * if (camera.freshImage()) { try { imageProc.getTheParticles(camera);
-         * imageProc.organizeTheParticles(imageProc.particles);
-         *
-         * if (isShooting) { double angle =
-         * ImageProcessing.getHorizontalAngle(target); //msg.printLn("" +
-         * angle);
-         *
-         * while (MathX.abs(angle - gyro.modulatedAngle) > 2) {
-         * gyro.turnToAngle(angle); getWatchdog().feed(); }
-         * launcher.shoot(target.boundingRectHeight, hoopHeight); isShooting =
-         * false; } } catch (Exception e) { e.printStackTrace();
-         * //msg.printLn("ERROR!!! Cannot Fetch Image"); } }
-         *
-         */
-    }
-    
-    public void teleopPeriodic() {
-        System.out.println("Hello");
+         System.out.println("Hello");
         
         if (controls.button7()) {            
             collecting = true;
@@ -237,6 +218,27 @@ public class RobotTemplate extends IterativeRobot {
         } else {
             bridgeArm.set(0);
         }
+        // Have the camera scan for targets
+/*
+         * if (camera.freshImage()) { try { imageProc.getTheParticles(camera);
+         * imageProc.organizeTheParticles(imageProc.particles);
+         *
+         * if (isShooting) { double angle =
+         * ImageProcessing.getHorizontalAngle(target); //msg.printLn("" +
+         * angle);
+         *
+         * while (MathX.abs(angle - gyro.modulatedAngle) > 2) {
+         * gyro.turnToAngle(angle); getWatchdog().feed(); }
+         * launcher.shoot(target.boundingRectHeight, hoopHeight); isShooting =
+         * false; } } catch (Exception e) { e.printStackTrace();
+         * //msg.printLn("ERROR!!! Cannot Fetch Image"); } }
+         *
+         */
+    }
+    
+    //called continuously
+    public void teleopPeriodic() {
+       
         
         
     }
