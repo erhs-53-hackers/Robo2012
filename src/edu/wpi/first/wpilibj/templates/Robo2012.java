@@ -16,18 +16,17 @@ import edu.wpi.first.wpilibj.image.ParticleAnalysisReport;
 public class Robo2012 extends IterativeRobot {
 
     RobotDrive drive;
-    Joystick stick;
+    Joystick stick1;
+    Joystick stick2;
     AxisCamera camera;
     ImageProcessing imageProc;
     ParticleAnalysisReport target;
     Physics physics;
     Launcher launcher;
-    Jaguar bridgeArm;    
+    Jaguar bridgeArm;
     Jaguar collectMotor;
-    AnalogChannel autoPot;
-    AnalogChannel telePot;
-    
-    //GyroX gyro;
+
+    GyroX gyro;  
     Messager msg;
     Controls controls;
 
@@ -49,8 +48,9 @@ public class Robo2012 extends IterativeRobot {
         drive.setInvertedMotor(RobotDrive.MotorType.kFrontRight, true);
         drive.setInvertedMotor(RobotDrive.MotorType.kRearRight, true);
 
-        stick = new Joystick(RoboMap.JOYSTICK1);
-        controls = new Controls(stick);
+        stick1 = new Joystick(RoboMap.JOYSTICK1);
+        stick2 = new Joystick(RoboMap.JOYSTICK2);
+        controls = new Controls(stick2);
 
         camera = AxisCamera.getInstance();
         camera.writeBrightness(30);
@@ -60,10 +60,8 @@ public class Robo2012 extends IterativeRobot {
         bridgeArm = new Jaguar(RoboMap.BRIDGE_MOTOR);        
         collectMotor = new Jaguar(RoboMap.COLLECT_MOTOR);
         launcher = new Launcher();
-        //gyro = new GyroX(RoboMap.GYRO, RoboMap.LAUNCH_TURN, drive);
-        autoPot = new AnalogChannel(RoboMap.AUTO_POT);
-        telePot = new AnalogChannel(RoboMap.TELO_POT);
-        msg.printLn("FRC 2012");
+        gyro = new GyroX(RoboMap.GYRO, RoboMap.LAUNCH_TURN, drive);
+        msg.printLn("Done: FRC 2012");
     }
 
     public void autonomousInit() {
@@ -75,7 +73,7 @@ public class Robo2012 extends IterativeRobot {
             try {
                 imageProc.getTheParticles(camera);
 
-                target = ImageProcessing.getTopMost(imageProc.particles);
+                //target = ImageProcessing.getTopMost(imageProc.particles);
 
                 double p = (Physics.MAXWIDTH / 2) - target.center_mass_x;
 
@@ -93,6 +91,7 @@ public class Robo2012 extends IterativeRobot {
                 //double angle = p / physics.LAMBDA;
                 msg.printLn("" + angle);
                 //gyro.turnToAngle(angle);
+
                 if (isShooting) {
                     Timer.delay(3);
 
@@ -109,9 +108,18 @@ public class Robo2012 extends IterativeRobot {
             }
         }
         getWatchdog().feed();
-    }   
+
+    }
+
+    public void teleopInit() {
+        msg.clearConsole();
+    }
+    
+
 
     public void teleopPeriodic() {
+        System.out.println("I'm in teleop");
+        
         if (controls.button8()) {
             isManual = true;
             
@@ -120,16 +128,19 @@ public class Robo2012 extends IterativeRobot {
             
         }
         if (controls.button1()) {//trigger reverses drive
-            drive.mecanumDrive_Cartesian(-stick.getX(), -stick.getY(), -MathX.pow(stick.getTwist(), 3), 0);
-            
+            drive.mecanumDrive_Cartesian(-stick1.getX(), -stick1.getY(),
+                    -MathX.pow(stick1.getTwist(), 3), 0);
         } else {
-            drive.mecanumDrive_Cartesian(stick.getX(), stick.getY(), MathX.pow(stick.getTwist(), 3), 0);
+            drive.mecanumDrive_Cartesian(stick1.getX(), stick1.getY(),
+                    MathX.pow(stick1.getTwist(), 3), 0);
+
             
         }
 
         if (!isManual) {
             //motor to collect the balls off the ground
-            collectMotor.set((stick.getThrottle() + 1) / 2);
+            msg.printOnLn("Mode: Auto", DriverStationLCD.Line.kMain6);
+            collectMotor.set((stick2.getThrottle() + 1) / 2);
             if (controls.FOV_Left()) {
                 target = imageProc.middleTarget;
                 hoopHeight = Physics.HOOP2;
@@ -151,8 +162,9 @@ public class Robo2012 extends IterativeRobot {
                 isShooting = true;
             }
         } else {
+            msg.printOnLn("Mode: Manual", DriverStationLCD.Line.kMain6);
             collectMotor.set(0);
-            double power = (stick.getThrottle() + 1) / 2;
+            double power = (stick2.getThrottle() + 1) / 2;
             launcher.launchMotor.set(power);
             
             if (controls.button2()) {
@@ -161,7 +173,7 @@ public class Robo2012 extends IterativeRobot {
             }
         }
 
-        /*if (controls.button3()) {
+        if (controls.button3()) {
             gyro.turnRobotToAngle(0);
             
         } else if (controls.button4()) {
@@ -173,41 +185,46 @@ public class Robo2012 extends IterativeRobot {
         } else if (controls.button6()) {
             gyro.turnRobotToAngle(90);
             
-        }*/
+        }
 
         //motor to control lazy susan for launcher
-        /*if (controls.button9()) {
+        if (controls.button9()) {
             gyro.turnAngle(5);
         } else if (controls.button10()) {
             gyro.turnAngle(-5);
-        }*/
+
+        }
           
          
+
 
         // motor to lower bridge arm
         if (controls.button11()) {
             bridgeArm.set(1);
         } else if (controls.button12()) {
             bridgeArm.set(-.75);
-
+        }
          //reformat to 80 characters, remove unused imports
 
         // Have the camera scan for targets
+        
 
-
+        System.out.println("iN TELEoP" + camera.freshImage());
+        
         if (camera.freshImage()) {
             try {                                                                                                     
                 imageProc.getTheParticles(camera);
-
+                System.out.println("In try");
+                imageProc.idTarget(imageProc.getTopMost(imageProc.particles));
                 /*TODO don't set a variable in the class (particles) and
                  * then call a method of the class passing in that same
                  * variable.  instead put that logic into a method in the
                  * class itself and call that method from here.
                  */
-               imageProc.idTopTarget(imageProc.getBottomMost(imageProc.particles));
-             double Distance =  imageProc.CameraCorrection(target,idTarget);
-             System.out.println("Look at Top Target,  Distance (inches) = " 
-                     + Distance );
+              // imageProc.idTopTarget(imageProc.getBottomMost(imageProc.particles));
+             //double Distance =  imageProc.CameraCorrection(target,idTarget);
+            // System.out.println("Look at Top Target,  Distance (inches) = " 
+              //       + Distance );
                 if (isShooting) {
                   launcher.shoot(target.boundingRectHeight, hoopHeight);
                   isShooting = false;
@@ -217,6 +234,6 @@ public class Robo2012 extends IterativeRobot {
                 msg.printLn("ERROR!!! Cannot Fetch Image");
             }
         }
-    }
+    
  }  
 }
