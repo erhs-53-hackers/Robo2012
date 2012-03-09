@@ -24,13 +24,13 @@ public class ImageProcessing {
     ParticleAnalysisReport bottomTarget, topTarget, middleTargetLeft,
             middleTargetRight;
     Messager msg = new Messager();
-    final double numberOfDegreesInVerticalFieldOfView = 33;
+    final double numberOfDegreesInVerticalFieldOfView = 35.25;
     final double numberOfPixelsVerticalInFieldOfView = 240;
     final double numberOfPixelsHorizontalInFieldOfView = 640;
     double targetHeight = 18;
-    final double heightToTopOfTopTarget = 100;
-    final double heightToBottomOfTopTarget = heightToTopOfTopTarget
-            - targetHeight;
+    final double heightToTopOfTopTarget = 118;
+    final double heightToBottomOfTopTarget = 100; /*heightToTopOfTopTarget
+            - targetHeight*/ 
     final double heightToBottomOfBottomTarget = 30;
     final double heightToTopOfBottomTarget = heightToBottomOfBottomTarget
             + targetHeight;
