@@ -86,6 +86,7 @@ public class RobotTemplate extends IterativeRobot {
     }
 
     public void autonomousPeriodic() {
+        /*
         if (camera.freshImage() && false) {
             try {
                 imageProc.getTheParticles(camera);
@@ -100,7 +101,7 @@ public class RobotTemplate extends IterativeRobot {
                     getWatchdog().feed();
                 }
                 * 
-                */
+                
 
 
 
@@ -122,6 +123,7 @@ public class RobotTemplate extends IterativeRobot {
             }
         }
         getWatchdog().feed();
+*/
     }
 
     public void teleopInit() {
