@@ -39,9 +39,9 @@ public class RobotTemplate extends IterativeRobot {
     public void robotInit() {
         msg = new Messager();
 
-        System.out.println("Loading Please Wait...");
+        msg.printLn("Loading Please Wait...");
         Timer.delay(10);
-        System.out.println("1");
+        msg.printLn("1");
         //left front, left back, right front, right back
         drive = new RobotDrive(
                 RoboMap.MOTOR1, RoboMap.MOTOR2, RoboMap.MOTOR3, RoboMap.MOTOR4);
@@ -49,31 +49,33 @@ public class RobotTemplate extends IterativeRobot {
         drive.setInvertedMotor(RobotDrive.MotorType.kRearRight, true);
         drive.setInvertedMotor(RobotDrive.MotorType.kRearLeft, true);
         drive.setInvertedMotor(RobotDrive.MotorType.kFrontLeft, true);
-        System.out.println("2");
+        drive.setSafetyEnabled(false);
+        getWatchdog().setEnabled(false);
+        msg.printLn("2");
 
         stick1 = new Joystick(RoboMap.JOYSTICK1);
         stick2 = new Joystick(RoboMap.JOYSTICK2);
         stick3 = new Joystick(RoboMap.JOYSTICK3);
         controls = new Controls(stick2);
-        System.out.println("3");
-        /*
+        msg.printLn("3");
+        
 
         camera = AxisCamera.getInstance();
         camera.writeBrightness(30);
         camera.writeResolution(AxisCamera.ResolutionT.k640x480);
-        * 
-        */
-        System.out.println("4");
-        //imageProc = new ImageProcessing();
-        System.out.println("5");
+        
+        
+        msg.printLn("4");
+        imageProc = new ImageProcessing();
+        msg.printLn("5");
         physics = new Physics();
-        System.out.println("6");
+        msg.printLn("6");
         bridgeArm = new Jaguar(RoboMap.BRIDGE_MOTOR);
-        System.out.println("7");
+        msg.printLn("7");
         collectMotor = new Jaguar(RoboMap.COLLECT_MOTOR);
-        System.out.println("8");
+        msg.printLn("8");
         launcher = new Launcher();
-        System.out.println("9");
+        msg.printLn("9");
         //gyro = new GyroX(RoboMap.GYRO, RoboMap.LAUNCH_TURN, drive);
         
 
@@ -150,7 +152,7 @@ public class RobotTemplate extends IterativeRobot {
         }
         if (!isManual) {
             //motor to collect the balls off the ground
-            System.out.println("Mode: Auto");
+            msg.printOnLn("Mode: Auto", DriverStationLCD.Line.kMain6);
             collectMotor.set((stick2.getThrottle() + 1) / 2);
             if (controls.FOV_Left()) {
                 target = imageProc.middleTargetLeft;
