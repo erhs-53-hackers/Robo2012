@@ -38,25 +38,34 @@ public class RobotTemplate extends IterativeRobot {
         msg = new Messager();
         
         msg.printLn("Loading Please Wait...");
-        Timer.delay(4);
+        Timer.delay(10);
+        msg.printLn("1");
         //left front, left back, right front, right back
         drive = new RobotDrive(
                 RoboMap.MOTOR1, RoboMap.MOTOR2, RoboMap.MOTOR3, RoboMap.MOTOR4);
         drive.setInvertedMotor(RobotDrive.MotorType.kFrontRight, true);
         drive.setInvertedMotor(RobotDrive.MotorType.kRearRight, true);
+        msg.printLn("2");
 
         stick1 = new Joystick(RoboMap.JOYSTICK1);
         stick2 = new Joystick(RoboMap.JOYSTICK2);
         controls = new Controls(stick2);
+        msg.printLn("3");
 
         camera = AxisCamera.getInstance();
         camera.writeBrightness(30);
         camera.writeResolution(AxisCamera.ResolutionT.k640x480);
+        msg.printLn("4");
         imageProc = new ImageProcessing();
+        msg.printLn("5");
         physics = new Physics();
-        bridgeArm = new Jaguar(RoboMap.BRIDGE_MOTOR);        
+        msg.printLn("6");
+        bridgeArm = new Jaguar(RoboMap.BRIDGE_MOTOR);    
+        msg.printLn("7");
         collectMotor = new Jaguar(RoboMap.COLLECT_MOTOR);
+        msg.printLn("8");
         launcher = new Launcher();
+        msg.printLn("9");
         //gyro = new GyroX(RoboMap.GYRO, RoboMap.LAUNCH_TURN, drive);
         
         
@@ -151,7 +160,7 @@ public class RobotTemplate extends IterativeRobot {
             }
         } else {
             msg.printOnLn("Mode: Manual", DriverStationLCD.Line.kMain6);
-            collectMotor.set(-1);
+            //collectMotor.set(-1);
             
             double power = (stick2.getThrottle() + 1) / 2;
             launcher.launchMotor.set(power);
