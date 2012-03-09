@@ -30,7 +30,7 @@ public class ImageProcessing {
     double targetHeight = 18;
     final double heightToTopOfTopTarget = 100;
     final double heightToBottomOfTopTarget = heightToTopOfTopTarget
-            + targetHeight;
+            - targetHeight;
     final double heightToBottomOfBottomTarget = 30;
     final double heightToTopOfBottomTarget = heightToBottomOfBottomTarget
             + targetHeight;
@@ -38,7 +38,7 @@ public class ImageProcessing {
     final double heightToTopOfMiddleTarget = heightToBottomOfMiddleTarget
             + targetHeight;
     final double cameraAngleOffset = 12;
-    final double cameraHeight = 45;
+    final double cameraHeight = 54;
 
     public ImageProcessing() {
         criteriaCollection.addCriteria(
@@ -198,20 +198,20 @@ public class ImageProcessing {
         return hypotneuse_1;
     }
 
-    public double getAdjacent1(double phiAngle, double hypotneuse) {
-        return MathX.cos(phiAngle) * hypotneuse;
+    public double getAdjacent1(double phiAngle, double heightToTopOfTopTarget) {
+        return heightToTopOfTopTarget/ MathX.tan(phiAngle);
     }
 
-    public double getAdjacent0(double thetaAngle, double hypotneuse) {
-        return MathX.cos(thetaAngle) * hypotneuse;
+    public double getAdjacent0(double thetaAngle, double heightToBottomOfTopTarget) {
+        return heightToBottomOfTopTarget/ MathX.tan(thetaAngle);
     }
 
     public double idTarget(ParticleAnalysisReport particle, int iterator) {
         double phi = getPhi(getPixelsFromLevelToTopOfATarget(particle));
         double theta = getTheta(getPixelsFromLevelToBottomOfATarget(particle));
 
-        double adjacent1 = getAdjacent1(phi, getHypotneuse1(phi, iterator));
-        double adjacent0 = getAdjacent0(theta, getHypotneuse0(theta, iterator));
+        double adjacent1 = getAdjacent1(phi, heightToTopOfTopTarget);
+        double adjacent0 = getAdjacent0(theta, heightToBottomOfTopTarget);
         double disparity = Math.abs(adjacent1 - adjacent0);
 
         msg.printOnLn("Bottom Adjacent0 : " + adjacent0, DriverStationLCD.Line.kUser2);
