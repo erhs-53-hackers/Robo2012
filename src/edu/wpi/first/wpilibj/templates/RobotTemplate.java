@@ -18,6 +18,7 @@ public class RobotTemplate extends IterativeRobot {
     RobotDrive drive;
     Joystick stick1;
     Joystick stick2;
+    Joystick stick3;
     AxisCamera camera;
     ImageProcessing imageProc;
     ParticleAnalysisReport target;
@@ -25,6 +26,7 @@ public class RobotTemplate extends IterativeRobot {
     Launcher launcher;
     Jaguar bridgeArm;
     Jaguar collectMotor;
+    
     GyroX gyro;
     Messager msg;
     Controls controls;
@@ -37,39 +39,46 @@ public class RobotTemplate extends IterativeRobot {
     public void robotInit() {
         msg = new Messager();
 
-        msg.printLn("Loading Please Wait...");
+        System.out.println("Loading Please Wait...");
         Timer.delay(10);
-        msg.printLn("1");
+        System.out.println("1");
         //left front, left back, right front, right back
         drive = new RobotDrive(
                 RoboMap.MOTOR1, RoboMap.MOTOR2, RoboMap.MOTOR3, RoboMap.MOTOR4);
         drive.setInvertedMotor(RobotDrive.MotorType.kFrontRight, true);
         drive.setInvertedMotor(RobotDrive.MotorType.kRearRight, true);
-        msg.printLn("2");
+        drive.setInvertedMotor(RobotDrive.MotorType.kRearLeft, true);
+        drive.setInvertedMotor(RobotDrive.MotorType.kFrontLeft, true);
+        System.out.println("2");
 
         stick1 = new Joystick(RoboMap.JOYSTICK1);
         stick2 = new Joystick(RoboMap.JOYSTICK2);
+        stick3 = new Joystick(RoboMap.JOYSTICK3);
         controls = new Controls(stick2);
-        msg.printLn("3");
+        System.out.println("3");
+        /*
 
         camera = AxisCamera.getInstance();
         camera.writeBrightness(30);
         camera.writeResolution(AxisCamera.ResolutionT.k640x480);
-        msg.printLn("4");
-        imageProc = new ImageProcessing();
-        msg.printLn("5");
+        * 
+        */
+        System.out.println("4");
+        //imageProc = new ImageProcessing();
+        System.out.println("5");
         physics = new Physics();
-        msg.printLn("6");
+        System.out.println("6");
         bridgeArm = new Jaguar(RoboMap.BRIDGE_MOTOR);
-        msg.printLn("7");
+        System.out.println("7");
         collectMotor = new Jaguar(RoboMap.COLLECT_MOTOR);
-        msg.printLn("8");
+        System.out.println("8");
         launcher = new Launcher();
-        msg.printLn("9");
+        System.out.println("9");
         //gyro = new GyroX(RoboMap.GYRO, RoboMap.LAUNCH_TURN, drive);
+        
 
 
-        msg.printLn("Done: FRC 2012");
+        System.out.println("Done: FRC 2012");
     }
 
     public void autonomousInit() {
@@ -77,6 +86,7 @@ public class RobotTemplate extends IterativeRobot {
     }
 
     public void autonomousPeriodic() {
+        /*
         if (camera.freshImage() && false) {
             try {
                 imageProc.getTheParticles(camera);
@@ -84,12 +94,14 @@ public class RobotTemplate extends IterativeRobot {
 
 
                 double angle = ImageProcessing.getHorizontalAngle(target);
-                msg.printLn("" + angle);
-
+                //msg.printLn("" + angle);
+/*
                 while (MathX.abs(angle - gyro.modulatedAngle) > 2) {
                     gyro.turnToAngle(angle);
                     getWatchdog().feed();
                 }
+                * 
+                
 
 
 
@@ -107,10 +119,11 @@ public class RobotTemplate extends IterativeRobot {
                 }
             } catch (Exception e) {
                 e.printStackTrace();
-                msg.printLn("ERROR!!! Cannot Fetch Image");
+                System.out.println("ERROR!!! Cannot Fetch Image");
             }
         }
         getWatchdog().feed();
+*/
     }
 
     public void teleopInit() {
@@ -118,18 +131,26 @@ public class RobotTemplate extends IterativeRobot {
     }
 
     public void teleopPeriodic() {
+        System.out.println("Hello");
         if (controls.button8()) {
             isManual = true;
 
         } else if (controls.button7()) {
             //isManual = false; REMOVE ME!!!!!
         }
-
-        drive.tankDrive(stick1, stick2);
-
+        
+        if(controls.button2())
+        {
+          drive.tankDrive(stick1.getAxis(Joystick.AxisType.kY)*.5, 
+                  stick2.getAxis(Joystick.AxisType.kY)*.5);  
+        }
+        else
+        {
+            drive.tankDrive(stick1, stick2);
+        }
         if (!isManual) {
             //motor to collect the balls off the ground
-            msg.printOnLn("Mode: Auto", DriverStationLCD.Line.kMain6);
+            System.out.println("Mode: Auto");
             collectMotor.set((stick2.getThrottle() + 1) / 2);
             if (controls.FOV_Left()) {
                 target = imageProc.middleTargetLeft;
@@ -153,16 +174,18 @@ public class RobotTemplate extends IterativeRobot {
             }
         } else {
             msg.printOnLn("Mode: Manual", DriverStationLCD.Line.kMain6);
-            //collectMotor.set(-1);
+            collectMotor.set(-1);
 
             double power = (stick2.getThrottle() + 1) / 2;
             launcher.launchMotor.set(power);
 
-            if (controls.button2()) {
+            if (controls.button1()) {
                 launcher.manualShoot();
-
+            } else {
+                launcher.loadMotor.set(0);
             }
         }
+        
         /*
          * if (controls.button3()) { gyro.turnRobotToAngle(0);
          *
@@ -186,17 +209,17 @@ public class RobotTemplate extends IterativeRobot {
 
 
         // motor to lower bridge arm
-        if (controls.button11()) {
+        if (stick1.getRawButton(3)) {
             bridgeArm.set(1);
-        } else if (controls.button12()) {
-            bridgeArm.set(-.75);
+        } else if (stick1.getRawButton(2)) {
+            bridgeArm.set(-1);
         } else {
             bridgeArm.set(0);
         }
 
 
         // Have the camera scan for targets
-
+/*
         if (camera.freshImage()) {
             try {
                 imageProc.getTheParticles(camera);
@@ -204,7 +227,7 @@ public class RobotTemplate extends IterativeRobot {
 
                 if (isShooting) {
                     double angle = ImageProcessing.getHorizontalAngle(target);
-                    msg.printLn("" + angle);
+                    //msg.printLn("" + angle);
 
                     while (MathX.abs(angle - gyro.modulatedAngle) > 2) {
                         gyro.turnToAngle(angle);
@@ -215,9 +238,11 @@ public class RobotTemplate extends IterativeRobot {
                 }
             } catch (Exception e) {
                 e.printStackTrace();
-                msg.printLn("ERROR!!! Cannot Fetch Image");
+                //msg.printLn("ERROR!!! Cannot Fetch Image");
             }
         }
+        * 
+        */
 
 
 

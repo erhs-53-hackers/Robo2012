@@ -33,4 +33,5 @@ public class RoboMap {
     /* USB */
     public static final int JOYSTICK1 = 1;
     public static final int JOYSTICK2 = 2;
+    public static final int JOYSTICK3 = 3;
 }

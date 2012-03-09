@@ -74,9 +74,9 @@ public class Launcher {
     }
     
     public void manualShoot() {
-        loadMotor.set(1);
-        Timer.delay(5);
-        loadMotor.set(0);
-        launchMotor.set(0);
+        loadMotor.set(-1);
+        //Timer.delay(5);
+        //loadMotor.set(0);
+        //launchMotor.set(0);
     }
 }

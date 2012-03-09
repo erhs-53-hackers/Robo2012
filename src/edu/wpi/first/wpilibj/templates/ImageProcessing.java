@@ -39,6 +39,7 @@ public class ImageProcessing {
             + targetHeight;
     final double cameraAngleOffset = 12;
     final double cameraHeight = 54;
+    final double minAcceptableDisparity = .5;
 
     public ImageProcessing() {
         criteriaCollection.addCriteria(
@@ -62,12 +63,12 @@ public class ImageProcessing {
                 + PixelsFromLevelToBottomOfTopTarget);
         return PixelsFromLevelToBottomOfTopTarget;
     }
-    
+
     public static double getHorizontalAngle(ParticleAnalysisReport particle) {
-         double p = (Physics.MAXWIDTH / 2) - particle.center_mass_x;
-         double angle = p / Physics.LAMBDA;         
-         return angle;
-                
+        double p = (Physics.MAXWIDTH / 2) - particle.center_mass_x;
+        double angle = p / Physics.LAMBDA;
+        return angle;
+
     }
 
     public double getPixelsFromLevelToTopOfATarget(
@@ -199,20 +200,33 @@ public class ImageProcessing {
     }
 
     public double getAdjacent1(double phiAngle, double heightToTopOfTopTarget) {
-        return heightToTopOfTopTarget/ MathX.tan(phiAngle);
+        return heightToTopOfTopTarget / MathX.tan(phiAngle);
     }
 
     public double getAdjacent0(double thetaAngle, double heightToBottomOfTopTarget) {
-        return heightToBottomOfTopTarget/ MathX.tan(thetaAngle);
+        return heightToBottomOfTopTarget / MathX.tan(thetaAngle);
     }
 
     public double idTarget(ParticleAnalysisReport particle, int iterator) {
         double phi = getPhi(getPixelsFromLevelToTopOfATarget(particle));
         double theta = getTheta(getPixelsFromLevelToBottomOfATarget(particle));
+        double length = 0;
+        switch (iterator) {
+            case 1:
+                length = heightToTopOfTopTarget - cameraHeight;
+                break;
+            case 2:
+                length = heightToTopOfMiddleTarget - cameraHeight;
+                break;
+            case 3:
+                length = heightToTopOfBottomTarget - cameraHeight;
+                break;
+        }
 
-        double adjacent1 = getAdjacent1(phi, heightToTopOfTopTarget);
-        double adjacent0 = getAdjacent0(theta, heightToBottomOfTopTarget);
-        double disparity = Math.abs(adjacent1 - adjacent0);
+        double adjacent1 = getAdjacent1(phi, length);
+        double adjacent0 = getAdjacent0(theta, length - targetHeight);
+
+        double disparity = MathX.abs(adjacent1 / adjacent0 - 1);
 
         msg.printOnLn("Bottom Adjacent0 : " + adjacent0, DriverStationLCD.Line.kUser2);
         msg.printOnLn("Bottom Adjacent1 : " + adjacent1, DriverStationLCD.Line.kUser3);
@@ -248,46 +262,95 @@ public class ImageProcessing {
     }
 
     public void organizeTheParticles(ParticleAnalysisReport[] particles) {
+        bottomTarget = null;
+        topTarget = null;
+        middleTargetLeft = null;
+        middleTargetRight = null;
         ParticleAnalysisReport midLeftTargetTemp = null, midRightTargetTemp = null;
         for (int i = 0; i < particles.length; i++) {
             ParticleAnalysisReport particle = particles[i];
+            double minDisparity = Double.POSITIVE_INFINITY;
+            int target = 1;
             for (int j = 1; j < 4; j++) {
-                double currentDisperity = idTarget(particle, j);
-                if (j == 1 && currentDisperity < 100) {
-                    topTarget = particle;
-                    msg.printOnLn("Top target found",
-                            DriverStationLCD.Line.kUser4);
-                } else if (j == 2 && currentDisperity < 100) {
-                    if (middleTargetLeft == null) {
+                double currentDisparity = idTarget(particle, j);
 
-                        midLeftTargetTemp = particle;
-                        msg.printOnLn("left target found",
-                                DriverStationLCD.Line.kUser5);
-
-                    } else {
-
-                        midRightTargetTemp = particle;
-                        msg.printOnLn("right target found",
-                                DriverStationLCD.Line.kUser5);
-                    }
-                } else if (j == 3 && currentDisperity < 100) {
-                    bottomTarget = particle;
-                    msg.printOnLn("bottom target found",
-                            DriverStationLCD.Line.kUser4);
-                } else {
-                    msg.printOnLn("OMFG i cant find any targets",
-                            DriverStationLCD.Line.kUser5);
+                if (currentDisparity < minDisparity) {
+                    minDisparity = currentDisparity;
+                    target = j;
                 }
             }
+
+
+
+            if (target == 1 && minDisparity < minAcceptableDisparity) {
+                topTarget = particle;
+                msg.printOnLn("Top target found",
+                        DriverStationLCD.Line.kUser4);
+            } else if (target == 2 && minDisparity < minAcceptableDisparity) {
+                if (midLeftTargetTemp == null) {
+
+                    midLeftTargetTemp = particle;
+                    msg.printOnLn("left target found",
+                            DriverStationLCD.Line.kUser5);
+
+                } else {
+
+                    midRightTargetTemp = particle;
+                    msg.printOnLn("right target found",
+                            DriverStationLCD.Line.kUser5);
+                }
+            } else if (target == 3 && minDisparity < minAcceptableDisparity) {
+                bottomTarget = particle;
+                msg.printOnLn("bottom target found",
+                        DriverStationLCD.Line.kUser4);
+            } else {
+                msg.printOnLn("OMFG i cant find any targets",
+                        DriverStationLCD.Line.kUser5);
+            }
+
 
         }
         if (midLeftTargetTemp != null && midRightTargetTemp != null) {
             middleTargetRight = getRightMost(new ParticleAnalysisReport[]{midLeftTargetTemp, midRightTargetTemp});
-            middleTargetLeft = getLeftMost(new ParticleAnalysisReport[]{middleTargetLeft, middleTargetRight});
+            middleTargetLeft = getLeftMost(new ParticleAnalysisReport[]{midLeftTargetTemp, midRightTargetTemp});
 
         } else {
-            middleTargetLeft = midLeftTargetTemp;
-            middleTargetRight = midRightTargetTemp;
+            if(topTarget != null && midRightTargetTemp != null) {
+                ParticleAnalysisReport[] array = new ParticleAnalysisReport[]{topTarget, midRightTargetTemp};
+                ParticleAnalysisReport p = getRightMost(array);
+                if(p == midRightTargetTemp) {
+                    middleTargetRight = midRightTargetTemp;
+                } else {
+                    middleTargetLeft = midRightTargetTemp;
+                }                
+            } else if(topTarget != null && midLeftTargetTemp != null) {
+                ParticleAnalysisReport[] array = new ParticleAnalysisReport[]{topTarget, midLeftTargetTemp};
+                ParticleAnalysisReport p = getLeftMost(array);
+                if(p == midRightTargetTemp) {
+                    middleTargetLeft = midLeftTargetTemp;
+                } else {
+                    middleTargetRight = midLeftTargetTemp;
+                }                
+            }
+            else if(bottomTarget != null && midRightTargetTemp != null) {
+                ParticleAnalysisReport[] array = new ParticleAnalysisReport[]{bottomTarget, midRightTargetTemp};
+                ParticleAnalysisReport p = getRightMost(array);
+                if(p == midRightTargetTemp) {
+                    middleTargetRight = midRightTargetTemp;
+                } else {
+                    middleTargetLeft = midRightTargetTemp;
+                }              
+            }else if(bottomTarget != null && midLeftTargetTemp != null) {
+                ParticleAnalysisReport[] array = new ParticleAnalysisReport[]{bottomTarget, midLeftTargetTemp};
+                ParticleAnalysisReport p = getLeftMost(array);
+                if(p == midRightTargetTemp) {
+                    middleTargetLeft= midLeftTargetTemp;
+                } else {
+                    middleTargetRight = midLeftTargetTemp;
+                }              
+            } else {
+                msg.printOnLn("Not 2 targets!!!", DriverStationLCD.Line.kMain6);
+            }
         }
 
 
