@@ -14,7 +14,7 @@ import edu.wpi.first.wpilibj.image.NIVision.MeasurementType;
 
 /**
  *
- * @author Rajath find targets
+ * @author Rajath, Michael
  */
 public class ImageProcessing {
 
@@ -61,6 +61,13 @@ public class ImageProcessing {
         System.out.println("PixelsFromLevelToBottomOfTopTarget"
                 + PixelsFromLevelToBottomOfTopTarget);
         return PixelsFromLevelToBottomOfTopTarget;
+    }
+    
+    public static double getHorizontalAngle(ParticleAnalysisReport particle) {
+         double p = (Physics.MAXWIDTH / 2) - particle.center_mass_x;
+         double angle = p / Physics.LAMBDA;         
+         return angle;
+                
     }
 
     public double getPixelsFromLevelToTopOfATarget(

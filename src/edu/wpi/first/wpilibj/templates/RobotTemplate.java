@@ -36,7 +36,7 @@ public class RobotTemplate extends IterativeRobot {
 
     public void robotInit() {
         msg = new Messager();
-        
+
         msg.printLn("Loading Please Wait...");
         Timer.delay(10);
         msg.printLn("1");
@@ -60,15 +60,15 @@ public class RobotTemplate extends IterativeRobot {
         msg.printLn("5");
         physics = new Physics();
         msg.printLn("6");
-        bridgeArm = new Jaguar(RoboMap.BRIDGE_MOTOR);    
+        bridgeArm = new Jaguar(RoboMap.BRIDGE_MOTOR);
         msg.printLn("7");
         collectMotor = new Jaguar(RoboMap.COLLECT_MOTOR);
         msg.printLn("8");
         launcher = new Launcher();
         msg.printLn("9");
         //gyro = new GyroX(RoboMap.GYRO, RoboMap.LAUNCH_TURN, drive);
-        
-        
+
+
         msg.printLn("Done: FRC 2012");
     }
 
@@ -82,18 +82,18 @@ public class RobotTemplate extends IterativeRobot {
                 imageProc.getTheParticles(camera);
                 target = ImageProcessing.getTopMost(imageProc.particles);
 
-                double p = (Physics.MAXWIDTH / 2) - target.center_mass_x;
-                double angle = p / physics.LAMBDA;
+
+                double angle = ImageProcessing.getHorizontalAngle(target);
                 msg.printLn("" + angle);
-                /*
+
                 while (MathX.abs(angle - gyro.modulatedAngle) > 2) {
                     gyro.turnToAngle(angle);
                     getWatchdog().feed();
                 }
-                * */
-                
-                
-                
+
+
+
+
 
                 if (isShooting) {
                     Timer.delay(3);
@@ -116,23 +116,16 @@ public class RobotTemplate extends IterativeRobot {
     public void teleopInit() {
         msg.clearConsole();
     }
-    
 
-    public void teleopPeriodic() {       
+    public void teleopPeriodic() {
         if (controls.button8()) {
             isManual = true;
-            
+
         } else if (controls.button7()) {
             //isManual = false; REMOVE ME!!!!!
-            
         }
-        if (controls.button1()) {//trigger reverses drive
-            drive.mecanumDrive_Cartesian(-stick1.getX(), -stick1.getY(), -MathX.pow(stick1.getTwist(), 3), 0);
-            
-        } else {
-            drive.mecanumDrive_Cartesian(stick1.getX(), stick1.getY(), MathX.pow(stick1.getTwist(), 3), 0);
-            
-        }
+
+        drive.tankDrive(stick1, stick2);
 
         if (!isManual) {
             //motor to collect the balls off the ground
@@ -141,19 +134,19 @@ public class RobotTemplate extends IterativeRobot {
             if (controls.FOV_Left()) {
                 target = imageProc.middleTargetLeft;
                 hoopHeight = Physics.HOOP2;
-                
+
             } else if (controls.FOV_Right()) {
                 target = imageProc.middleTargetRight;
                 hoopHeight = Physics.HOOP2;
-                
+
             } else if (controls.FOV_Top()) {
                 target = imageProc.topTarget;
                 hoopHeight = Physics.HOOP3;
-                
+
             } else if (controls.FOV_Bottom()) {
                 target = imageProc.bottomTarget;
                 hoopHeight = Physics.HOOP1;
-                
+
             }
             if (controls.button2()) {
                 isShooting = true;
@@ -161,42 +154,36 @@ public class RobotTemplate extends IterativeRobot {
         } else {
             msg.printOnLn("Mode: Manual", DriverStationLCD.Line.kMain6);
             //collectMotor.set(-1);
-            
+
             double power = (stick2.getThrottle() + 1) / 2;
             launcher.launchMotor.set(power);
-            
+
             if (controls.button2()) {
                 launcher.manualShoot();
-                
+
             }
         }
-/*
-        if (controls.button3()) {
-            gyro.turnRobotToAngle(0);
-            
-        } else if (controls.button4()) {
-            gyro.turnRobotToAngle(180);
-            
-        } else if (controls.button5()) {
-            gyro.turnRobotToAngle(-90);
-            
-        } else if (controls.button6()) {
-            gyro.turnRobotToAngle(90);
-            
-        }
-        * */
-        
-/*
-        //motor to control lazy susan for launcher
-        if (controls.button9()) {
-            gyro.turnAngle(5);
-        } else if (controls.button10()) {
-            gyro.turnAngle(-5);
-        }
-        * 
-        */
-        
-        
+        /*
+         * if (controls.button3()) { gyro.turnRobotToAngle(0);
+         *
+         * } else if (controls.button4()) { gyro.turnRobotToAngle(180);
+         *
+         * } else if (controls.button5()) { gyro.turnRobotToAngle(-90);
+         *
+         * } else if (controls.button6()) { gyro.turnRobotToAngle(90);
+         *
+         * }
+         *
+         */
+
+        /*
+         * //motor to control lazy susan for launcher if (controls.button9()) {
+         * gyro.turnAngle(5); } else if (controls.button10()) {
+         * gyro.turnAngle(-5); }
+         *
+         */
+
+
 
         // motor to lower bridge arm
         if (controls.button11()) {
@@ -209,13 +196,20 @@ public class RobotTemplate extends IterativeRobot {
 
 
         // Have the camera scan for targets
-       
+
         if (camera.freshImage()) {
             try {
                 imageProc.getTheParticles(camera);
                 imageProc.organizeTheParticles(imageProc.particles);
-                
+
                 if (isShooting) {
+                    double angle = ImageProcessing.getHorizontalAngle(target);
+                    msg.printLn("" + angle);
+
+                    while (MathX.abs(angle - gyro.modulatedAngle) > 2) {
+                        gyro.turnToAngle(angle);
+                        getWatchdog().feed();
+                    }
                     launcher.shoot(target.boundingRectHeight, hoopHeight);
                     isShooting = false;
                 }
@@ -223,11 +217,11 @@ public class RobotTemplate extends IterativeRobot {
                 e.printStackTrace();
                 msg.printLn("ERROR!!! Cannot Fetch Image");
             }
-        } 
-        
-        
-        
-        
+        }
+
+
+
+
         Timer.delay(0.01f);
     }
 }

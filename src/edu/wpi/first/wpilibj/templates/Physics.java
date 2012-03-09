@@ -14,7 +14,7 @@ public class Physics {
     private double currentHoop = 94 / 12;//HOOP3;//the current hoop
     private static final int FOV = 33;//Field of View
     private static final int MAXPIXEL = 480;//height
-    double LAMBDA = MAXPIXEL / FOV;
+    public static double LAMBDA = MAXPIXEL / FOV;
     public static final int MAXWIDTH = 640;
     private static final float LAUNCH_HEIGHT = 4f;
     //height the camera is off the ground
