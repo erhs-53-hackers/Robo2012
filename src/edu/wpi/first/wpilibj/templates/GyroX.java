@@ -15,7 +15,7 @@ import edu.wpi.first.wpilibj.RobotDrive;
  */
 public class GyroX {
 
-    PWM drive;
+    PWM lazy;
     
     RobotDrive driveTrain;
     Gyro gyro;
@@ -24,7 +24,7 @@ public class GyroX {
 
     public GyroX(final int gyroInit, final int port, RobotDrive robo) {
         this.gyro = new Gyro(gyroInit);
-        this.drive = new PWM(port);
+        this.lazy = new PWM(port);
         this.driveTrain = robo;
         
     }
@@ -43,9 +43,9 @@ public class GyroX {
         int multi = (nowAngle > 0 ? 1 : -1);
         if (Math.abs(nowAngle) > 1.5) {
             if (Math.abs(nowAngle) < 10) {
-                drive.setRaw((int)(.45 * multi * 255));
+                lazy.setRaw((int)(.45 * multi * 255));
             } else {
-                drive.setRaw((int)(.75 * multi * 255));
+                lazy.setRaw((int)(.75 * multi * 255));
             }
 
         }
