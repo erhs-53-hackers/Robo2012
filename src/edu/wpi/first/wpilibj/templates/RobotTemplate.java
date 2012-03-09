@@ -114,14 +114,34 @@ public class RobotTemplate extends IterativeRobot {
     }
     
     public void teleopInit() {
-        camera = AxisCamera.getInstance();
-        camera.writeBrightness(30);
-        camera.writeResolution(AxisCamera.ResolutionT.k640x480);
+        //camera = AxisCamera.getInstance();
+        //camera.writeBrightness(30);
+        //camera.writeResolution(AxisCamera.ResolutionT.k640x480);
         msg.clearConsole();
     }
     
     public void teleopContinuous() {
-         System.out.println("Hello");
+        // Have the camera scan for targets
+/*
+         * if (camera.freshImage()) { try { imageProc.getTheParticles(camera);
+         * imageProc.organizeTheParticles(imageProc.particles);
+         *
+         * if (isShooting) { double angle =
+         * ImageProcessing.getHorizontalAngle(target); //msg.printLn("" +
+         * angle);
+         *
+         * while (MathX.abs(angle - gyro.modulatedAngle) > 2) {
+         * gyro.turnToAngle(angle); getWatchdog().feed(); }
+         * launcher.shoot(target.boundingRectHeight, hoopHeight); isShooting =
+         * false; } } catch (Exception e) { e.printStackTrace();
+         * //msg.printLn("ERROR!!! Cannot Fetch Image"); } }
+         *
+         */
+    }
+    
+    //called continuously
+    public void teleopPeriodic() {
+        System.out.println("Hello");
         
         if (controls.button7()) {            
             collecting = true;
@@ -143,7 +163,7 @@ public class RobotTemplate extends IterativeRobot {
             //isManual = false; REMOVE ME!!!!!
         }
         
-        if (stick1.getRawButton(2)) {
+        if (stick1.getRawButton(2) || stick2.getRawButton(2)) {
             drive.tankDrive(stick1.getAxis(Joystick.AxisType.kY) * .5,
                     stick2.getAxis(Joystick.AxisType.kY) * .5);            
         } else {
@@ -211,34 +231,13 @@ public class RobotTemplate extends IterativeRobot {
 
 
         // motor to lower bridge arm
-        if (stick1.getRawButton(2)) {
-            bridgeArm.set(1);
-        } else if (stick1.getRawButton(3)) {
+        if (stick1.getRawButton(3)) {
+            bridgeArm.set(.25);
+        } else if (stick1.getRawButton(2)) {
             bridgeArm.set(-1);
         } else {
             bridgeArm.set(0);
         }
-        // Have the camera scan for targets
-/*
-         * if (camera.freshImage()) { try { imageProc.getTheParticles(camera);
-         * imageProc.organizeTheParticles(imageProc.particles);
-         *
-         * if (isShooting) { double angle =
-         * ImageProcessing.getHorizontalAngle(target); //msg.printLn("" +
-         * angle);
-         *
-         * while (MathX.abs(angle - gyro.modulatedAngle) > 2) {
-         * gyro.turnToAngle(angle); getWatchdog().feed(); }
-         * launcher.shoot(target.boundingRectHeight, hoopHeight); isShooting =
-         * false; } } catch (Exception e) { e.printStackTrace();
-         * //msg.printLn("ERROR!!! Cannot Fetch Image"); } }
-         *
-         */
-    }
-    
-    //called continuously
-    public void teleopPeriodic() {
-       
         
         
     }
