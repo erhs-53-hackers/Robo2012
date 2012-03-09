@@ -213,7 +213,7 @@ public class RobotTemplate extends IterativeRobot {
         if (camera.freshImage()) {
             try {
                 imageProc.getTheParticles(camera);
-                imageProc.orginizeTheParticles(imageProc.particles);
+                imageProc.organizeTheParticles(imageProc.particles);
                 
                 if (isShooting) {
                     launcher.shoot(target.boundingRectHeight, hoopHeight);
