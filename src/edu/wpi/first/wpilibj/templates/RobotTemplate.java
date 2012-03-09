@@ -138,9 +138,16 @@ public class RobotTemplate extends IterativeRobot {
         } else if (controls.button7()) {
             //isManual = false; REMOVE ME!!!!!
         }
-
-        drive.tankDrive(stick1, stick2);
-
+        
+        if(controls.button2())
+        {
+          drive.tankDrive(stick1.getAxis(Joystick.AxisType.kY)*.5, 
+                  stick2.getAxis(Joystick.AxisType.kY)*.5);  
+        }
+        else
+        {
+            drive.tankDrive(stick1, stick2);
+        }
         if (!isManual) {
             //motor to collect the balls off the ground
             System.out.println("Mode: Auto");
@@ -178,6 +185,7 @@ public class RobotTemplate extends IterativeRobot {
                 launcher.loadMotor.set(0);
             }
         }
+        
         /*
          * if (controls.button3()) { gyro.turnRobotToAngle(0);
          *
