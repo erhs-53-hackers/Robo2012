@@ -242,7 +242,7 @@ public class RobotTemplate extends IterativeRobot {
 
         // motor to lower bridge arm
         if (stick1.getRawButton(3)) {
-            bridgeArm.set(.25);
+            bridgeArm.set(.5);
         } else if (stick1.getRawButton(2)) {
             bridgeArm.set(-1);
         } else {
