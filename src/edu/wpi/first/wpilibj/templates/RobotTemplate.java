@@ -86,6 +86,12 @@ public class RobotTemplate extends IterativeRobot {
     }
     
     public void autonomousPeriodic() {
+        launcher.launchMotor.set(.75);
+        Timer.delay(3);
+        collectMotor.set(-1);
+        launcher.loadMotor.set(-1);
+        
+        
         /*
          * if (camera.freshImage() && false) { try {
          * imageProc.getTheParticles(camera); target =
@@ -113,7 +119,11 @@ public class RobotTemplate extends IterativeRobot {
          */
     }
     
+    
     public void teleopInit() {
+        launcher.launchMotor.set(0);      
+        collectMotor.set(0);
+        launcher.loadMotor.set(0);
         //camera = AxisCamera.getInstance();
         //camera.writeBrightness(30);
         //camera.writeResolution(AxisCamera.ResolutionT.k640x480);
