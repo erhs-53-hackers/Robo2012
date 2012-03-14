@@ -73,12 +73,18 @@ public class Messager {
      * Clears the DriverStation LCD
      */
     public final void clearConsole() {
-        driverLCD.println(DriverStationLCD.Line.kMain6, 1, "                             ");
-        driverLCD.println(DriverStationLCD.Line.kUser2, 1, "                             ");
-        driverLCD.println(DriverStationLCD.Line.kUser3, 1, "                             ");
-        driverLCD.println(DriverStationLCD.Line.kUser4, 1, "                             ");
-        driverLCD.println(DriverStationLCD.Line.kUser5, 1, "                             ");
-        driverLCD.println(DriverStationLCD.Line.kUser6, 1, "                             ");
+        driverLCD.println(DriverStationLCD.Line.kMain6, 1, ""
+                + "                             ");
+        driverLCD.println(DriverStationLCD.Line.kUser2, 1, ""
+                + "                             ");
+        driverLCD.println(DriverStationLCD.Line.kUser3, 1, ""
+                + "                             ");
+        driverLCD.println(DriverStationLCD.Line.kUser4, 1, ""
+                + "                             ");
+        driverLCD.println(DriverStationLCD.Line.kUser5, 1, ""
+                + "                             ");
+        driverLCD.println(DriverStationLCD.Line.kUser6, 1, ""
+                + "                             ");
     }
 
     /**

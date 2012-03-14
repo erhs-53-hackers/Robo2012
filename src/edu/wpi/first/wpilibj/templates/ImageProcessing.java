@@ -177,7 +177,8 @@ public class ImageProcessing {
         return hypotneuse_0;
     }
 
-    public double getHypotneuse1(double angle, int targetSelector) { //ref-reference number
+    public double getHypotneuse1(double angle, int targetSelector) { 
+        //ref-reference number
         //1 Top
         //2 Middle
         double opposite1 = 0;                             //3 Bottom
@@ -203,7 +204,8 @@ public class ImageProcessing {
         return heightToTopOfTopTarget / MathX.tan(phiAngle);
     }
 
-    public double getAdjacent0(double thetaAngle, double heightToBottomOfTopTarget) {
+    public double getAdjacent0(double thetaAngle,
+            double heightToBottomOfTopTarget) {
         return heightToBottomOfTopTarget / MathX.tan(thetaAngle);
     }
 
@@ -228,8 +230,12 @@ public class ImageProcessing {
 
         double disparity = MathX.abs(adjacent1 / adjacent0 - 1);
 
-        msg.printOnLn("Bottom Adjacent0 : " + adjacent0, DriverStationLCD.Line.kUser2);
-        msg.printOnLn("Bottom Adjacent1 : " + adjacent1, DriverStationLCD.Line.kUser3);
+        msg.printOnLn("Bottom Adjacent0 : " + 
+                adjacent0, DriverStationLCD.Line.kUser2);
+        msg.printOnLn("Bottom Adjacent1 : " + 
+                adjacent1, DriverStationLCD.Line.kUser3);
+        msg.printOnLn("Disparity : " + 
+                disparity, DriverStationLCD.Line.kMain6);
         //msg.printLn("The disperity is " + disparity);
         //System.out.println("---------------------------------------------");
         return disparity;
@@ -266,7 +272,8 @@ public class ImageProcessing {
         topTarget = null;
         middleTargetLeft = null;
         middleTargetRight = null;
-        ParticleAnalysisReport midLeftTargetTemp = null, midRightTargetTemp = null;
+        ParticleAnalysisReport midLeftTargetTemp = null, midRightTargetTemp = 
+                null;
         for (int i = 0; i < particles.length; i++) {
             ParticleAnalysisReport particle = particles[i];
             double minDisparity = Double.POSITIVE_INFINITY;
@@ -311,12 +318,15 @@ public class ImageProcessing {
 
         }
         if (midLeftTargetTemp != null && midRightTargetTemp != null) {
-            middleTargetRight = getRightMost(new ParticleAnalysisReport[]{midLeftTargetTemp, midRightTargetTemp});
-            middleTargetLeft = getLeftMost(new ParticleAnalysisReport[]{midLeftTargetTemp, midRightTargetTemp});
+            middleTargetRight = getRightMost(new ParticleAnalysisReport[]
+            {midLeftTargetTemp, midRightTargetTemp});
+            middleTargetLeft = getLeftMost(new ParticleAnalysisReport[]
+            {midLeftTargetTemp, midRightTargetTemp});
 
         } else {
             if(topTarget != null && midRightTargetTemp != null) {
-                ParticleAnalysisReport[] array = new ParticleAnalysisReport[]{topTarget, midRightTargetTemp};
+                ParticleAnalysisReport[] array = new ParticleAnalysisReport[]
+                {topTarget, midRightTargetTemp};
                 ParticleAnalysisReport p = getRightMost(array);
                 if(p == midRightTargetTemp) {
                     middleTargetRight = midRightTargetTemp;
@@ -324,7 +334,8 @@ public class ImageProcessing {
                     middleTargetLeft = midRightTargetTemp;
                 }                
             } else if(topTarget != null && midLeftTargetTemp != null) {
-                ParticleAnalysisReport[] array = new ParticleAnalysisReport[]{topTarget, midLeftTargetTemp};
+                ParticleAnalysisReport[] array = new ParticleAnalysisReport[]
+                {topTarget, midLeftTargetTemp};
                 ParticleAnalysisReport p = getLeftMost(array);
                 if(p == midRightTargetTemp) {
                     middleTargetLeft = midLeftTargetTemp;
@@ -333,7 +344,8 @@ public class ImageProcessing {
                 }                
             }
             else if(bottomTarget != null && midRightTargetTemp != null) {
-                ParticleAnalysisReport[] array = new ParticleAnalysisReport[]{bottomTarget, midRightTargetTemp};
+                ParticleAnalysisReport[] array = new ParticleAnalysisReport[]
+                {bottomTarget, midRightTargetTemp};
                 ParticleAnalysisReport p = getRightMost(array);
                 if(p == midRightTargetTemp) {
                     middleTargetRight = midRightTargetTemp;
@@ -341,7 +353,8 @@ public class ImageProcessing {
                     middleTargetLeft = midRightTargetTemp;
                 }              
             }else if(bottomTarget != null && midLeftTargetTemp != null) {
-                ParticleAnalysisReport[] array = new ParticleAnalysisReport[]{bottomTarget, midLeftTargetTemp};
+                ParticleAnalysisReport[] array = new ParticleAnalysisReport[]
+                {bottomTarget, midLeftTargetTemp};
                 ParticleAnalysisReport p = getLeftMost(array);
                 if(p == midRightTargetTemp) {
                     middleTargetLeft= midLeftTargetTemp;
@@ -356,7 +369,8 @@ public class ImageProcessing {
 
     }
 
-    public double CameraCorrection(ParticleAnalysisReport particle, String target) {
+    public double CameraCorrection
+            (ParticleAnalysisReport particle, String target) {
 
 
 
