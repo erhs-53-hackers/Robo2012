@@ -14,35 +14,28 @@ import edu.wpi.first.wpilibj.image.ParticleAnalysisReport;
  * @author Team53
  */
 public class RobotTemplate extends IterativeRobot {
-    
+
     RobotDrive drive;
-    Joystick stick1;
-    Joystick stick2;
-    Joystick stick3;
+    Messager msg;
+    Joystick leftStick, rightStick, launchControlStick;
+    Controls launchControls;
     AxisCamera camera;
     ImageProcessing imageProc;
     ParticleAnalysisReport target;
     Physics physics;
     Launcher launcher;
-    Jaguar bridgeArm;
-    Jaguar collectMotor;
+    Jaguar bridgeArm, collector;
     GyroX gyro;
-    Messager msg;
-    Controls controls;
     boolean isManual = true;
     boolean isShooting = false;
     int shots = 0;
     double distanceFromTarget;
     double hoopHeight = Physics.HOOP1;
-    boolean collecting = false;
-    
+
     public void robotInit() {
         msg = new Messager();
-        
         msg.printLn("Loading Please Wait...");
         Timer.delay(10);
-        msg.printLn("1");
-        //left front, left back, right front, right back
         drive = new RobotDrive(
                 RoboMap.MOTOR1, RoboMap.MOTOR2, RoboMap.MOTOR3, RoboMap.MOTOR4);
         drive.setInvertedMotor(RobotDrive.MotorType.kFrontRight, true);
@@ -51,47 +44,29 @@ public class RobotTemplate extends IterativeRobot {
         drive.setInvertedMotor(RobotDrive.MotorType.kFrontLeft, true);
         drive.setSafetyEnabled(false);
         getWatchdog().setEnabled(false);
-        msg.printLn("2");
-        
-        stick1 = new Joystick(RoboMap.JOYSTICK1);
-        stick2 = new Joystick(RoboMap.JOYSTICK2);
-        stick3 = new Joystick(RoboMap.JOYSTICK3);
-        controls = new Controls(stick3);
-        msg.printLn("3");
-        
-        
-        
-        
-        
-        msg.printLn("4");
+        leftStick = new Joystick(RoboMap.JOYSTICK1);
+        rightStick = new Joystick(RoboMap.JOYSTICK2);
+        launchControlStick = new Joystick(RoboMap.JOYSTICK3);
+        launchControls = new Controls(launchControlStick);
         //imageProc = new ImageProcessing();
-        msg.printLn("5");
         physics = new Physics();
-        msg.printLn("6");
         bridgeArm = new Jaguar(RoboMap.BRIDGE_MOTOR);
-        msg.printLn("7");
-        collectMotor = new Jaguar(RoboMap.COLLECT_MOTOR);
-        msg.printLn("8");
+        collector = new Jaguar(RoboMap.COLLECT_MOTOR);
         launcher = new Launcher();
-        msg.printLn("9");
         //gyro = new GyroX(RoboMap.GYRO, RoboMap.LAUNCH_TURN, drive);
-        
-        
-        
         msg.printLn("Done: FRC 2012");
     }
-    
+
     public void autonomousInit() {
         isShooting = false;//change me!!!!!
     }
-    
+
     public void autonomousPeriodic() {
         launcher.launchMotor.set(.75);
         Timer.delay(3);
-        collectMotor.set(-1);
+        collector.set(-1);
         launcher.loadMotor.set(-1);
-        
-        
+
         /*
          * if (camera.freshImage() && false) { try {
          * imageProc.getTheParticles(camera); target =
@@ -118,18 +93,17 @@ public class RobotTemplate extends IterativeRobot {
          * Image"); } } getWatchdog().feed();
          */
     }
-    
-    
+
     public void teleopInit() {
-        launcher.launchMotor.set(0);      
-        collectMotor.set(0);
+        launcher.launchMotor.set(0);
+        collector.set(0);
         launcher.loadMotor.set(0);
         //camera = AxisCamera.getInstance();
         //camera.writeBrightness(30);
         //camera.writeResolution(AxisCamera.ResolutionT.k640x480);
         msg.clearConsole();
     }
-    
+
     public void teleopContinuous() {
         // Have the camera scan for targets
 /*
@@ -148,107 +122,90 @@ public class RobotTemplate extends IterativeRobot {
          *
          */
     }
-    
-    //called continuously
+
     public void teleopPeriodic() {
-        System.out.println("Hello");
-        
-        if (controls.button7()) {            
-            collecting = true;
-            
-        } else if (controls.button8()) {
-            collecting = false;
-        }
-        
-        if (collecting) {
-            collectMotor.set(-1);
-        } else {
-            collectMotor.set(0);
-        }
-        
-        if (controls.button8()) {
+        System.out.println("Teleop Looping");
+
+        // switch to control assisted teleop
+        if (launchControls.button11()) {
             isManual = true;
-            
-        } else if (controls.button7()) {
-            //isManual = false; REMOVE ME!!!!!
+        } else if (launchControls.button12()) {
+            isManual = false;
         }
-        
-        if (stick1.getRawButton(2) || stick2.getRawButton(2)) {
-            drive.tankDrive(stick1.getAxis(Joystick.AxisType.kY) * .5,
-                    stick2.getAxis(Joystick.AxisType.kY) * .5);            
+
+        // drive system, independent of teleop assistance
+        if (leftStick.getRawButton(2) || rightStick.getRawButton(2)) {
+            drive.tankDrive(leftStick.getAxis(Joystick.AxisType.kY) * .5,
+                    rightStick.getAxis(Joystick.AxisType.kY) * .5);
         } else {
-            drive.tankDrive(stick1, stick2);
+            drive.tankDrive(leftStick, rightStick);
         }
-        
-        if (!isManual) {
-            //motor to collect the balls off the ground
-            msg.printOnLn("Mode: Auto", DriverStationLCD.Line.kMain6);
-            collectMotor.set((stick3.getThrottle() + 1) / 2);
-            if (controls.FOV_Left()) {
-                target = imageProc.middleTargetLeft;
-                hoopHeight = Physics.HOOP2;
-                
-            } else if (controls.FOV_Right()) {
-                target = imageProc.middleTargetRight;
-                hoopHeight = Physics.HOOP2;
-                
-            } else if (controls.FOV_Top()) {
-                target = imageProc.topTarget;
-                hoopHeight = Physics.HOOP3;
-                
-            } else if (controls.FOV_Bottom()) {
-                target = imageProc.bottomTarget;
-                hoopHeight = Physics.HOOP1;
-                
-            }
-            if (controls.button2()) {
-                isShooting = true;
-            }
+
+        // motor to lower bridge arm, currently independent of teleop assitance
+        if (leftStick.getRawButton(3)) {
+            bridgeArm.set(.5);
+        } else if (leftStick.getRawButton(2)) {
+            bridgeArm.set(-1);
         } else {
+            bridgeArm.set(0);
+        }
+
+        if (isManual) {
             msg.printOnLn("Mode: Manual", DriverStationLCD.Line.kMain6);
-            
-            
-            double power = (stick3.getThrottle() + 1) / 2;
+            if (launchControls.button7()) {
+                collector.set(-1);
+            } else if (launchControls.button8()) {
+                collector.set(0);
+            }
+            double power = (launchControlStick.getThrottle() + 1) / 2;
             launcher.launchMotor.set(power);
-            
-            if (controls.button1()) {
+            msg.printOnLn("Launch Power = " + power, DriverStationLCD.Line.kUser2);
+            // control the firing mechanism
+            if (launchControls.button1()) {
                 launcher.manualShoot();
             } else {
                 launcher.loadMotor.set(0);
             }
+        } else if (!isManual) {
+            msg.printOnLn("Mode: Auto", DriverStationLCD.Line.kMain6);
+            collector.set((launchControlStick.getThrottle() + 1) / 2);
+            if (launchControls.FOV_Left()) {
+                target = imageProc.middleTargetLeft;
+                hoopHeight = Physics.HOOP2;
+            } else if (launchControls.FOV_Right()) {
+                target = imageProc.middleTargetRight;
+                hoopHeight = Physics.HOOP2;
+            } else if (launchControls.FOV_Top()) {
+                target = imageProc.topTarget;
+                hoopHeight = Physics.HOOP3;
+            } else if (launchControls.FOV_Bottom()) {
+                target = imageProc.bottomTarget;
+                hoopHeight = Physics.HOOP1;
+            }
+            if (launchControls.button2()) {
+                isShooting = true;
+            }
         }
 
         /*
-         * if (controls.button3()) { gyro.turnRobotToAngle(0);
+         * if (launchControls.button3()) { gyro.turnRobotToAngle(0);
          *
-         * } else if (controls.button4()) { gyro.turnRobotToAngle(180);
+         * } else if (launchControls.button4()) { gyro.turnRobotToAngle(180);
          *
-         * } else if (controls.button5()) { gyro.turnRobotToAngle(-90);
+         * } else if (launchControls.button5()) { gyro.turnRobotToAngle(-90);
          *
-         * } else if (controls.button6()) { gyro.turnRobotToAngle(90);
+         * } else if (launchControls.button6()) { gyro.turnRobotToAngle(90);
          *
          * }
          *
          */
 
         /*
-         * //motor to control lazy susan for launcher if (controls.button9()) {
-         * gyro.turnAngle(5); } else if (controls.button10()) {
-         * gyro.turnAngle(-5); }
+         * //motor to control lazy susan for launcher if
+         * (launchControls.button9()) { gyro.turnAngle(5); } else if
+         * (launchControls.button10()) { gyro.turnAngle(-5); }
          *
          */
 
-
-
-        // motor to lower bridge arm
-        if (stick1.getRawButton(3)) {
-            bridgeArm.set(.5);
-        } else if (stick1.getRawButton(2)) {
-            bridgeArm.set(-1);
-        } else {
-            bridgeArm.set(0);
-        }
-        
-        
     }
 }
