@@ -1,39 +1,50 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package edu.wpi.first.wpilibj.templates;
 
 import edu.wpi.first.wpilibj.Gyro;
-import edu.wpi.first.wpilibj.Jaguar;
 import edu.wpi.first.wpilibj.PWM;
 import edu.wpi.first.wpilibj.RobotDrive;
 
 /**
  *
- * @author Nick, Alex, Michael
+ * @author Nick, Alex, Michael, Dale, Chris
  */
 public class GyroX {
 
-    PWM lazy;
-    
     RobotDrive driveTrain;
+    PWM lazySusan;
     Gyro gyro;
     double modulatedAngle;
     double targetAngle = 0;
 
-    public GyroX(final int gyroInit, final int port, RobotDrive robo) {
-        this.gyro = new Gyro(gyroInit);
-        this.lazy = new PWM(port);
-        this.driveTrain = robo;
-        
+    public GyroX(final int gyroChannel) {
+        this.gyro = new Gyro(gyroChannel);
     }
 
-    public void turnToAngle(double newAngle) {
+    public GyroX(final int gyroChannel, RobotDrive robotDrive) {
+        this.gyro = new Gyro(gyroChannel);
+        this.driveTrain = robotDrive;
+    }
+
+    public GyroX(final int gyroChannel, final int lazySusanTurnPort, RobotDrive robotDrive) {
+        this.gyro = new Gyro(gyroChannel);
+        this.lazySusan = new PWM(lazySusanTurnPort);
+        this.driveTrain = robotDrive;
+    }
+
+    private double modAngle(double angle) {
+        double returnAngle = angle % 360 + (angle > 180 ? -360 : 0);
+        return returnAngle;
+    }
+
+    private double refreshGyro() {
+        //this.gyro.reset();
+        modulatedAngle = modAngle(gyro.getAngle() * 4.14015366);
+        return modulatedAngle;
+    }
+
+    public void turnTurretToAngle(double targetAngle) {
         refreshGyro();
-
-        double nowAngle = newAngle - modulatedAngle;
-
+        double nowAngle = targetAngle - modulatedAngle;
         if (nowAngle > 180) {
             nowAngle -= 360;
         }
@@ -43,19 +54,16 @@ public class GyroX {
         int multi = (nowAngle > 0 ? 1 : -1);
         if (Math.abs(nowAngle) > 1.5) {
             if (Math.abs(nowAngle) < 10) {
-                lazy.setRaw((int)(.45 * multi * 255));
+                lazySusan.setRaw((int) (.45 * multi * 255));
             } else {
-                lazy.setRaw((int)(.75 * multi * 255));
+                lazySusan.setRaw((int) (.75 * multi * 255));
             }
-
         }
-
     }
-    public void turnRobotToAngle(double newAngle) {
+
+    public void turnRobotToAngle(double targetAngle) {
         refreshGyro();
-
-        double nowAngle = newAngle - modulatedAngle;
-
+        double nowAngle = targetAngle - modulatedAngle;
         if (nowAngle > 180) {
             nowAngle -= 360;
         }
@@ -69,33 +77,28 @@ public class GyroX {
             } else {
                 driveTrain.mecanumDrive_Polar(0, 0, .75 * multi);
             }
-
         }
-
     }
 
-    private double modAngle(double angle) {
-        double retangle = angle % 360 + (angle > 180 ? -360 : 0);
-        return retangle;
-    }
-
-    public double refreshGyro() {
-        //this.gyro.reset();
-        modulatedAngle = modAngle(gyro.getAngle() * 4.14015366);
-        return modulatedAngle;
-    }
-    /*
-     * public void goStraight(boolean newTarget) { if (newTarget) { targetAngle
-     * = modulatedAngle; } double driveConstant = (Math.abs(targetAngle -
-     * modulatedAngle) > 10 ? .75 : .45) * ((targetAngle - modulatedAngle) > 0 ?
-     * 1 : -1); drive.tankDrive(.25 - driveConstant, .25 + driveConstant); }
-     *
-     */
-
-    public void turnAngle(double turnAmount) {
+    public void turnTurret(double turnAmount) {
         double newAngle = modulatedAngle + turnAmount;
         while (MathX.abs(newAngle - modulatedAngle) > 2) {
-            turnToAngle(newAngle);
+            turnTurretToAngle(newAngle);
         }
     }
+
+    public void turnRobot(double turnAmount) {
+        double newAngle = modulatedAngle + turnAmount;
+        while (MathX.abs(newAngle - modulatedAngle) > 2) {
+            turnRobotToAngle(newAngle);
+        }
+    }
+
+    public double getDriveConstant() {
+        double driveConstant = (Math.abs(targetAngle
+                - modulatedAngle) > 10 ? .75 : .45) * ((targetAngle - modulatedAngle) > 0
+                ? 1 : -1);
+        return driveConstant;
+    }
+    
 }
