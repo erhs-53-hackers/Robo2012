@@ -23,7 +23,7 @@
 (define top-target-upper-height 118)
 (define top-target-lower-height (- top-target-upper-height target-height))
 
-(define middle-target-upper-height 64)
+(define middle-target-upper-height 81)
 (define middle-target-lower-height
   (- middle-target-upper-height target-height))
 
@@ -75,5 +75,25 @@
 (define (adjacent opposite radians)
   (/ opposite
      (tan radians)))
+
+(define (adjacents opposite0 radians0 opposite1 radians1)
+  (for/list ([opposite (list opposite0 opposite1)]
+             [radians (list radians0 radians1)])
+            (adjacent opposite radians)))
+
+(define (adjacents-close-enough? adjacents)
+  (< (/ (apply max adjacents)
+        (apply min adjacents))
+     1.1))
+
+(define (top-target? center bounding-height)
+  (define particle-lower-pixel
+    (center-and-bounding-height->lower-pixel center bounding-height))
+  (define particle-upper-pixel
+    (center-and-bounding-height->upper-pixel center bounding-height))
+  (adjacents-close-enough?
+   (adjacents
+    opposite-top-lower particle-lower-pixel
+    opposite-top-upper particle-upper-pixel)))
 
 (provide (all-defined-out))
