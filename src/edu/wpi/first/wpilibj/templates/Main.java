@@ -27,9 +27,12 @@ public class Main {
         imageCalc.setTargetPixels(imageCalc.topTarget,
                 imageCalc.topTargetReport.center_mass_y,
                 imageCalc.topTargetReport.boundingRectHeight);
-        imageCalc.setTargetPixels(imageCalc.middleTarget,
+        imageCalc.setTargetPixels(imageCalc.middleLeftTarget,
                 imageCalc.middleTargetLeftReport.center_mass_y,
                 imageCalc.middleTargetLeftReport.boundingRectHeight);
+        imageCalc.setTargetPixels(imageCalc.middleRightTarget,
+                imageCalc.middleTargetRightReport.center_mass_y,
+                imageCalc.middleTargetRightReport.boundingRectHeight);
         imageCalc.setTargetPixels(imageCalc.bottomTarget,
                 imageCalc.bottomTargetReport.center_mass_y,
                 imageCalc.bottomTargetReport.boundingRectHeight);
@@ -55,16 +58,20 @@ public class Main {
     }
 
     public void main() {
+        try {
+            init();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
         if (controls.FOV_Top()) {
             imageCalc.setCurrentTarget(imageCalc.topTarget);
-        }
-        if (controls.FOV_Bottom()) {
+        } else if (controls.FOV_Bottom()) {
             imageCalc.setCurrentTarget(imageCalc.bottomTarget);
-        }
-        if (controls.FOV_Left() || controls.FOV_Right()) {
-            imageCalc.setCurrentTarget(imageCalc.middleTarget);
-        }
-        if (imageCalc.currentTarget != null) {
+        } else if (controls.FOV_Left()) {
+            imageCalc.setCurrentTarget(imageCalc.middleLeftTarget);
+        } else if (controls.FOV_Right()) {
+            imageCalc.setCurrentTarget(imageCalc.middleRightTarget);
+        } else if (imageCalc.currentTarget != null) {
             System.out.println("Distance: " + returnDistanceToTarget());
         } else {
             System.out.println("Cannot determine distance");

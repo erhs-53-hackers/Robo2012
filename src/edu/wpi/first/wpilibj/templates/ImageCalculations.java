@@ -19,7 +19,7 @@ public class ImageCalculations {
     CriteriaCollection criteriaCollection = new CriteriaCollection();
     ParticleAnalysisReport bottomTargetReport, topTargetReport,
             middleTargetLeftReport, middleTargetRightReport;
-    Target bottomTarget, middleTarget, topTarget, currentTarget;
+    Target bottomTarget, middleLeftTarget, middleRightTarget, topTarget, currentTarget;
     Messager msg = new Messager();
     // camera imaging values
     final double FOV_d = 35.25; // field of view, degrees
@@ -34,7 +34,8 @@ public class ImageCalculations {
         criteriaCollection.addCriteria(
                 MeasurementType.IMAQ_MT_BOUNDING_RECT_HEIGHT, 40, 400, false);
         bottomTarget = new Target((2 + (1 / 3.0)) * 12);
-        middleTarget = new Target((5 + (1 / 12.0)) * 12);
+        middleLeftTarget = new Target((5 + (1 / 12.0)) * 12);
+        middleRightTarget = new Target((5 + (1 / 12.0)) * 12);
         topTarget = new Target((8 + (1 / 6.0)) * 12);
     }
 
