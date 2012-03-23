@@ -71,7 +71,8 @@ public class Main {
             imageCalc.setCurrentTarget(imageCalc.middleLeftTarget);
         } else if (controls.FOV_Right()) {
             imageCalc.setCurrentTarget(imageCalc.middleRightTarget);
-        } else if (imageCalc.currentTarget != null) {
+        }
+        if (imageCalc.currentTarget != null) {
             System.out.println("Distance: " + returnDistanceToTarget());
         } else {
             System.out.println("Cannot determine distance");
