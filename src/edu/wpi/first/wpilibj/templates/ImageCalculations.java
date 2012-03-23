@@ -19,7 +19,10 @@ public class ImageCalculations {
     CriteriaCollection criteriaCollection = new CriteriaCollection();
     ParticleAnalysisReport bottomTargetReport, topTargetReport,
             middleTargetLeftReport, middleTargetRightReport;
-    Target bottomTarget, middleLeftTarget, middleRightTarget, topTarget, currentTarget;
+    Target topTarget,
+            middleLeftTarget, middleRightTarget,
+            bottomTarget,
+            currentTarget;
     Messager msg = new Messager();
     // camera imaging values
     final double FOV_d = 35.25; // field of view, degrees
@@ -47,7 +50,8 @@ public class ImageCalculations {
         return (degrees * FOV_p) / FOV_d;
     }
 
-    public void setTargetPixels(Target target, int centerMassY, int pixelHeight) {
+    public void setTargetPixels(
+            Target target, int centerMassY, int pixelHeight) {
         target.setPixelValues(centerMassY, pixelHeight);
     }
 
@@ -76,7 +80,8 @@ public class ImageCalculations {
         bottomTargetReport = getBottomMost(particles);
     }
 
-    public static ParticleAnalysisReport getTopMost(ParticleAnalysisReport[] particles) {
+    public static ParticleAnalysisReport getTopMost(
+            ParticleAnalysisReport[] particles) {
         ParticleAnalysisReport greatest = particles[0];
         for (int i = 0; i < particles.length; i++) {
             ParticleAnalysisReport particle = particles[i];
@@ -88,7 +93,8 @@ public class ImageCalculations {
         return greatest;
     }
 
-    public static ParticleAnalysisReport getBottomMost(ParticleAnalysisReport[] particles) {
+    public static ParticleAnalysisReport getBottomMost(
+            ParticleAnalysisReport[] particles) {
         ParticleAnalysisReport lowest = particles[0];
         for (int i = 0; i < particles.length; i++) {
             ParticleAnalysisReport particle = particles[i];
@@ -100,7 +106,8 @@ public class ImageCalculations {
         return lowest;
     }
 
-    public static ParticleAnalysisReport getRightMost(ParticleAnalysisReport[] particles) {
+    public static ParticleAnalysisReport getRightMost(
+            ParticleAnalysisReport[] particles) {
         ParticleAnalysisReport rightistTarget = particles[0];
         for (int i = 0; i < particles.length; i++) {
             ParticleAnalysisReport particle = particles[i];
@@ -112,7 +119,8 @@ public class ImageCalculations {
         return rightistTarget;
     }
 
-    public static ParticleAnalysisReport getLeftMost(ParticleAnalysisReport[] particles) {
+    public static ParticleAnalysisReport getLeftMost(
+            ParticleAnalysisReport[] particles) {
         ParticleAnalysisReport leftistTarget = particles[0];
         for (int i = 0; i < particles.length; i++) {
             ParticleAnalysisReport particle = particles[i];
@@ -126,7 +134,7 @@ public class ImageCalculations {
 
     public void getTheParticles(AxisCamera camera) throws Exception {
         int erosionCount = 2;
-        // true means use connectivity 8, true means connectivity 4
+        // true means use connectivity 8, false means connectivity 4
         boolean connectivity8Or4 = false;
         ColorImage colorImage;
         BinaryImage binaryImage;
@@ -162,8 +170,12 @@ public class ImageCalculations {
             double minDisparity = Double.POSITIVE_INFINITY;
             int target = 1;
             for (int j = 1; j < 4; j++) {
-                double currentDisparity = getDisparity(currentTarget.bottomHeight, currentTarget.bottomPixelValue,
-                        currentTarget.topHeight, currentTarget.topPixelValue);
+                double currentDisparity =
+                        getDisparity(
+                            currentTarget.bottomHeight,
+                            currentTarget.bottomPixelValue,
+                            currentTarget.topHeight,
+                            currentTarget.topPixelValue);
 
                 if (currentDisparity < minDisparity) {
                     minDisparity = currentDisparity;
@@ -196,41 +208,48 @@ public class ImageCalculations {
                 msg.printOnLn("OMFG i cant find any targets",
                         DriverStationLCD.Line.kUser5);
             }
-
-
         }
-        if (midLeftTargetTemp != null && midRightTargetTemp != null) {
-            middleTargetRightReport = getRightMost(new ParticleAnalysisReport[]{midLeftTargetTemp, midRightTargetTemp});
-            middleTargetLeftReport = getLeftMost(new ParticleAnalysisReport[]{midLeftTargetTemp, midRightTargetTemp});
 
+        ParticleAnalysisReport[] targets;
+        ParticleAnalysisReport p;
+
+        if (midLeftTargetTemp != null && midRightTargetTemp != null) {
+            targets = new ParticleAnalysisReport[]{
+                midLeftTargetTemp, midRightTargetTemp};
+            middleTargetRightReport = getRightMost(targets);
+            middleTargetLeftReport = getLeftMost(targets);
         } else {
             if (topTarget != null && midRightTargetTemp != null) {
-                ParticleAnalysisReport[] array = new ParticleAnalysisReport[]{topTargetReport, midRightTargetTemp};
-                ParticleAnalysisReport p = getRightMost(array);
+                targets = new ParticleAnalysisReport[]{
+                    topTargetReport, midRightTargetTemp};
+                p = getRightMost(targets);
                 if (p == midRightTargetTemp) {
                     middleTargetRightReport = midRightTargetTemp;
                 } else {
                     middleTargetLeftReport = midRightTargetTemp;
                 }
             } else if (topTarget != null && midLeftTargetTemp != null) {
-                ParticleAnalysisReport[] array = new ParticleAnalysisReport[]{topTargetReport, midLeftTargetTemp};
-                ParticleAnalysisReport p = getLeftMost(array);
+                targets = new ParticleAnalysisReport[]{
+                    topTargetReport, midLeftTargetTemp};
+                p = getLeftMost(targets);
                 if (p == midRightTargetTemp) {
                     middleTargetLeftReport = midLeftTargetTemp;
                 } else {
                     middleTargetRightReport = midLeftTargetTemp;
                 }
             } else if (bottomTarget != null && midRightTargetTemp != null) {
-                ParticleAnalysisReport[] array = new ParticleAnalysisReport[]{bottomTargetReport, midRightTargetTemp};
-                ParticleAnalysisReport p = getRightMost(array);
+                targets = new ParticleAnalysisReport[]{
+                    bottomTargetReport, midRightTargetTemp};
+                p = getRightMost(targets);
                 if (p == midRightTargetTemp) {
                     middleTargetRightReport = midRightTargetTemp;
                 } else {
                     middleTargetLeftReport = midRightTargetTemp;
                 }
             } else if (bottomTarget != null && midLeftTargetTemp != null) {
-                ParticleAnalysisReport[] array = new ParticleAnalysisReport[]{bottomTargetReport, midLeftTargetTemp};
-                ParticleAnalysisReport p = getLeftMost(array);
+                targets = new ParticleAnalysisReport[]{
+                    bottomTargetReport, midLeftTargetTemp};
+                p = getLeftMost(targets);
                 if (p == midRightTargetTemp) {
                     middleTargetLeftReport = midLeftTargetTemp;
                 } else {
@@ -240,7 +259,5 @@ public class ImageCalculations {
                 msg.printOnLn("Not 2 targets!!!", DriverStationLCD.Line.kMain6);
             }
         }
-
-
     }
 }
