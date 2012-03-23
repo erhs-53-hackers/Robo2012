@@ -302,6 +302,47 @@ public class ImageProcessing {
         convexHullImage.free();
         filteredImage.free();
     }
+    
+    // Danny's algorithm
+    private double FOVradians = Math.toRadians(35);
+    private double maxHeight = 480;
+    private double cameraTilt = Math.toRadians(15);
+    private double levelPixel = FOVradians / 2 + toPixels(cameraTilt);
+    
+    
+    
+    private double toPixels(double radians) {
+        return radians / FOVradians * maxHeight;
+    }
+    
+    private double toRadians(double pixels) {
+        return pixels / maxHeight * FOVradians;
+    }
+    private double toUpperPixel(double center, double height) {
+        return center - (height/2);
+    }
+    
+    private double toLowerPixel(double center, double height) {
+        return center + (height/2);
+    }
+    
+    private double convertToLevel(double pixel) {
+        return levelPixel - pixel;
+    }
+    public double adjacent(double opposite, double radians) {
+        return opposite / Math.tan(radians);        
+    }
+    
+    public double getDistance() {
+        ParticleAnalysisReport top = getTopMost(particles);
+        double radians = toRadians(convertToLevel(toUpperPixel(top.center_mass_y, top.boundingRectHeight)));
+        msg.printOnLn("" + Math.toDegrees(radians), DriverStationLCD.Line.kMain6);
+        return adjacent(heightToTopOfTopTarget - cameraHeight, radians);
+    }
+    
+    //end
+    
+    
 
     public void organizeTheParticles(ParticleAnalysisReport[] particles) {
         bottomTarget = null;

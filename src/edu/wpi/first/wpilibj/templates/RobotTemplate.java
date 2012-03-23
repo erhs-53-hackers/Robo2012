@@ -14,7 +14,7 @@ import edu.wpi.first.wpilibj.image.ParticleAnalysisReport;
  * @author Team53
  */
 public class RobotTemplate extends IterativeRobot {
-
+    
     RobotDrive drive;
     Messager msg;
     Joystick leftStick, rightStick, launchControlStick;
@@ -31,7 +31,7 @@ public class RobotTemplate extends IterativeRobot {
     int shots = 0;
     double distanceFromTarget;
     double hoopHeight = Physics.HOOP1;
-
+    
     public void robotInit() {
         msg = new Messager();
         msg.printLn("Loading Please Wait...");
@@ -48,7 +48,11 @@ public class RobotTemplate extends IterativeRobot {
         rightStick = new Joystick(RoboMap.JOYSTICK2);
         launchControlStick = new Joystick(RoboMap.JOYSTICK3);
         launchControls = new Controls(launchControlStick);
-        //imageProc = new ImageProcessing();
+        
+        camera = AxisCamera.getInstance();
+        camera.writeBrightness(30);
+        camera.writeResolution(AxisCamera.ResolutionT.k640x480);
+        imageProc = new ImageProcessing();
         physics = new Physics();
         bridgeArm = new Jaguar(RoboMap.BRIDGE_MOTOR);
         collector = new Jaguar(RoboMap.COLLECT_MOTOR);
@@ -56,43 +60,58 @@ public class RobotTemplate extends IterativeRobot {
         //gyro = new GyroX(RoboMap.GYRO, RoboMap.LAUNCH_TURN, drive);
         msg.printLn("Done: FRC 2012");
     }
-
+    
     public void autonomousInit() {
         isShooting = false;//change me!!!!!
     }
-
+    
     public void autonomousPeriodic() {
-        launcher.launchMotor.set(.75);
-        Timer.delay(3);
-        collector.set(-1);
-        launcher.loadMotor.set(-1);
+        //launcher.launchMotor.set(.75);
+        //Timer.delay(3);
+        //collector.set(-1);
+        //launcher.loadMotor.set(-1);
+        //msg.printLn("yo");
+        if (camera.freshImage()) {            
+            try {
+                imageProc.getTheParticles(camera);
+                
+                msg.printOnLn("" + imageProc.getDistance(), DriverStationLCD.Line.kUser2);
+            } catch (Exception e) {
+                msg.printLn("Error");
+            }
+        }
 
-        /*
-         * if (camera.freshImage() && false) { try {
-         * imageProc.getTheParticles(camera); target =
-         * ImageProcessing.getTopMost(imageProc.particles);
-         *
-         *
-         * double angle = ImageProcessing.getHorizontalAngle(target);
-         * //msg.printLn("" + angle); /* while (MathX.abs(angle -
-         * gyro.modulatedAngle) > 2) { gyro.turnToAngle(angle);
-         * getWatchdog().feed(); }
-         *
-         *
-         *
-         *
-         *
-         *
-         *
-         * if (isShooting) { Timer.delay(3);
-         *
-         * launcher.shoot(target.boundingRectHeight, Physics.HOOP3);
-         *
-         * shots++; if (shots == 2) { isShooting = false; } } } catch (Exception
-         * e) { e.printStackTrace(); System.out.println("ERROR!!! Cannot Fetch
-         * Image"); } } getWatchdog().feed();
-         */
-    }
+
+
+
+            /*
+             * if (camera.freshImage() && false) { try {
+             * imageProc.getTheParticles(camera); target =
+             * ImageProcessing.getTopMost(imageProc.particles);
+             *
+             *
+             * double angle = ImageProcessing.getHorizontalAngle(target);
+             * //msg.printLn("" + angle); /* while (MathX.abs(angle -
+             * gyro.modulatedAngle) > 2) { gyro.turnToAngle(angle);
+             * getWatchdog().feed(); }
+             *
+             *
+             *
+             *
+             *
+             *
+             *
+             * if (isShooting) { Timer.delay(3);
+             *
+             * launcher.shoot(target.boundingRectHeight, Physics.HOOP3);
+             *
+             * shots++; if (shots == 2) { isShooting = false; } } } catch
+             * (Exception e) { e.printStackTrace(); System.out.println("ERROR!!!
+             * Cannot Fetch Image"); } } getWatchdog().feed();
+             */
+        }
+
+    
 
     public void teleopInit() {
         launcher.launchMotor.set(0);
@@ -103,7 +122,7 @@ public class RobotTemplate extends IterativeRobot {
         //camera.writeResolution(AxisCamera.ResolutionT.k640x480);
         msg.clearConsole();
     }
-
+    
     public void teleopContinuous() {
         // Have the camera scan for targets
 /*
@@ -122,7 +141,7 @@ public class RobotTemplate extends IterativeRobot {
          *
          */
     }
-
+    
     public void teleopPeriodic() {
         System.out.println("Teleop Looping");
 
@@ -149,7 +168,7 @@ public class RobotTemplate extends IterativeRobot {
         } else {
             bridgeArm.set(0);
         }
-
+        
         if (isManual) {
             msg.printOnLn("Mode: Manual", DriverStationLCD.Line.kMain6);
             if (launchControls.button7()) {
@@ -206,6 +225,6 @@ public class RobotTemplate extends IterativeRobot {
          * (launchControls.button10()) { gyro.turnAngle(-5); }
          *
          */
-
+        
     }
 }
