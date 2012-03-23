@@ -3,6 +3,7 @@
 #lang racket
 
 (require rackunit
+         plot/utils ; for degrees->radians, radians->degrees
          "target-identifier.rkt")
 
 (define top-center-mass-y 50)
@@ -54,9 +55,9 @@
 
 ; given a pixel, return how many pixels from it to level
 ;   in the camera's field of view
-(check-equal? (pixel->pixels-to-level 0)
+(check-equal? (pixel->elevation-pixels 0)
               level-pixel)
-(check-equal? (pixel->pixels-to-level 1)
+(check-equal? (pixel->elevation-pixels 1)
               (- level-pixel 1))
 
 (define top-particle-lower-pixel
@@ -64,12 +65,12 @@
    top-center-mass-y
    top-bounding-rect-height))
 (define top-particle-lower-radians
-  (pixels->radians (pixel->pixels-to-level top-particle-lower-pixel)))
+  (pixels->radians (pixel->elevation-pixels top-particle-lower-pixel)))
 (define top-particle-upper-pixel
   (center-and-bounding-height->upper-pixel
    top-center-mass-y top-bounding-rect-height))
 (define top-particle-upper-radians
-  (pixels->radians (pixel->pixels-to-level top-particle-upper-pixel)))
+  (pixels->radians (pixel->elevation-pixels top-particle-upper-pixel)))
 ; given an opposite and an angle, calculate the adjacent
 (check-= (adjacent opposite-top-upper top-particle-upper-radians)
          112
@@ -97,11 +98,39 @@
 (check-false (adjacents-close-enough? (list (* 1.2 adjacent0) adjacent1))
              "the adjacents are too different to be the same triangle")
 
+(check-= (radians->degrees
+          (center-and-bounding-height-pixels->lower-elevation-radians
+           280 122))
+         4.5828125
+         1
+         (string-append "convert from center and bounding height"
+                        " in pixels to lower elevation in radians"))
+(check-= (radians->degrees
+          (center-and-bounding-height-pixels->upper-elevation-radians
+           280 122))
+         13.5421875
+         1
+         (string-append "convert from center and bounding height"
+                        " in pixels to upper elevation in radians"))
+
 ; given the center and bounding height of a particle,
 ;   return whether it's the top target or not
-(check-true (top-target? top-center-mass-y top-bounding-rect-height))
-(check-false (top-target? (+ 40 top-center-mass-y) top-bounding-rect-height)
-             "not top target if it's 40 pixels lower and same size")
+(check-true (top-target? top-center-mass-y top-bounding-rect-height)
+            "top target should be identified as such")
 (check-false (top-target? (+ 14 top-center-mass-y)
                           (+ 28 top-bounding-rect-height))
              "not top target if it's 28 pixels bigger and same upper height")
+
+(define middle-center-mass-y 280)
+(define middle-bounding-rect-height 122)
+(check-true (middle-target? middle-center-mass-y middle-bounding-rect-height)
+             "middle target should be identified as such")
+(check-false (middle-target? top-center-mass-y top-bounding-rect-height)
+             "top target is not the middle target")
+
+(define bottom-center-mass-y 506)
+(define bottom-bounding-rect-height 123)
+(check-true (bottom-target? bottom-center-mass-y bottom-bounding-rect-height)
+             "bottom target should be identified as such")
+(check-false (bottom-target? top-center-mass-y top-bounding-rect-height)
+             "top target is not the bottom target")

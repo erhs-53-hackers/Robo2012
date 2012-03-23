@@ -69,7 +69,7 @@
 (define (center-and-bounding-height->lower-pixel center bounding-height)
   (+ center (/ bounding-height 2)))
 
-(define (pixel->pixels-to-level pixel)
+(define (pixel->elevation-pixels pixel)
   (- level-pixel pixel))
 
 (define (adjacent opposite radians)
@@ -82,18 +82,57 @@
             (adjacent opposite radians)))
 
 (define (adjacents-close-enough? adjacents)
-  (< (/ (apply max adjacents)
-        (apply min adjacents))
-     1.1))
+  (define larger (apply max adjacents))
+  (define smaller (apply min adjacents))
+  (and (< 1 (/ larger smaller))
+       (< (/ larger smaller) 1.1)))
+
+(define (center-and-bounding-height-pixels->lower-elevation-radians
+         center bounding-height)
+  (pixels->radians
+   (pixel->elevation-pixels
+    (center-and-bounding-height->lower-pixel center bounding-height))))
+
+(define (center-and-bounding-height-pixels->upper-elevation-radians
+         center bounding-height)
+  (pixels->radians
+   (pixel->elevation-pixels
+    (center-and-bounding-height->upper-pixel center bounding-height))))
 
 (define (top-target? center bounding-height)
-  (define particle-lower-pixel
-    (center-and-bounding-height->lower-pixel center bounding-height))
-  (define particle-upper-pixel
-    (center-and-bounding-height->upper-pixel center bounding-height))
+  (define lower-elevation-radians
+    (center-and-bounding-height-pixels->lower-elevation-radians
+     center bounding-height))
+  (define upper-elevation-radians
+    (center-and-bounding-height-pixels->upper-elevation-radians
+     center bounding-height))
   (adjacents-close-enough?
    (adjacents
-    opposite-top-lower particle-lower-pixel
-    opposite-top-upper particle-upper-pixel)))
+    opposite-top-lower lower-elevation-radians
+    opposite-top-upper upper-elevation-radians)))
+
+(define (middle-target? center bounding-height)
+  (define lower-elevation-radians
+    (center-and-bounding-height-pixels->lower-elevation-radians
+     center bounding-height))
+  (define upper-elevation-radians
+    (center-and-bounding-height-pixels->upper-elevation-radians
+     center bounding-height))
+  (adjacents-close-enough?
+   (adjacents
+    opposite-middle-lower lower-elevation-radians
+    opposite-middle-upper upper-elevation-radians)))
+
+(define (bottom-target? center bounding-height)
+  (define lower-elevation-radians
+    (center-and-bounding-height-pixels->lower-elevation-radians
+     center bounding-height))
+  (define upper-elevation-radians
+    (center-and-bounding-height-pixels->upper-elevation-radians
+     center bounding-height))
+  (adjacents-close-enough?
+   (adjacents
+    opposite-bottom-lower lower-elevation-radians
+    opposite-bottom-upper upper-elevation-radians)))
 
 (provide (all-defined-out))
