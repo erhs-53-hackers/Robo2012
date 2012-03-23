@@ -279,7 +279,7 @@ public class ImageProcessing {
 
     public void getTheParticles(AxisCamera camera) throws Exception {
         int erosionCount = 2;
-        // true means use connectivity 8, true means connectivity 4
+        // true means use connectivity 8, false means connectivity 4
         boolean connectivity8Or4 = false;
         ColorImage colorImage;
         BinaryImage binaryImage;
