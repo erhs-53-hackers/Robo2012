@@ -1,6 +1,7 @@
 package edu.wpi.first.wpilibj.templates;
 
 import edu.wpi.first.wpilibj.Gyro;
+import edu.wpi.first.wpilibj.PIDSource;
 import edu.wpi.first.wpilibj.PWM;
 import edu.wpi.first.wpilibj.RobotDrive;
 
@@ -8,7 +9,7 @@ import edu.wpi.first.wpilibj.RobotDrive;
  *
  * @author Nick, Alex, Michael, Dale, Chris
  */
-public class GyroX {
+public class GyroX implements PIDSource {
 
     RobotDrive driveTrain;
     PWM lazySusan;
@@ -99,6 +100,10 @@ public class GyroX {
                 - modulatedAngle) > 10 ? .75 : .45) * ((targetAngle - modulatedAngle) > 0
                 ? 1 : -1);
         return driveConstant;
+    }
+    
+    public double pidGet() {
+        return modAngle(gyro.getAngle() * 4.14015366);
     }
     
 }
