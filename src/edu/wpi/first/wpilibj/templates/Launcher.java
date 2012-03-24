@@ -3,6 +3,7 @@ package edu.wpi.first.wpilibj.templates;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.Jaguar;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.Victor;
 
 /**
  *
@@ -10,16 +11,17 @@ import edu.wpi.first.wpilibj.Timer;
  */
 public class Launcher {
 
-    Jaguar launchMotor;
-    Jaguar loadMotor;
+    Victor launchMotor;
+    Victor loadMotor;
     Encoder encoder;
+    double topTargetRPM = 5000;//needs to be calibrated
 
     /**
      * Default constructor for the launcher
      */
     public Launcher() {
-        this.launchMotor = new Jaguar(RoboMap.LAUNCH_MOTOR);
-        this.loadMotor = new Jaguar(RoboMap.LOAD_MOTOR);
+        this.launchMotor = new Victor(RoboMap.LAUNCH_MOTOR);
+        this.loadMotor = new Victor(RoboMap.LOAD_MOTOR);
         this.encoder = new Encoder(
                 RoboMap.LAUNCH_ENCODER1,
                 RoboMap.LAUNCH_ENCODER2,
@@ -32,6 +34,7 @@ public class Launcher {
         int sampleNumber = 500;
         double deltaTime = .5;
         double deltaEncod;
+        
         double[] encod1Array = new double[(sampleNumber + 1)];
         double[] encod2Array = new double[(sampleNumber + 1)];
         double encod1=0, encod2=0;
@@ -72,6 +75,24 @@ public class Launcher {
         loadMotor.set(0);
         launchMotor.set(0);
     }
+    
+    public void shootTopTarget() {
+        double speed = 0.0;
+        encoder.start();
+        while (MathX.abs(getRPM() - topTargetRPM) >= 100) {
+            launchMotor.set(speed);
+            speed += .025;
+            Timer.delay(.025);
+            
+        }
+        encoder.stop();
+        loadMotor.set(1);
+        Timer.delay(5);
+        loadMotor.set(0);
+        launchMotor.set(0);        
+    }
+    
+    
     
     public void manualShoot() {
         loadMotor.set(-1);
