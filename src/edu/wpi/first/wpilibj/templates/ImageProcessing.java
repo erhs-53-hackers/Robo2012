@@ -24,8 +24,8 @@ public class ImageProcessing {
             middleTargetRight;
     Messager msg = new Messager();
     static final double FOV = 35.25;//camera field of view in degrees
-    static final double camResWidth = 480;
-    static final double camResHeight = 640;
+    static final double camResWidth = 640;
+    static final double camResHeight = 480;
     static final double targetHeight = 18.0;
     static final double cameraAngle = 12;
     static final double cameraHeight = 26;
