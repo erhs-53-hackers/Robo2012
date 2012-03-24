@@ -31,6 +31,7 @@ public class RobotTemplate extends IterativeRobot {
     int shots = 0;
     double distanceFromTarget;
     double hoopHeight = Physics.HOOP1;
+    DeadReckoning dead;
     
     public void robotInit() {
         msg = new Messager();
@@ -57,6 +58,8 @@ public class RobotTemplate extends IterativeRobot {
         bridgeArm = new Jaguar(RoboMap.BRIDGE_MOTOR);
         collector = new Jaguar(RoboMap.COLLECT_MOTOR);
         launcher = new Launcher();
+        dead = new DeadReckoning(drive,launcher.launchMotor,launcher.loadMotor,
+                collector,bridgeArm);
         //gyro = new GyroX(RoboMap.GYRO, RoboMap.LAUNCH_TURN, drive);
         msg.printLn("Done: FRC 2012");
     }
@@ -66,24 +69,7 @@ public class RobotTemplate extends IterativeRobot {
     }
     
     public void autonomousPeriodic() {
-        //launcher.launchMotor.set(.75);
-        //Timer.delay(3);
-        //collector.set(-1);
-        //launcher.loadMotor.set(-1);
-        //msg.printLn("yo");
-        if (camera.freshImage()) {            
-            try {
-                imageProc.getTheParticles(camera);
-                
-                msg.printOnLn("" + imageProc.getDistance(), DriverStationLCD.Line.kUser2);
-            } catch (Exception e) {
-                msg.printLn("Error");
-            }
-        }
-
-
-
-
+            dead.driveToBridge();
             /*
              * if (camera.freshImage() && false) { try {
              * imageProc.getTheParticles(camera); target =
