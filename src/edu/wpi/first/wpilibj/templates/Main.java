@@ -21,6 +21,7 @@ public class Main {
 
     public void init() throws Exception {
         imageCalc.getTheParticles(cam);
+        imageCalc.organizeTheParticles(imageCalc.particles);
         imageCalc.setTargetPixels(imageCalc.topTarget,
                 imageCalc.topTargetReport.center_mass_y,
                 imageCalc.topTargetReport.boundingRectHeight);
