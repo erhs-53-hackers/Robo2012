@@ -32,6 +32,7 @@ public class RobotTemplate extends IterativeRobot {
     int shots = 0;
     double distanceFromTarget;
     double hoopHeight = Physics.HOOP1;
+    DeadReckoning dead;
     
     public void robotInit() {
         msg = new Messager();
@@ -56,10 +57,14 @@ public class RobotTemplate extends IterativeRobot {
         camera.writeBrightness(30);
         camera.writeResolution(AxisCamera.ResolutionT.k640x480);
         imageProc = new ImageProcessing();
+
         //physics = new Physics();
         //bridgeArm = new Victor(RoboMap.BRIDGE_MOTOR);
         //collector = new Victor(RoboMap.COLLECT_MOTOR);
         //launcher = new Launcher();
+
+        //dead = new DeadReckoning(drive,launcher.launchMotor,launcher.loadMotor, collector,bridgeArm);
+
         //gyro = new GyroX(RoboMap.GYRO, RoboMap.LAUNCH_TURN, drive);
         msg.printLn("Done: FRC 2012");
     }
@@ -69,6 +74,7 @@ public class RobotTemplate extends IterativeRobot {
     }
     
     public void autonomousPeriodic() {
+
         //msg.printLn("hello");
         //launcher.launchMotor.set(.75);
         //Timer.delay(3);
@@ -93,6 +99,9 @@ public class RobotTemplate extends IterativeRobot {
 
 
 
+
+
+            //dead.driveToBridge();
 
             /*
              * if (camera.freshImage() && false) { try {
