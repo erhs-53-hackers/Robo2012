@@ -24,7 +24,7 @@ public class ImageProcessing {
             middleTargetRight;
     Messager msg = new Messager();
     static final double FOV = 35.25;//camera field of view in degrees
-    static final double camResWidth = 240;
+    static final double camResWidth = 480;
     static final double camResHeight = 640;
     static final double targetHeight = 18.0;
     static final double cameraAngle = 12;
@@ -104,10 +104,15 @@ public class ImageProcessing {
         return leftistTarget;
     }
 
+    /**
+     * Fills the array (particles) with all found particle analysis reports
+     * @param camera the camera to get the particle analysis report from
+     * @throws Exception 
+     */
     public void getTheParticles(AxisCamera camera) throws Exception {
         int erosionCount = 2;
         // true means use connectivity 8, false means connectivity 4
-        boolean connectivity8Or4 = false;
+        boolean useConnectivity8 = false;
         ColorImage colorImage;
         BinaryImage binaryImage;
         BinaryImage cleanImage;
@@ -118,9 +123,9 @@ public class ImageProcessing {
         //seperate the light and dark image
         binaryImage = colorImage.thresholdRGB(0, 42, 71, 255, 0, 255);
         cleanImage = binaryImage.removeSmallObjects(
-                connectivity8Or4, erosionCount);
+                useConnectivity8, erosionCount);
         //fill the rectangles that were created
-        convexHullImage = cleanImage.convexHull(connectivity8Or4);
+        convexHullImage = cleanImage.convexHull(useConnectivity8);
         filteredImage = convexHullImage.particleFilter(criteriaCollection);
         particles = filteredImage.getOrderedParticleAnalysisReports();
         colorImage.free();
@@ -130,6 +135,12 @@ public class ImageProcessing {
         filteredImage.free();
     }
 
+    /**
+     * Get the horizontal distance to the target
+     * @param part the particle analysis report to get the report from
+     * @param height the height of the target to get the report from
+     * @return distance to target, in inches
+     */
     public double getDistance(ParticleAnalysisReport part, double height) {
         double ph = part.boundingRectHeight;
         double delta = height - cameraHeight;
