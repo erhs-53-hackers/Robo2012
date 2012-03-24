@@ -3,6 +3,7 @@ package edu.wpi.first.wpilibj.templates;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.Jaguar;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.Victor;
 
 /**
  *
@@ -10,16 +11,16 @@ import edu.wpi.first.wpilibj.Timer;
  */
 public class Launcher {
 
-    Jaguar launchMotor;
-    Jaguar loadMotor;
+    Victor launchMotor;
+    Victor loadMotor;
     Encoder encoder;
 
     /**
      * Default constructor for the launcher
      */
     public Launcher() {
-        this.launchMotor = new Jaguar(RoboMap.LAUNCH_MOTOR);
-        this.loadMotor = new Jaguar(RoboMap.LOAD_MOTOR);
+        this.launchMotor = new Victor(RoboMap.LAUNCH_MOTOR);
+        this.loadMotor = new Victor(RoboMap.LOAD_MOTOR);
         this.encoder = new Encoder(
                 RoboMap.LAUNCH_ENCODER1,
                 RoboMap.LAUNCH_ENCODER2,

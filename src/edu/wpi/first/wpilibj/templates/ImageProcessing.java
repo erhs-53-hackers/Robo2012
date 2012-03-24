@@ -43,7 +43,7 @@ public class ImageProcessing {
             heightToBottomOfMiddleTarget + targetHeight;
 
     final double cameraAngleOffset = 12;
-    final double cameraHeight = 54;
+    final double cameraHeight = 26;
     /* TODO
      * this should be MAX, not MIN.  this is the most disparity we expect to see
      */
@@ -303,41 +303,27 @@ public class ImageProcessing {
         filteredImage.free();
     }
     
-    // Danny's algorithm
-    private double FOVradians = Math.toRadians(35);
-    private double maxHeight = 480;
-    private double cameraTilt = Math.toRadians(15);
-    private double levelPixel = FOVradians / 2 + toPixels(cameraTilt);
-    
-    
-    
-    private double toPixels(double radians) {
-        return radians / FOVradians * maxHeight;
-    }
-    
-    private double toRadians(double pixels) {
-        return pixels / maxHeight * FOVradians;
-    }
-    private double toUpperPixel(double center, double height) {
-        return center - (height/2);
-    }
-    
-    private double toLowerPixel(double center, double height) {
-        return center + (height/2);
-    }
-    
-    private double convertToLevel(double pixel) {
-        return levelPixel - pixel;
-    }
-    public double adjacent(double opposite, double radians) {
-        return opposite / Math.tan(radians);        
-    }
+    // Mr. Desch's    
     
     public double getDistance() {
+        //test case for 168 inches
         ParticleAnalysisReport top = getTopMost(particles);
-        double radians = toRadians(convertToLevel(toUpperPixel(top.center_mass_y, top.boundingRectHeight)));
-        msg.printOnLn("" + Math.toDegrees(radians), DriverStationLCD.Line.kMain6);
-        return adjacent(heightToTopOfTopTarget - cameraHeight, radians);
+        double ph = top.boundingRectHeight;
+        double delta = 83;//hardcoded needs to be changed
+        double lambda = 14.55;
+        double R = 18/MathX.tan(ph / lambda);
+        double D = 0;
+        
+        for(int i=0;i<4;i++) {
+            double theta = MathX.asin(delta / R);
+            double new_ph = ph / MathX.cos(theta);
+            R = 18/MathX.tan(new_ph / lambda);
+            D = MathX.sqrt(R*R-delta*delta);
+            
+        }
+       
+       
+        return D;
     }
     
     //end

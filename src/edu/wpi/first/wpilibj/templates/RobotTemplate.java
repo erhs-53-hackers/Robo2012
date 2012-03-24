@@ -24,7 +24,8 @@ public class RobotTemplate extends IterativeRobot {
     ParticleAnalysisReport target;
     Physics physics;
     Launcher launcher;
-    Jaguar bridgeArm, collector;
+    ImageCalculations imageCalc = new ImageCalculations();
+    Victor bridgeArm, collector;
     GyroX gyro;
     boolean isManual = true;
     boolean isShooting = false;
@@ -36,27 +37,29 @@ public class RobotTemplate extends IterativeRobot {
         msg = new Messager();
         msg.printLn("Loading Please Wait...");
         Timer.delay(10);
-        drive = new RobotDrive(
-                RoboMap.MOTOR1, RoboMap.MOTOR2, RoboMap.MOTOR3, RoboMap.MOTOR4);
-        drive.setInvertedMotor(RobotDrive.MotorType.kFrontRight, true);
-        drive.setInvertedMotor(RobotDrive.MotorType.kRearRight, true);
-        drive.setInvertedMotor(RobotDrive.MotorType.kRearLeft, true);
-        drive.setInvertedMotor(RobotDrive.MotorType.kFrontLeft, true);
-        drive.setSafetyEnabled(false);
-        getWatchdog().setEnabled(false);
-        leftStick = new Joystick(RoboMap.JOYSTICK1);
-        rightStick = new Joystick(RoboMap.JOYSTICK2);
-        launchControlStick = new Joystick(RoboMap.JOYSTICK3);
-        launchControls = new Controls(launchControlStick);
+        
+        //drive = new RobotDrive(
+        //        RoboMap.MOTOR1, RoboMap.MOTOR2, RoboMap.MOTOR3, RoboMap.MOTOR4);
+        //drive = new RobotDrive(new Victor(RoboMap.MOTOR1), new Victor(RoboMap.MOTOR2), new Victor(RoboMap.MOTOR3), new Victor(RoboMap.MOTOR4));
+        //drive.setInvertedMotor(RobotDrive.MotorType.kFrontRight, true);
+        //drive.setInvertedMotor(RobotDrive.MotorType.kRearRight, true);
+        //drive.setInvertedMotor(RobotDrive.MotorType.kRearLeft, true);
+        //drive.setInvertedMotor(RobotDrive.MotorType.kFrontLeft, true);
+        //drive.setSafetyEnabled(false);
+        //getWatchdog().setEnabled(false);
+        //leftStick = new Joystick(RoboMap.JOYSTICK1);
+        //rightStick = new Joystick(RoboMap.JOYSTICK2);
+        //launchControlStick = new Joystick(RoboMap.JOYSTICK3);
+        //launchControls = new Controls(launchControlStick);
         
         camera = AxisCamera.getInstance();
         camera.writeBrightness(30);
         camera.writeResolution(AxisCamera.ResolutionT.k640x480);
         imageProc = new ImageProcessing();
-        physics = new Physics();
-        bridgeArm = new Jaguar(RoboMap.BRIDGE_MOTOR);
-        collector = new Jaguar(RoboMap.COLLECT_MOTOR);
-        launcher = new Launcher();
+        //physics = new Physics();
+        //bridgeArm = new Victor(RoboMap.BRIDGE_MOTOR);
+        //collector = new Victor(RoboMap.COLLECT_MOTOR);
+        //launcher = new Launcher();
         //gyro = new GyroX(RoboMap.GYRO, RoboMap.LAUNCH_TURN, drive);
         msg.printLn("Done: FRC 2012");
     }
@@ -66,6 +69,7 @@ public class RobotTemplate extends IterativeRobot {
     }
     
     public void autonomousPeriodic() {
+        //msg.printLn("hello");
         //launcher.launchMotor.set(.75);
         //Timer.delay(3);
         //collector.set(-1);
@@ -74,10 +78,16 @@ public class RobotTemplate extends IterativeRobot {
         if (camera.freshImage()) {            
             try {
                 imageProc.getTheParticles(camera);
+                target = ImageProcessing.getTopMost(imageProc.particles);
                 
-                msg.printOnLn("" + imageProc.getDistance(), DriverStationLCD.Line.kUser2);
+                
+                
+               msg.printOnLn("" + imageProc.getDistance(), DriverStationLCD.Line.kUser2);
+               
+                double angle = ImageProcessing.getHorizontalAngle(target);
+                msg.printOnLn("Angle:" + angle, DriverStationLCD.Line.kUser3);
             } catch (Exception e) {
-                msg.printLn("Error");
+                System.out.println(e.getMessage());
             }
         }
 
