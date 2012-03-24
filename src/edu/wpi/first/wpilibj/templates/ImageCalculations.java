@@ -19,7 +19,7 @@ public class ImageCalculations {
     CriteriaCollection criteriaCollection = new CriteriaCollection();
     ParticleAnalysisReport bottomTargetReport, topTargetReport,
             middleTargetLeftReport, middleTargetRightReport;
-    Target topTarget,
+    Target  topTarget,
             middleLeftTarget, middleRightTarget,
             bottomTarget,
             currentTarget;
@@ -63,12 +63,23 @@ public class ImageCalculations {
     public double getDistance(double targetHeight, double targetPixelValue) {
         return targetHeight / (MathX.tan(getElevationAngle(targetPixelValue)));
     }
+    
+    public double getAverageDistance(Target target) {
+        double distance1 = getDistance(target.topHeight, target.topPixelValue);
+        double distance2 = getDistance(target.bottomHeight, target.bottomPixelValue);
+        return (distance1 + distance2) / 2;
+    }
 
-    public double getDisparity(double targetHeight_b, double angle_b,
-            double targetHeight_t, double angle_t) {
-        double disparity = MathX.abs(getDistance(targetHeight_t, angle_t)
-                - getDistance(targetHeight_b, angle_b));
+    public double getDisparity(double targetHeight_b, double pixel_b,
+            double targetHeight_t, double pixel_t) {
+        double disparity = MathX.abs(getDistance(targetHeight_t, pixel_t)
+                - getDistance(targetHeight_b, pixel_b));
         return disparity;
+    }
+    
+    public double getDisparity(Target target) {
+        return getDisparity(target.bottomHeight, target.bottomPixelValue,
+                target.topHeight, target.topPixelValue);
     }
 
     public void setCurrentTarget(Target selectedTarget) {

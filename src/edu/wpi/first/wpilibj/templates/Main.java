@@ -24,9 +24,6 @@ public class Main {
         imageCalc.setTargetPixels(imageCalc.topTarget,
                 imageCalc.topTargetReport.center_mass_y,
                 imageCalc.topTargetReport.boundingRectHeight);
-        imageCalc.setTargetPixels(imageCalc.topTarget,
-                imageCalc.topTargetReport.center_mass_y,
-                imageCalc.topTargetReport.boundingRectHeight);
         imageCalc.setTargetPixels(imageCalc.middleLeftTarget,
                 imageCalc.middleTargetLeftReport.center_mass_y,
                 imageCalc.middleTargetLeftReport.boundingRectHeight);
@@ -38,31 +35,8 @@ public class Main {
                 imageCalc.bottomTargetReport.boundingRectHeight);
     }
 
-    public double returnDistanceToTarget() {
-        distance = (imageCalc.getDistance(
-                imageCalc.currentTarget.bottomHeight,
-                imageCalc.currentTarget.bottomPixelValue)
-                + imageCalc.getDistance(imageCalc.currentTarget.topHeight,
-                imageCalc.currentTarget.topPixelValue)) / 2;
-        double disparity = imageCalc.getDisparity(
-                imageCalc.currentTarget.bottomHeight,
-                imageCalc.currentTarget.bottomPixelValue,
-                imageCalc.currentTarget.topHeight,
-                imageCalc.currentTarget.topPixelValue);
-        if (disparity < imageCalc.disparityLimit) {
-            return distance;
-        } else {
-            System.out.println("Disparity = " + disparity + ". Too high");
-            return -1;
-        }
-    }
-
     public void main() {
-        try {
-            init();
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
+
         if (controls.FOV_Top()) {
             imageCalc.setCurrentTarget(imageCalc.topTarget);
         } else if (controls.FOV_Bottom()) {
@@ -72,10 +46,30 @@ public class Main {
         } else if (controls.FOV_Right()) {
             imageCalc.setCurrentTarget(imageCalc.middleRightTarget);
         }
+
         if (imageCalc.currentTarget != null) {
-            System.out.println("Distance: " + returnDistanceToTarget());
+            if (imageCalc.getDisparity(imageCalc.currentTarget) < imageCalc.disparityLimit) {
+                System.out.println("Distance: " + imageCalc.getAverageDistance(imageCalc.currentTarget));
+                System.out.println("Disparity = " + imageCalc.getDisparity(imageCalc.currentTarget));
+            } else {
+                System.out.println("Disparity = "
+                        + imageCalc.getDisparity(imageCalc.currentTarget));
+                System.out.println("TOO LARGE");
+            }
         } else {
-            System.out.println("Cannot determine distance");
+            System.out.println("No target supplied");
         }
     }
+
+    public void loop() {
+        if (cam.freshImage()) {
+            try {
+                init();
+                main();
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+        }
+    }
+    
 }
