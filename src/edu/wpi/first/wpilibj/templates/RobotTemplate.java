@@ -14,7 +14,7 @@ import edu.wpi.first.wpilibj.image.ParticleAnalysisReport;
  * @author Team53
  */
 public class RobotTemplate extends IterativeRobot {
-    
+
     RobotDrive drive;
     Messager msg;
     Joystick leftStick, rightStick, launchControlStick;
@@ -22,23 +22,20 @@ public class RobotTemplate extends IterativeRobot {
     AxisCamera camera;
     ImageProcessing imageProc;
     ParticleAnalysisReport target;
-    Physics physics;
-    Launcher launcher;
-    ImageCalculations imageCalc = new ImageCalculations();
+    Launcher launcher;    
     Victor bridgeArm, collector;
     GyroX gyro;
     boolean isManual = true;
     boolean isShooting = false;
     int shots = 0;
     double distanceFromTarget;
-    double hoopHeight = Physics.HOOP1;
     DeadReckoning dead;
-    
+
     public void robotInit() {
         msg = new Messager();
         msg.printLn("Loading Please Wait...");
         Timer.delay(10);
-        
+
         //drive = new RobotDrive(
         //        RoboMap.MOTOR1, RoboMap.MOTOR2, RoboMap.MOTOR3, RoboMap.MOTOR4);
         //drive = new RobotDrive(new Victor(RoboMap.MOTOR1), new Victor(RoboMap.MOTOR2), new Victor(RoboMap.MOTOR3), new Victor(RoboMap.MOTOR4));
@@ -52,7 +49,7 @@ public class RobotTemplate extends IterativeRobot {
         //rightStick = new Joystick(RoboMap.JOYSTICK2);
         //launchControlStick = new Joystick(RoboMap.JOYSTICK3);
         //launchControls = new Controls(launchControlStick);
-        
+
         camera = AxisCamera.getInstance();
         camera.writeBrightness(30);
         camera.writeResolution(AxisCamera.ResolutionT.k640x480);
@@ -68,11 +65,11 @@ public class RobotTemplate extends IterativeRobot {
         //gyro = new GyroX(RoboMap.GYRO, RoboMap.LAUNCH_TURN, drive);
         msg.printLn("Done: FRC 2012");
     }
-    
+
     public void autonomousInit() {
         isShooting = false;//change me!!!!!
     }
-    
+
     public void autonomousPeriodic() {
 
         //msg.printLn("hello");
@@ -81,15 +78,17 @@ public class RobotTemplate extends IterativeRobot {
         //collector.set(-1);
         //launcher.loadMotor.set(-1);
         //msg.printLn("yo");
-        if (camera.freshImage()) {            
+        if (camera.freshImage()) {
             try {
                 imageProc.getTheParticles(camera);
                 target = ImageProcessing.getTopMost(imageProc.particles);
-                
-                
-                
-               msg.printOnLn("" + imageProc.getDistance(), DriverStationLCD.Line.kUser2);
-               
+
+
+                double distance = imageProc.getDistance(target,
+                        ImageProcessing.topTargetHeight);
+
+                msg.printOnLn("" + distance, DriverStationLCD.Line.kUser2);
+
                 double angle = ImageProcessing.getHorizontalAngle(target);
                 msg.printOnLn("Angle:" + angle, DriverStationLCD.Line.kUser3);
             } catch (Exception e) {
@@ -101,68 +100,44 @@ public class RobotTemplate extends IterativeRobot {
 
 
 
-            //dead.driveToBridge();
+        //dead.driveToBridge();
 
-            /*
-             * if (camera.freshImage() && false) { try {
-             * imageProc.getTheParticles(camera); target =
-             * ImageProcessing.getTopMost(imageProc.particles);
-             *
-             *
-             * double angle = ImageProcessing.getHorizontalAngle(target);
-             * //msg.printLn("" + angle); /* while (MathX.abs(angle -
-             * gyro.modulatedAngle) > 2) { gyro.turnToAngle(angle);
-             * getWatchdog().feed(); }
-             *
-             *
-             *
-             *
-             *
-             *
-             *
-             * if (isShooting) { Timer.delay(3);
-             *
-             * launcher.shoot(target.boundingRectHeight, Physics.HOOP3);
-             *
-             * shots++; if (shots == 2) { isShooting = false; } } } catch
-             * (Exception e) { e.printStackTrace(); System.out.println("ERROR!!!
-             * Cannot Fetch Image"); } } getWatchdog().feed();
-             */
-        }
-
-    
+        /*
+         * if (camera.freshImage() && false) { try {
+         * imageProc.getTheParticles(camera); target =
+         * ImageProcessing.getTopMost(imageProc.particles);
+         *
+         *
+         * double angle = ImageProcessing.getHorizontalAngle(target);
+         * //msg.printLn("" + angle); /* while (MathX.abs(angle -
+         * gyro.modulatedAngle) > 2) { gyro.turnToAngle(angle);
+         * getWatchdog().feed(); }
+         *
+         *
+         *
+         *
+         *
+         *
+         *
+         * if (isShooting) { Timer.delay(3);
+         *
+         * launcher.shoot(target.boundingRectHeight, Physics.HOOP3);
+         *
+         * shots++; if (shots == 2) { isShooting = false; } } } catch (Exception
+         * e) { e.printStackTrace(); System.out.println("ERROR!!! Cannot Fetch
+         * Image"); } } getWatchdog().feed();
+         */
+    }
 
     public void teleopInit() {
         launcher.launchMotor.set(0);
         collector.set(0);
         launcher.loadMotor.set(0);
-        //camera = AxisCamera.getInstance();
-        //camera.writeBrightness(30);
-        //camera.writeResolution(AxisCamera.ResolutionT.k640x480);
+        
         msg.clearConsole();
     }
-    
-    public void teleopContinuous() {
-        // Have the camera scan for targets
-/*
-         * if (camera.freshImage()) { try { imageProc.getTheParticles(camera);
-         * imageProc.organizeTheParticles(imageProc.particles);
-         *
-         * if (isShooting) { double angle =
-         * ImageProcessing.getHorizontalAngle(target); //msg.printLn("" +
-         * angle);
-         *
-         * while (MathX.abs(angle - gyro.modulatedAngle) > 2) {
-         * gyro.turnToAngle(angle); getWatchdog().feed(); }
-         * launcher.shoot(target.boundingRectHeight, hoopHeight); isShooting =
-         * false; } } catch (Exception e) { e.printStackTrace();
-         * //msg.printLn("ERROR!!! Cannot Fetch Image"); } }
-         *
-         */
-    }
-    
+
     public void teleopPeriodic() {
-        System.out.println("Teleop Looping");
 
         // switch to control assisted teleop
         if (launchControls.button11()) {
@@ -187,7 +162,7 @@ public class RobotTemplate extends IterativeRobot {
         } else {
             bridgeArm.set(0);
         }
-        
+
         if (isManual) {
             msg.printOnLn("Mode: Manual", DriverStationLCD.Line.kMain6);
             if (launchControls.button7()) {
@@ -207,43 +182,28 @@ public class RobotTemplate extends IterativeRobot {
         } else if (!isManual) {
             msg.printOnLn("Mode: Auto", DriverStationLCD.Line.kMain6);
             collector.set((launchControlStick.getThrottle() + 1) / 2);
-            if (launchControls.FOV_Left()) {
-                target = imageProc.middleTargetLeft;
-                hoopHeight = Physics.HOOP2;
-            } else if (launchControls.FOV_Right()) {
-                target = imageProc.middleTargetRight;
-                hoopHeight = Physics.HOOP2;
-            } else if (launchControls.FOV_Top()) {
-                target = imageProc.topTarget;
-                hoopHeight = Physics.HOOP3;
-            } else if (launchControls.FOV_Bottom()) {
-                target = imageProc.bottomTarget;
-                hoopHeight = Physics.HOOP1;
-            }
+
             if (launchControls.button2()) {
                 isShooting = true;
             }
         }
 
-        /*
-         * if (launchControls.button3()) { gyro.turnRobotToAngle(0);
-         *
-         * } else if (launchControls.button4()) { gyro.turnRobotToAngle(180);
-         *
-         * } else if (launchControls.button5()) { gyro.turnRobotToAngle(-90);
-         *
-         * } else if (launchControls.button6()) { gyro.turnRobotToAngle(90);
-         *
-         * }
-         *
-         */
+        if (camera.freshImage() && isShooting) {
+            try {
+                imageProc.getTheParticles(camera);
+                ParticleAnalysisReport topTarget = imageProc.getTopTarget();
+                double angle = ImageProcessing.getHorizontalAngle(topTarget);
+                gyro.turnTurret(angle);
+                launcher.shootTopTarget();        
+                
+                
+                isShooting = false;               
+            } catch (Exception e) {
+                msg.printLn(e.getMessage());
+                isShooting = false;
+            }
 
-        /*
-         * //motor to control lazy susan for launcher if
-         * (launchControls.button9()) { gyro.turnAngle(5); } else if
-         * (launchControls.button10()) { gyro.turnAngle(-5); }
-         *
-         */
-        
+        }       
+
     }
 }

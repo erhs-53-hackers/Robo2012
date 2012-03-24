@@ -14,6 +14,7 @@ public class Launcher {
     Victor launchMotor;
     Victor loadMotor;
     Encoder encoder;
+    double topTargetRPM = 5000;//needs to be calibrated
 
     /**
      * Default constructor for the launcher
@@ -33,6 +34,7 @@ public class Launcher {
         int sampleNumber = 500;
         double deltaTime = .5;
         double deltaEncod;
+        
         double[] encod1Array = new double[(sampleNumber + 1)];
         double[] encod2Array = new double[(sampleNumber + 1)];
         double encod1=0, encod2=0;
@@ -73,6 +75,24 @@ public class Launcher {
         loadMotor.set(0);
         launchMotor.set(0);
     }
+    
+    public void shootTopTarget() {
+        double speed = 0.0;
+        encoder.start();
+        while (MathX.abs(getRPM() - topTargetRPM) >= 100) {
+            launchMotor.set(speed);
+            speed += .025;
+            Timer.delay(.025);
+            
+        }
+        encoder.stop();
+        loadMotor.set(1);
+        Timer.delay(5);
+        loadMotor.set(0);
+        launchMotor.set(0);        
+    }
+    
+    
     
     public void manualShoot() {
         loadMotor.set(-1);

@@ -17,125 +17,43 @@ import edu.wpi.first.wpilibj.image.ParticleAnalysisReport;
  * @author Rajath, Michael
  */
 public class ImageProcessing {
+
     ParticleAnalysisReport particles[];
-    Physics imageCalculations;
     CriteriaCollection criteriaCollection = new CriteriaCollection();
     ParticleAnalysisReport bottomTarget, topTarget, middleTargetLeft,
             middleTargetRight;
     Messager msg = new Messager();
-    final double numberOfDegreesInVerticalFieldOfView = 35.25;
-
-    final double numberOfPixelsVerticalInFieldOfView = 240;
-    final double numberOfPixelsHorizontalInFieldOfView = 640;
-
-    final double targetHeight = 18.0;
-
-    final double heightToBottomOfTopTarget = 100;
-    final double heightToTopOfTopTarget =
-            heightToBottomOfTopTarget + targetHeight;
-
-    final double heightToBottomOfBottomTarget = 30;
-    final double heightToTopOfBottomTarget =
-            heightToBottomOfBottomTarget + targetHeight;
-
-    final double heightToBottomOfMiddleTarget = 56;
-    final double heightToTopOfMiddleTarget =
-            heightToBottomOfMiddleTarget + targetHeight;
-
-    final double cameraAngleOffset = 12;
-    final double cameraHeight = 26;
-    /* TODO
-     * this should be MAX, not MIN.  this is the most disparity we expect to see
-     */
-    final double minAcceptableDisparity = .5;
+    static final double FOV = 35.25;//camera field of view in degrees
+    static final double camResWidth = 240;
+    static final double camResHeight = 640;
+    static final double targetHeight = 18.0;
+    static final double cameraAngle = 12;
+    static final double cameraHeight = 26;
+    static final double maxDisparity = .5;
+    static final double lambda = 14.55;
+    static final double topTargetHeight = 109;//inches to middle
+    static final double middleTargetHeight = 72;//inches to middle
+    static final double bottomTargetHeight = 39;//inches to middle
+    static final double T_topTargetHeight = 118;//inches to top of tape
+    static final double T_middleTargetHeight = 81;//inches to top of tape
+    static final double T_bottomTargetHeight = 48;//inches to top of tape
+    static final double B_topTargetHeight = 100;//inches to bottom of tape
+    static final double B_middleTargetHeight = 63;//inches to bottom of tape
+    static final double B_bottomTargetHeight = 30;//inches to bottom of tape
 
     public ImageProcessing() {
         criteriaCollection.addCriteria(
                 MeasurementType.IMAQ_MT_BOUNDING_RECT_WIDTH, 30, 400, false);
         criteriaCollection.addCriteria(
                 MeasurementType.IMAQ_MT_BOUNDING_RECT_HEIGHT, 40, 400, false);
-        imageCalculations = new Physics();
-    }
 
-    /* TODO
-     * change the name of this to pixelsToDegrees
-     * NOTE: pixels is spelled ending in "e" then "l" and not "l" then "e"
-     */
-    /* TODO
-     * use this method instead in the code instead of making this calculation
-     *   by hand everywhere
-     */
-    public double pixlesToAngles(double pixles)
-    {
-        return pixles * numberOfDegreesInVerticalFieldOfView
-                / numberOfPixelsVerticalInFieldOfView;
-    }
-    /* TODO
-     * change the name of this to degreesToPixels
-     * NOTE: Pixels is spelled ending in "e" then "l" and not "l" then "e"
-     */
-    /* TODO
-     * use this method instead in the code instead of making this calculation
-     *   by hand everywhere
-     */
-    /* TODO
-     * this algorithm is wrong.  fix it.  look at pixlesToAngles
-     */
-    public double anglesToPixles(double angle)
-    {
-        return angle * numberOfDegreesInVerticalFieldOfView
-                / numberOfPixelsVerticalInFieldOfView;
-    }
-    /* TODO
-     * create a method called bottomOfParticle(ParticleAnalysisReport particle)
-     * {...}
-     */
-    public double getPixelsFromLevelToBottomOfATarget(
-            ParticleAnalysisReport particle) {
-        double PixelsFromLevelToBottomOfTopTarget =
-                numberOfPixelsVerticalInFieldOfView - particle.center_mass_y
-                - (particle.boundingRectHeight / 2);
-        System.out.println("PixelsFromLevelToBottomOfTopTarget"
-                + PixelsFromLevelToBottomOfTopTarget);
-        return PixelsFromLevelToBottomOfTopTarget;
     }
 
     public static double getHorizontalAngle(ParticleAnalysisReport particle) {
-        double p = (Physics.MAXWIDTH / 2) - particle.center_mass_x;
-        double angle = p / Physics.LAMBDA;
+        double p = (camResWidth / 2) - particle.center_mass_x;
+        double angle = p / lambda;
         return angle;
 
-    }
-
-    public double getPixelsFromLevelToTopOfATarget(
-            ParticleAnalysisReport particle) {
-        /*
-         * TODO take into account the fact that level is not always at the
-         * bottom of the field of view
-         */
-        /*
-         * TODO don't use global variable PixelsFromLevelToBottomOfTopTarget,
-         * instead use local variables, return values, and parameters
-         */
-        double PixelsFromLevelToTopOfTopTarget =
-                numberOfPixelsVerticalInFieldOfView - particle.center_mass_y
-                + (particle.boundingRectHeight / 2);
-        System.out.println("PixelsFromLevelToTopOfTopTarget"
-                + PixelsFromLevelToTopOfTopTarget);
-        return PixelsFromLevelToTopOfTopTarget;
-    }
-
-    public double getPhi(double PixelsFromLevelToTopOfTopTarget) {
-        /*
-         * TODO: consider simply returning the calculated value, instead of
-         * assigning it to a variable and then returning that variable
-         */
-        return pixlesToAngles(PixelsFromLevelToTopOfTopTarget)
-                + cameraAngleOffset;
-    }
-
-    public double getTheta(double PixelsFromLevelToBottomOfATarget) {
-        return pixlesToAngles(PixelsFromLevelToBottomOfATarget) + cameraAngleOffset;
     }
 
     public static ParticleAnalysisReport getTopMost(ParticleAnalysisReport[] particles) {
@@ -186,97 +104,6 @@ public class ImageProcessing {
         return leftistTarget;
     }
 
-    public void setTargets(ParticleAnalysisReport[] particles) {
-        topTarget = getTopMost(particles);
-        bottomTarget = getBottomMost(particles);
-
-    }
-
-    public double getHypotneuse0(double angle, int ref) { //ref-reference number
-        //1 Top
-        //2 Middle
-        double opposite0 = 0;                             //3 Bottom
-        switch (ref) {
-            case 1:
-                opposite0 = heightToBottomOfTopTarget - cameraHeight;
-                break;
-            case 2:
-                opposite0 = heightToBottomOfMiddleTarget - cameraHeight;
-                break;
-            case 3:
-                opposite0 = heightToBottomOfBottomTarget - cameraHeight;
-                break;
-        }
-        double hypotneuse_0 = opposite0
-                / MathX.sin(getTheta(angle));
-        System.out.println("Phi " + getTheta(angle));
-        return hypotneuse_0;
-    }
-
-    public double getHypotneuse1(double angle, int targetSelector) { 
-        //ref-reference number
-        //1 Top
-        //2 Middle
-        double opposite1 = 0;                             //3 Bottom
-        switch (targetSelector) {
-            case 1:
-                opposite1 = heightToTopOfTopTarget - cameraHeight;
-                break;
-            case 2:
-                opposite1 = heightToTopOfMiddleTarget - cameraHeight;
-                break;
-            case 3:
-                opposite1 = heightToTopOfBottomTarget - cameraHeight;
-                break;
-        }
-        double hypotneuse_1 =
-                opposite1
-                / MathX.sin(getPhi(angle));
-        System.out.println("Phi " + getPhi(angle));
-        return hypotneuse_1;
-    }
-
-    public double getAdjacent1(double phiAngle, double heightToTopOfTopTarget) {
-        return heightToTopOfTopTarget / MathX.tan(phiAngle);
-    }
-
-    public double getAdjacent0(double thetaAngle,
-            double heightToBottomOfTopTarget) {
-        return heightToBottomOfTopTarget / MathX.tan(thetaAngle);
-    }
-
-    public double idTarget(ParticleAnalysisReport particle, int iterator) {
-        double phi = getPhi(getPixelsFromLevelToTopOfATarget(particle));
-        double theta = getTheta(getPixelsFromLevelToBottomOfATarget(particle));
-        double length = 0;
-        switch (iterator) {
-            case 1:
-                length = heightToTopOfTopTarget - cameraHeight;
-                break;
-            case 2:
-                length = heightToTopOfMiddleTarget - cameraHeight;
-                break;
-            case 3:
-                length = heightToTopOfBottomTarget - cameraHeight;
-                break;
-        }
-
-        double adjacent1 = getAdjacent1(phi, length);
-        double adjacent0 = getAdjacent0(theta, length - targetHeight);
-
-        double disparity = MathX.abs(adjacent1 / adjacent0 - 1);
-
-        msg.printOnLn("Bottom Adjacent0 : " + 
-                adjacent0, DriverStationLCD.Line.kUser2);
-        msg.printOnLn("Bottom Adjacent1 : " + 
-                adjacent1, DriverStationLCD.Line.kUser3);
-        msg.printOnLn("Disparity : " + 
-                disparity, DriverStationLCD.Line.kMain6);
-        //msg.printLn("The disperity is " + disparity);
-        //System.out.println("---------------------------------------------");
-        return disparity;
-    }
-
     public void getTheParticles(AxisCamera camera) throws Exception {
         int erosionCount = 2;
         // true means use connectivity 8, false means connectivity 4
@@ -302,168 +129,41 @@ public class ImageProcessing {
         convexHullImage.free();
         filteredImage.free();
     }
-    
-    // Mr. Desch's    
-    
-    public double getDistance() {
-        //test case for 168 inches
-        ParticleAnalysisReport top = getTopMost(particles);
-        double ph = top.boundingRectHeight;
-        double delta = 83;//hardcoded needs to be changed
-        double lambda = 14.55;
-        double R = 18/MathX.tan(ph / lambda);
+
+    public double getDistance(ParticleAnalysisReport part, double height) {
+        double ph = part.boundingRectHeight;
+        double delta = height - cameraHeight;
+        double R = 18 / MathX.tan(ph / lambda);
         double D = 0;
-        
-        for(int i=0;i<4;i++) {
+
+        for (int i = 0; i < 4; i++) {
             double theta = MathX.asin(delta / R);
             double new_ph = ph / MathX.cos(theta);
-            R = 18/MathX.tan(new_ph / lambda);
-            D = MathX.sqrt(R*R-delta*delta);
-            
+            R = 18 / MathX.tan(new_ph / lambda);
+            D = MathX.sqrt(R * R - delta * delta);
         }
-       
-       
+
         return D;
     }
-    
-    //end
-    
-    
 
-    public void organizeTheParticles(ParticleAnalysisReport[] particles) {
-        bottomTarget = null;
-        topTarget = null;
-        middleTargetLeft = null;
-        middleTargetRight = null;
-        ParticleAnalysisReport midLeftTargetTemp = null, midRightTargetTemp = 
-                null;
-        for (int i = 0; i < particles.length; i++) {
-            ParticleAnalysisReport particle = particles[i];
-            double minDisparity = Double.POSITIVE_INFINITY;
-            int target = 1;
-            for (int j = 1; j < 4; j++) {
-                double currentDisparity = idTarget(particle, j);
+    public boolean isTopTarget(ParticleAnalysisReport part) {
+        double D1 = getDistance(part, T_topTargetHeight);
+        double D2 = getDistance(part, B_topTargetHeight);
+        double disparity = MathX.abs(D1 / D2 - 1);
 
-                if (currentDisparity < minDisparity) {
-                    minDisparity = currentDisparity;
-                    target = j;
-                }
-            }
-
-
-
-            if (target == 1 && minDisparity < minAcceptableDisparity) {
-                topTarget = particle;
-                msg.printOnLn("Top target found",
-                        DriverStationLCD.Line.kUser4);
-            } else if (target == 2 && minDisparity < minAcceptableDisparity) {
-                if (midLeftTargetTemp == null) {
-
-                    midLeftTargetTemp = particle;
-                    msg.printOnLn("left target found",
-                            DriverStationLCD.Line.kUser5);
-
-                } else {
-
-                    midRightTargetTemp = particle;
-                    msg.printOnLn("right target found",
-                            DriverStationLCD.Line.kUser5);
-                }
-            } else if (target == 3 && minDisparity < minAcceptableDisparity) {
-                bottomTarget = particle;
-                msg.printOnLn("bottom target found",
-                        DriverStationLCD.Line.kUser4);
-            } else {
-                msg.printOnLn("OMFG i cant find any targets",
-                        DriverStationLCD.Line.kUser5);
-            }
-
-
-        }
-        if (midLeftTargetTemp != null && midRightTargetTemp != null) {
-            middleTargetRight = getRightMost(new ParticleAnalysisReport[]
-            {midLeftTargetTemp, midRightTargetTemp});
-            middleTargetLeft = getLeftMost(new ParticleAnalysisReport[]
-            {midLeftTargetTemp, midRightTargetTemp});
-
+        if (disparity < maxDisparity) {
+            return true;
         } else {
-            if(topTarget != null && midRightTargetTemp != null) {
-                ParticleAnalysisReport[] array = new ParticleAnalysisReport[]
-                {topTarget, midRightTargetTemp};
-                ParticleAnalysisReport p = getRightMost(array);
-                if(p == midRightTargetTemp) {
-                    middleTargetRight = midRightTargetTemp;
-                } else {
-                    middleTargetLeft = midRightTargetTemp;
-                }                
-            } else if(topTarget != null && midLeftTargetTemp != null) {
-                ParticleAnalysisReport[] array = new ParticleAnalysisReport[]
-                {topTarget, midLeftTargetTemp};
-                ParticleAnalysisReport p = getLeftMost(array);
-                if(p == midRightTargetTemp) {
-                    middleTargetLeft = midLeftTargetTemp;
-                } else {
-                    middleTargetRight = midLeftTargetTemp;
-                }                
-            }
-            else if(bottomTarget != null && midRightTargetTemp != null) {
-                ParticleAnalysisReport[] array = new ParticleAnalysisReport[]
-                {bottomTarget, midRightTargetTemp};
-                ParticleAnalysisReport p = getRightMost(array);
-                if(p == midRightTargetTemp) {
-                    middleTargetRight = midRightTargetTemp;
-                } else {
-                    middleTargetLeft = midRightTargetTemp;
-                }              
-            }else if(bottomTarget != null && midLeftTargetTemp != null) {
-                ParticleAnalysisReport[] array = new ParticleAnalysisReport[]
-                {bottomTarget, midLeftTargetTemp};
-                ParticleAnalysisReport p = getLeftMost(array);
-                if(p == midRightTargetTemp) {
-                    middleTargetLeft= midLeftTargetTemp;
-                } else {
-                    middleTargetRight = midLeftTargetTemp;
-                }              
-            } else {
-                msg.printOnLn("Not 2 targets!!!", DriverStationLCD.Line.kMain6);
-            }
+            return false;
         }
-
-
     }
-
-    public double CameraCorrection
-            (ParticleAnalysisReport particle, String target) {
-
-        double targetMiddleHeight = 0.0;
-
-        if ("top".equals(target)) {
-            targetMiddleHeight = 109;
+    
+    public ParticleAnalysisReport getTopTarget() throws Exception {
+        for(int i=0;i<particles.length;i++) {
+            if(isTopTarget(particles[i])) {
+                return particles[i];
+            }
         }
-        if ("middle".equals(target)) {
-            targetMiddleHeight = 72;
-        }
-        if ("bottom".equals(target)) {
-            targetMiddleHeight = 39;
-        }
-        double delta = targetMiddleHeight - cameraHeight;
-        double lambda = numberOfPixelsVerticalInFieldOfView
-                / numberOfDegreesInVerticalFieldOfView;
-        double pixelHeightBetweenReflectiveTape =
-                getPixelsFromLevelToTopOfATarget(particle)
-                - getPixelsFromLevelToBottomOfATarget(particle);
-        double ph_fixed = pixelHeightBetweenReflectiveTape;
-
-        double R = 18 / MathX.tan(ph_fixed / lambda);
-
-        double Distance = 0;
-        for (int i = 1; i <= 4; i++) {
-            double theta = MathX.asin(delta / R);
-            double ph_new = ph_fixed / MathX.cos(theta);
-            R = 18 / MathX.tan(ph_new / lambda);
-            Distance = MathX.sqrt(R * R - delta * delta);
-        }
-
-        return Distance;
+        throw new Exception("Top target not found!");
     }
 }
