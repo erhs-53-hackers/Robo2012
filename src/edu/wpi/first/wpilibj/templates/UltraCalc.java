@@ -6,13 +6,13 @@ package edu.wpi.first.wpilibj.templates;
  */
 public class UltraCalc {
 
-    double voltsScalar;
     double maxVoltage = 5.0;
+    double maxDistance = 512; //inches
+    double voltsScalar = maxVoltage / maxDistance;
     private Messager msg;
 
     public UltraCalc() {
         msg = new Messager();
-        voltsScalar = maxVoltage / 512;
     }
 
     /**
@@ -22,13 +22,10 @@ public class UltraCalc {
      * @return
      */
     public double findRange(double volts) {
-
         double range = volts / voltsScalar;
-
-        if (!(range >= 254)) {
+        if (range >= 254) {
             msg.printLn("Maxed out at 254 inches");
         }
-
         return range;
     }
 
