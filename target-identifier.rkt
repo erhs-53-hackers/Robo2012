@@ -6,10 +6,13 @@
          plot/utils ; for degrees->radians, radians->degrees
          )
 
+(struct particle (center-y bounding-height))
+
 ; number of pixels from top to bottom of camera's field of view
 (define vertical-field-of-view-pixels 480)
 ; number of radians from top to bottom of camera's field of view
-(define vertical-field-of-view-radians (degrees->radians (+ 35 (/ 1 4))))
+(define vertical-field-of-view-radians
+  (degrees->radians 34.42900061182182))
 ;camera tilts back from vertical by this many radians
 (define camera-tilt (degrees->radians 12))
 ; height in inches of camera from the ground
@@ -64,10 +67,10 @@
 
 ; given particle's center pixel and bounding-height in pixels,
 ;  return the upper or lower pixel
-(define (center-and-bounding-height->upper-pixel center bounding-height)
-  (- center (/ bounding-height 2)))
-(define (center-and-bounding-height->lower-pixel center bounding-height)
-  (+ center (/ bounding-height 2)))
+(define (particle->lower-pixel particle)
+  (+ (particle-center-y particle) (/ (particle-bounding-height particle) 2)))
+(define (particle->upper-pixel particle)
+  (- (particle-center-y particle) (/ (particle-bounding-height particle) 2)))
 
 (define (pixel->elevation-pixels pixel)
   (- level-pixel pixel))
@@ -87,49 +90,31 @@
   (and (< 1 (/ larger smaller))
        (< (/ larger smaller) 1.1)))
 
-(define (center-and-bounding-height-pixels->lower-elevation-radians
-         center bounding-height)
-  (pixels->radians
-   (pixel->elevation-pixels
-    (center-and-bounding-height->lower-pixel center bounding-height))))
+(define (particle->lower-elevation-radians particle)
+  (pixels->radians (pixel->elevation-pixels (particle->lower-pixel particle))))
 
-(define (center-and-bounding-height-pixels->upper-elevation-radians
-         center bounding-height)
-  (pixels->radians
-   (pixel->elevation-pixels
-    (center-and-bounding-height->upper-pixel center bounding-height))))
+(define (particle->upper-elevation-radians particle)
+  (pixels->radians (pixel->elevation-pixels (particle->upper-pixel particle))))
 
-(define (top-target? center bounding-height)
-  (define lower-elevation-radians
-    (center-and-bounding-height-pixels->lower-elevation-radians
-     center bounding-height))
-  (define upper-elevation-radians
-    (center-and-bounding-height-pixels->upper-elevation-radians
-     center bounding-height))
+(define (top-target? particle)
+  (define lower-elevation-radians (particle->lower-elevation-radians particle))
+  (define upper-elevation-radians (particle->upper-elevation-radians particle))
   (adjacents-close-enough?
    (adjacents
     opposite-top-lower lower-elevation-radians
     opposite-top-upper upper-elevation-radians)))
 
-(define (middle-target? center bounding-height)
-  (define lower-elevation-radians
-    (center-and-bounding-height-pixels->lower-elevation-radians
-     center bounding-height))
-  (define upper-elevation-radians
-    (center-and-bounding-height-pixels->upper-elevation-radians
-     center bounding-height))
+(define (middle-target? particle)
+  (define lower-elevation-radians (particle->lower-elevation-radians particle))
+  (define upper-elevation-radians (particle->upper-elevation-radians particle))
   (adjacents-close-enough?
    (adjacents
     opposite-middle-lower lower-elevation-radians
     opposite-middle-upper upper-elevation-radians)))
 
-(define (bottom-target? center bounding-height)
-  (define lower-elevation-radians
-    (center-and-bounding-height-pixels->lower-elevation-radians
-     center bounding-height))
-  (define upper-elevation-radians
-    (center-and-bounding-height-pixels->upper-elevation-radians
-     center bounding-height))
+(define (bottom-target? particle)
+  (define lower-elevation-radians (particle->lower-elevation-radians particle))
+  (define upper-elevation-radians (particle->upper-elevation-radians particle))
   (adjacents-close-enough?
    (adjacents
     opposite-bottom-lower lower-elevation-radians
