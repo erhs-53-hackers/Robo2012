@@ -88,15 +88,22 @@ public class Messager {
     }
 
     /**
-     * Prints a message on the Driver Station LCD
+     * Prints a message to a specific line on the Driver Station LCD
      *
      * @param s The String to be printed on the Driver Station
+     * @param line The line to print the message to
      */
     public void printOnLn(String s, DriverStationLCD.Line line) {
         driverLCD.println(line, 1, "                             ");
         driverLCD.println(line, 1, s);
         driverLCD.updateLCD();
     }
+    
+    /**
+     * Prints a message to the Driver Station LCD in a console-like manner
+     * 
+     * @param s The String to be printed on the Driver Station
+     */
     public void printLn(String s) {
         String time = "" + (int) Timer.getFPGATimestamp();
         post("[" + time + "]: " + s);
