@@ -81,16 +81,32 @@ public class RobotTemplate extends IterativeRobot {
         if (camera.freshImage()) {
             try {
                 imageProc.getTheParticles(camera);
+               
+                
                 target = ImageProcessing.getTopMost(imageProc.particles);
+                
+                msg.printOnLn("Top:" + imageProc.isTopTarget(target), DriverStationLCD.Line.kMain6);
+                msg.printOnLn("Bottom:" + imageProc.isBottomTarget(target), DriverStationLCD.Line.kUser2);
 
 
-                double distance = imageProc.getDistance(target,
-                        ImageProcessing.topTargetHeight);
+                /*
+                if(imageProc.isTopTarget(target)) {
+                    msg.printLn("Top");
+                }
+                if(imageProc.isBottomTarget(target)) {
+                    msg.printLn("Botton");
+                }
+                if(!imageProc.isBottomTarget(target) && !imageProc.isTopTarget(target)) {
+                    msg.printLn("No target found");
+                }
+                * 
+                */
 
-                msg.printOnLn("" + distance, DriverStationLCD.Line.kUser2);
+                
 
-                double angle = ImageProcessing.getHorizontalAngle(target);
-                msg.printOnLn("Angle:" + angle, DriverStationLCD.Line.kUser3);
+                
+                 
+                
             } catch (Exception e) {
                 System.out.println(e.getMessage());
             }
@@ -187,9 +203,10 @@ public class RobotTemplate extends IterativeRobot {
                 isShooting = true;
             }
         }
-
+/*
         if (camera.freshImage() && isShooting) {
             try {
+                
                 imageProc.getTheParticles(camera);
                 ParticleAnalysisReport topTarget = imageProc.getTopTarget();
                 double angle = ImageProcessing.getHorizontalAngle(topTarget);
@@ -203,7 +220,9 @@ public class RobotTemplate extends IterativeRobot {
                 isShooting = false;
             }
 
-        }       
+        } 
+        * 
+        */
 
     }
 }

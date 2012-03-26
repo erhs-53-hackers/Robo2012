@@ -23,23 +23,34 @@ public class ImageProcessing {
     ParticleAnalysisReport bottomTarget, topTarget, middleTargetLeft,
             middleTargetRight;
     Messager msg = new Messager();
-    static final double FOV = 35.25;//camera field of view in degrees
+    static final double FOV = 34.42900061182182;//camera field of view in degrees
     static final double camResWidth = 640;
     static final double camResHeight = 480;
-    static final double targetHeight = 18.0;
-    static final double cameraAngle = 12;
-    static final double cameraHeight = 26;
+    static final double targetHeight = 18.125;
+    static final double cameraTilt = 16.3537752906153;
+    static final double cameraHeight = 21;
     static final double maxDisparity = .5;
-    static final double lambda = 14.55;
-    static final double topTargetHeight = 109;//inches to middle
+    static final double lambda = camResHeight / FOV;
+    
+    //static final double topTargetHeight = 109;//inches to middle
+    //static final double middleTargetHeight = 72;//inches to middle
+    //static final double bottomTargetHeight = 39;//inches to middle
+    //static final double T_topTargetHeight = 118;//inches to top of tape
+    //static final double T_middleTargetHeight = 81;//inches to top of tape
+    //static final double T_bottomTargetHeight = 48;//inches to top of tape
+    //static final double B_topTargetHeight = 100;//inches to bottom of tape
+    //static final double B_middleTargetHeight = 63;//inches to bottom of tape
+    //static final double B_bottomTargetHeight = 30;//inches to bottom of tape
+    
+    static final double topTargetHeight = 53;//inches to middle
     static final double middleTargetHeight = 72;//inches to middle
-    static final double bottomTargetHeight = 39;//inches to middle
-    static final double T_topTargetHeight = 118;//inches to top of tape
+    static final double bottomTargetHeight = 16.375;//inches to middle
+    static final double T_topTargetHeight = 53 + (targetHeight/2);//inches to top of tape
     static final double T_middleTargetHeight = 81;//inches to top of tape
-    static final double T_bottomTargetHeight = 48;//inches to top of tape
-    static final double B_topTargetHeight = 100;//inches to bottom of tape
+    static final double T_bottomTargetHeight = 16.375 + (targetHeight/2);//inches to top of tape
+    static final double B_topTargetHeight = 53 - (targetHeight/2);//inches to bottom of tape
     static final double B_middleTargetHeight = 63;//inches to bottom of tape
-    static final double B_bottomTargetHeight = 30;//inches to bottom of tape
+    static final double B_bottomTargetHeight = 16.375 - (targetHeight/2);//inches to bottom of tape
 
     public ImageProcessing() {
         criteriaCollection.addCriteria(
@@ -134,6 +145,15 @@ public class ImageProcessing {
         convexHullImage.free();
         filteredImage.free();
     }
+    
+    public double getCameraTilt() {
+        double level = particles[0].center_mass_y - particles[0].boundingRectHeight / 2;
+        
+        level *= FOV;
+        level /= camResHeight;        
+        
+        return level - FOV/2;
+    }
 
     /**
      * Get the horizontal distance to the target
@@ -144,23 +164,80 @@ public class ImageProcessing {
     public double getDistance(ParticleAnalysisReport part, double height) {
         double ph = part.boundingRectHeight;
         double delta = height - cameraHeight;
-        double R = 18 / MathX.tan(ph / lambda);
+        double R = 18.125 / MathX.tan(ph / lambda);
         double D = 0;
+        
 
         for (int i = 0; i < 4; i++) {
-            double theta = MathX.asin(delta / R);
-            double new_ph = ph / MathX.cos(theta);
-            R = 18 / MathX.tan(new_ph / lambda);
-            D = MathX.sqrt(R * R - delta * delta);
+            double theta = MathX.asin(delta / R);            
+            double new_ph = ph / MathX.cos(theta);            
+            R = 18 / MathX.tan(new_ph / lambda);            
+            D = MathX.sqrt(R * R - delta * delta);            
         }
 
         return D;
     }
+    
+    private double max(double d1, double d2) {
+        if(d1 > d2) {
+            return d1;
+        }
+        return d2;
+    }
+    
+    private double min(double d1, double d2) {
+        if(d1 < d2) {
+            return d1;
+        }
+        return d2;
+    }
 
-    public boolean isTopTarget(ParticleAnalysisReport part) {
+    public double isTopTarget(ParticleAnalysisReport part) {
         double D1 = getDistance(part, T_topTargetHeight);
         double D2 = getDistance(part, B_topTargetHeight);
-        double disparity = MathX.abs(D1 / D2 - 1);
+        double disparity = max(D1, D2) / min(D1, D2);
+        
+        System.out.println("Top1:" + D1);
+        System.out.println("Top2:" + D2);
+        System.out.println("----------------------");
+
+        /*
+        if (disparity < maxDisparity) {
+            return true;
+        } else {
+            return false;
+        }
+        * 
+        */
+        
+        return disparity;
+    }
+    
+    public double isBottomTarget(ParticleAnalysisReport part) {
+        double D1 = getDistance(part, T_bottomTargetHeight);
+        double D2 = getDistance(part, B_bottomTargetHeight);
+        double disparity = max(D1, D2) / min(D1, D2);
+        System.out.println("Bottom1:" + D1);
+        System.out.println("Bottom2:" + D2);
+        System.out.println("----------------------");
+        /*
+
+        if (disparity < maxDisparity) {
+            return true;
+        } else {
+            return false;
+        }
+        * 
+        */
+        
+        return disparity;
+    }
+    
+    public boolean isMiddleTarget(ParticleAnalysisReport part) {
+        double D1 = getDistance(part, T_middleTargetHeight);
+        double D2 = getDistance(part, B_middleTargetHeight);
+        double disparity = max(D1, D2) / min(D1, D2);
+        
 
         if (disparity < maxDisparity) {
             return true;
@@ -169,6 +246,7 @@ public class ImageProcessing {
         }
     }
     
+    /*
     public ParticleAnalysisReport getTopTarget() throws Exception {
         for(int i=0;i<particles.length;i++) {
             if(isTopTarget(particles[i])) {
@@ -177,4 +255,6 @@ public class ImageProcessing {
         }
         throw new Exception("Top target not found!");
     }
+    * 
+    */
 }
