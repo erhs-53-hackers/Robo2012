@@ -31,6 +31,7 @@ public class RobotTemplate extends IterativeRobot {
     double distanceFromTarget;
     DeadReckoning dead;
 
+
     public void robotInit() {
         msg = new Messager();
         msg.printLn("Loading Please Wait...");
@@ -83,10 +84,12 @@ public class RobotTemplate extends IterativeRobot {
                 imageProc.getTheParticles(camera);
                
                 
-                target = ImageProcessing.getTopMost(imageProc.particles);
                 
-                msg.printOnLn("Top:" + imageProc.isTopTarget(target), DriverStationLCD.Line.kMain6);
-                msg.printOnLn("Bottom:" + imageProc.isBottomTarget(target), DriverStationLCD.Line.kUser2);
+                
+                //msg.printOnLn("Top:" + imageProc.isTopTarget(target), DriverStationLCD.Line.kMain6);
+                //msg.printOnLn("Bottom:" + imageProc.isBottomTarget(target), DriverStationLCD.Line.kUser2);
+                msg.printOnLn("dist(midtop):" + imageProc.getDistance(imageProc.particles[0], 32.3125), DriverStationLCD.Line.kUser3);
+                //msg.printLn("" + imageProc.getCameraTilt());
 
 
                 /*
@@ -108,7 +111,7 @@ public class RobotTemplate extends IterativeRobot {
                  
                 
             } catch (Exception e) {
-                System.out.println(e.getMessage());
+                System.out.println("YO!!!:" + e.getMessage());
             }
         }
 

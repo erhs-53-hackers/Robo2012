@@ -27,7 +27,7 @@ public class ImageProcessing {
     static final double camResWidth = 640;
     static final double camResHeight = 480;
     static final double targetHeight = 18.125;
-    static final double cameraTilt = 16.3537752906153;
+    static final double cameraTilt = 13.4;
     static final double cameraHeight = 21;
     static final double maxDisparity = .5;
     static final double lambda = camResHeight / FOV;
@@ -169,10 +169,10 @@ public class ImageProcessing {
         
 
         for (int i = 0; i < 4; i++) {
-            double theta = MathX.asin(delta / R);            
-            double new_ph = ph / MathX.cos(theta);            
-            R = 18 / MathX.tan(new_ph / lambda);            
-            D = MathX.sqrt(R * R - delta * delta);            
+            double theta = MathX.asin(delta / R);
+            double new_ph = ph / MathX.cos(theta);
+            R = 18.125 / MathX.tan(new_ph / lambda);
+            D = MathX.sqrt(R * R - delta * delta);
         }
 
         return D;
