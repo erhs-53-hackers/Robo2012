@@ -86,10 +86,13 @@ public class ParticleFilters {
     }
 
     public void compare() {
-        if (sumuparray(current) > sumuparray(newangle) + 14) {
+        for (int i = 0; i < current.length; i ++)
+        {
+        if  (current[i] > newangle[i] + 4 || current[i] < newangle[i] + 4 ) {
             msg.printLn("I am in the origninal part");
         } else {
             msg.printOnLn("I am in the wrong f****** place", DriverStationLCD.Line.kUser4);
+        }
         }
     }
 
