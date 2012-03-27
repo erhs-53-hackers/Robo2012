@@ -31,6 +31,7 @@ public class RobotTemplate extends IterativeRobot {
     double distanceFromTarget;
     DeadReckoning dead;
 
+    ParticleFilters rajathFilter;
 
     public void robotInit() {
         msg = new Messager();
@@ -64,14 +65,27 @@ public class RobotTemplate extends IterativeRobot {
         //dead = new DeadReckoning(drive,launcher.launchMotor,launcher.loadMotor, collector,bridgeArm);
 
         //gyro = new GyroX(RoboMap.GYRO, RoboMap.LAUNCH_TURN, drive);
+        rajathFilter = new ParticleFilters();
         msg.printLn("Done: FRC 2012");
     }
 
     public void autonomousInit() {
         isShooting = false;//change me!!!!!
+        if(camera.freshImage())
+        {
+                 try{
+                    imageProc.getTheParticles(camera);
+        }catch(Exception e)
+                {
+                    e.printStackTrace();
+                }
+        rajathFilter.getDistances(imageProc.particles);
+        rajathFilter.setArray();   
+        }
     }
 
     public void autonomousPeriodic() {
+
 
         //msg.printLn("hello");
         //launcher.launchMotor.set(.75);
@@ -113,7 +127,44 @@ public class RobotTemplate extends IterativeRobot {
             } catch (Exception e) {
                 System.out.println("YO!!!:" + e.getMessage());
             }
+
+       
+       // rajathFilter.getDistances(imageProc.particles);
+        //rajathFilter.compare();
+             
+
         }
+        else
+        {
+            msg.printLn("CAN'T FIND TARGET");
+        }
+            //dead.driveToBridge();
+            /*
+             * if (camera.freshImage() && false) { try {
+             * imageProc.getTheParticles(camera); target =
+             * ImageProcessing.getTopMost(imageProc.particles);
+             *
+             *
+             * double angle = ImageProcessing.getHorizontalAngle(target);
+             * //msg.printLn("" + angle); /* while (MathX.abs(angle -
+             * gyro.modulatedAngle) > 2) { gyro.turnToAngle(angle);
+             * getWatchdog().feed(); }
+             *
+             *
+             *
+             *
+             *
+             *
+             *
+             * if (isShooting) { Timer.delay(3);
+             *
+             * launcher.shoot(target.boundingRectHeight, Physics.HOOP3);
+             *
+             * shots++; if (shots == 2) { isShooting = false; } } } catch
+             * (Exception e) { e.printStackTrace(); System.out.println("ERROR!!!
+             * Cannot Fetch Image"); } } getWatchdog().feed();
+             */
+        
 
 
 
@@ -226,6 +277,7 @@ public class RobotTemplate extends IterativeRobot {
         } 
         * 
         */
+
 
     }
 }
