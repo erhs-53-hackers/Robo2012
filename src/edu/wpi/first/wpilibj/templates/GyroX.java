@@ -11,10 +11,11 @@ import edu.wpi.first.wpilibj.RobotDrive;
  */
 public class GyroX implements PIDSource {
 
+    double startAngle = 0; //Change depending on decided starting angle when beginning competition
     RobotDrive driveTrain;
     PWM lazySusan;
     Gyro gyro;
-    double modulatedAngle;
+    double modulatedAngle = 0;//Change depending on decided starting angle when beginning competition AKA start angle
     double targetAngle = 0;
 
     public GyroX(final int gyroChannel) {
