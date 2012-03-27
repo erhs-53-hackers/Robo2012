@@ -32,25 +32,25 @@ public class ImageProcessing {
     static final double maxDisparity = .5;
     static final double lambda = camResHeight / FOV;
     
-    //static final double topTargetHeight = 109;//inches to middle
-    //static final double middleTargetHeight = 72;//inches to middle
-    //static final double bottomTargetHeight = 39;//inches to middle
-    //static final double T_topTargetHeight = 118;//inches to top of tape
-    //static final double T_middleTargetHeight = 81;//inches to top of tape
-    //static final double T_bottomTargetHeight = 48;//inches to top of tape
-    //static final double B_topTargetHeight = 100;//inches to bottom of tape
-    //static final double B_middleTargetHeight = 63;//inches to bottom of tape
-    //static final double B_bottomTargetHeight = 30;//inches to bottom of tape
-    
-    static final double topTargetHeight = 53;//inches to middle
+    static final double topTargetHeight = 109;//inches to middle
     static final double middleTargetHeight = 72;//inches to middle
-    static final double bottomTargetHeight = 16.375;//inches to middle
-    static final double T_topTargetHeight = 53 + (targetHeight/2);//inches to top of tape
+    static final double bottomTargetHeight = 39;//inches to middle
+    static final double T_topTargetHeight = 118;//inches to top of tape
     static final double T_middleTargetHeight = 81;//inches to top of tape
-    static final double T_bottomTargetHeight = 16.375 + (targetHeight/2);//inches to top of tape
-    static final double B_topTargetHeight = 53 - (targetHeight/2);//inches to bottom of tape
+    static final double T_bottomTargetHeight = 48;//inches to top of tape
+    static final double B_topTargetHeight = 100;//inches to bottom of tape
     static final double B_middleTargetHeight = 63;//inches to bottom of tape
-    static final double B_bottomTargetHeight = 16.375 - (targetHeight/2);//inches to bottom of tape
+    static final double B_bottomTargetHeight = 30;//inches to bottom of tape
+    
+    //static final double topTargetHeight = 53;//inches to middle
+    //static final double middleTargetHeight = 72;//inches to middle
+    //static final double bottomTargetHeight = 16.375;//inches to middle
+    //static final double T_topTargetHeight = 53 + (targetHeight/2);//inches to top of tape
+    //static final double T_middleTargetHeight = 81;//inches to top of tape
+    //static final double T_bottomTargetHeight = 16.375 + (targetHeight/2);//inches to top of tape
+    //static final double B_topTargetHeight = 53 - (targetHeight/2);//inches to bottom of tape
+    //static final double B_middleTargetHeight = 63;//inches to bottom of tape
+    //static final double B_bottomTargetHeight = 16.375 - (targetHeight/2);//inches to bottom of tape
 
     public ImageProcessing() {
         criteriaCollection.addCriteria(
