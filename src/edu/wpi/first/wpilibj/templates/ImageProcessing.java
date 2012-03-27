@@ -164,14 +164,14 @@ public class ImageProcessing {
     public double getDistance(ParticleAnalysisReport part, double height) {
         double ph = part.boundingRectHeight;
         double delta = height - cameraHeight;
-        double R = 18.125 / MathX.tan(ph / lambda);
+        double R = targetHeight / MathX.tan(ph / lambda);
         double D = 0;
         
 
         for (int i = 0; i < 4; i++) {
             double theta = MathX.asin(delta / R);
             double new_ph = ph / MathX.cos(theta);
-            R = 18.125 / MathX.tan(new_ph / lambda);
+            R = targetHeight / MathX.tan(new_ph / lambda);
             D = MathX.sqrt(R * R - delta * delta);
         }
 

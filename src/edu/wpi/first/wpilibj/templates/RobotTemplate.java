@@ -95,13 +95,10 @@ public class RobotTemplate extends IterativeRobot {
         //msg.printLn("yo");
         if (camera.freshImage()) {
             try {
-                imageProc.getTheParticles(camera);
-               
+                imageProc.getTheParticles(camera);             
                 
-                
-                
-                //msg.printOnLn("Top:" + imageProc.isTopTarget(target), DriverStationLCD.Line.kMain6);
-                //msg.printOnLn("Bottom:" + imageProc.isBottomTarget(target), DriverStationLCD.Line.kUser2);
+                msg.printOnLn("Top:" + imageProc.isTopTarget(target), DriverStationLCD.Line.kMain6);
+                msg.printOnLn("Bottom:" + imageProc.isBottomTarget(target), DriverStationLCD.Line.kUser2);
                 msg.printOnLn("dist(midtop):" + imageProc.getDistance(imageProc.particles[0], 32.3125), DriverStationLCD.Line.kUser3);
                 //msg.printLn("" + imageProc.getCameraTilt());
 
