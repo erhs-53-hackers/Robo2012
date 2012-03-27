@@ -234,7 +234,7 @@ public class RobotTemplate extends IterativeRobot {
                 isShooting = false;
             }
 
-        }       
+        }
 
     }
 }

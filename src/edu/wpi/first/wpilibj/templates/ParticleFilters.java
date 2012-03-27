@@ -23,8 +23,8 @@ public class ParticleFilters {
     
     Messager msg;
     
-    final double numberOfPixelsVerticalInFieldOfView = 240;
-    final double numberOfPixelsHorizontalInFieldOfView = 640;
+    final double VerticalFOV_p = 240; // field of view, pixels
+    final double HorizontalFOV_p = 640;
 
     final double targetHeight = 18.0;
 
