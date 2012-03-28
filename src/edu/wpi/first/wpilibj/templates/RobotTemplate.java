@@ -13,7 +13,7 @@ import edu.wpi.first.wpilibj.image.ParticleAnalysisReport;
  *
  * @author Team53
  */
-public class RobotTemplate extends IterativeRobot {
+public class RobotTemplate extends IterativeRobot implements PIDSource, PIDOutput{
 
     RobotDrive drive;
     Messager msg;
@@ -25,6 +25,7 @@ public class RobotTemplate extends IterativeRobot {
     Launcher launcher;
     Victor bridgeArm, collector;
     GyroX gyro;
+    PIDController pid;
     boolean isManual = true;
     boolean isShooting = false;
     int shots = 0;
@@ -33,87 +34,82 @@ public class RobotTemplate extends IterativeRobot {
     ParticleFilters rajathFilter;
 
     public void robotInit() {
+        pid = new PIDController(0.1, 0, 0, this, this);
+        pid.setSetpoint(0);
+        pid.setOutputRange(-.4, .4);
         msg = new Messager();
         msg.printLn("Loading Please Wait...");
         Timer.delay(10);
 
        
-        drive = new RobotDrive(new Victor(RoboMap.MOTOR1), new Victor(RoboMap.MOTOR2), new Victor(RoboMap.MOTOR3), new Victor(RoboMap.MOTOR4));
-        drive.setInvertedMotor(RobotDrive.MotorType.kFrontRight, true);
-        drive.setInvertedMotor(RobotDrive.MotorType.kRearRight, true);
-        drive.setInvertedMotor(RobotDrive.MotorType.kRearLeft, true);
-        drive.setInvertedMotor(RobotDrive.MotorType.kFrontLeft, true);
+        drive = new RobotDrive(new Jaguar(1), new Jaguar(2));
+       
         drive.setSafetyEnabled(false);
         getWatchdog().setEnabled(false);
-        leftStick = new Joystick(RoboMap.JOYSTICK1);
-        rightStick = new Joystick(RoboMap.JOYSTICK2);
-        launchControlStick = new Joystick(RoboMap.JOYSTICK3);
-        launchControls = new Controls(launchControlStick);
+        //leftStick = new Joystick(RoboMap.JOYSTICK1);
+        //rightStick = new Joystick(RoboMap.JOYSTICK2);
+        //launchControlStick = new Joystick(RoboMap.JOYSTICK3);
+        //launchControls = new Controls(launchControlStick);
 
         camera = AxisCamera.getInstance();
         camera.writeBrightness(30);
         camera.writeResolution(AxisCamera.ResolutionT.k640x480);
         imageProc = new ImageProcessing();
         
-        bridgeArm = new Victor(RoboMap.BRIDGE_MOTOR);
-        collector = new Victor(RoboMap.COLLECT_MOTOR);
-        launcher = new Launcher();
+        //bridgeArm = new Victor(RoboMap.BRIDGE_MOTOR);
+        //collector = new Victor(RoboMap.COLLECT_MOTOR);
+        //launcher = new Launcher();
 
-        dead = new DeadReckoning(drive,launcher.launchMotor,launcher.loadMotor, collector,bridgeArm);
+        //dead = new DeadReckoning(drive,launcher.launchMotor,launcher.loadMotor, collector,bridgeArm);
 
         //gyro = new GyroX(RoboMap.GYRO, RoboMap.LAUNCH_TURN, drive);
-        rajathFilter = new ParticleFilters();
+        //rajathFilter = new ParticleFilters();
         msg.printLn("Done: FRC 2012");
     }
 
     public void autonomousInit() {
         isShooting = false;//change me!!!!!
-        if (camera.freshImage()) {
-            try {
-                imageProc.getTheParticles(camera);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            rajathFilter.getDistances(imageProc.particles);
-            rajathFilter.setArray();
-        }
+        
+        
     }
+    
+    
 
-    public void autonomousPeriodic() {         
-        dead.driveToBridge();
-        /*!!!!! REMOVE THIS LINE !!!!!
+    public void autonomousPeriodic() { 
+        
+        //dead.driveToBridge();
+        //dead.driveToBridge();
+       // dead.shoot();
+        
         if (camera.freshImage()) {
             try {
                 
                 imageProc.getTheParticles(camera);
+                pid.enable();
+                
 
-                msg.printOnLn("Top:" + imageProc.isTopTarget(target), DriverStationLCD.Line.kMain6);
-                msg.printOnLn("Bottom:" + imageProc.isBottomTarget(target), DriverStationLCD.Line.kUser2);
-                msg.printOnLn("dist(midtop):" + imageProc.getDistance(imageProc.particles[0], ImageProcessing.topTargetHeight), DriverStationLCD.Line.kUser3);
-                msg.printOnLn("Tilt:" + imageProc.getCameraTilt(), DriverStationLCD.Line.kUser4);
+                //msg.printOnLn("Top:" + imageProc.isTopTarget(target), DriverStationLCD.Line.kMain6);
+                //msg.printOnLn("Bottom:" + imageProc.isBottomTarget(target), DriverStationLCD.Line.kUser2);
+                //msg.printOnLn("dist(midtop):" + imageProc.getDistance(imageProc.particles[0], ImageProcessing.topTargetHeight), DriverStationLCD.Line.kUser3);
+                //msg.printOnLn("Tilt:" + imageProc.getCameraTilt(), DriverStationLCD.Line.kUser4);
                                
                 // start gyro debug
                 //double angle = imageproc.getHorizontalAngle();
+                
                 //gyro.turnTurret(angle);
                 //end gyro debug
 
 
             } catch (Exception e) {
                 System.out.println("Exception:" + e.getMessage());
-            }
-            
-            
-
-
-            
-            
+            }         
            
 
 
         } else {
             msg.printLn("No Camera Image");
         }
-        *///!!!!! REMOVE THIS LINE !!!!!
+       
         
          /*
           * if(imageProc.isTopTarget(target)) { msg.printLn("Top"); }
@@ -125,8 +121,12 @@ public class RobotTemplate extends IterativeRobot {
           */
 
     }
+    
+    
 
     public void teleopInit() {
+        pid.disable();
+        pid.free();
         launcher.launchMotor.set(0);
         collector.set(0);
         launcher.loadMotor.set(0);
@@ -137,19 +137,7 @@ public class RobotTemplate extends IterativeRobot {
     public void teleopPeriodic() {
         System.out.println("Value: " + dead.potentiometer.getVoltage());
 
-        // switch to control assisted teleop
-        double power = (testStick.getZ() + 1)/2;
-        msg.printLn(Double.toString(power));
-        if(testStick.getRawButton(2)){            
-            launcher.launchMotor.set(power);
-            Timer.delay(3);
-            collector.set(-1);
-            launcher.loadMotor.set(-1);
-            Timer.delay(7);
-            launcher.launchMotor.set(0);
-            collector.set(0);
-            launcher.loadMotor.set(0);
-        }
+        // switch to control assisted teleop       
         if (launchControls.button11()) {
             isManual = true;
         } else if (launchControls.button12()) {
@@ -213,5 +201,18 @@ public class RobotTemplate extends IterativeRobot {
          */
 
 
+    }
+
+    public void pidWrite(double output) {
+        //gyro.lazySusan.setRaw((int)output);
+        drive.arcadeDrive(0, output);
+        
+    }
+
+    public double pidGet() {
+        double d = ImageProcessing.getHorizontalAngle(
+                ImageProcessing.getBottomMost(imageProc.particles));
+        System.out.println(-d);
+        return -d;
     }
 }

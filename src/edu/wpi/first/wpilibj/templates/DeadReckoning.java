@@ -23,7 +23,7 @@ public class DeadReckoning {
     Victor collect;
     Victor bridge;
     AnalogChannel potentiometer;
-    double speed = .678443;
+    double speed = .778443;
     Messager msg = new Messager();
     
     boolean Autonomousflag;
@@ -41,11 +41,11 @@ public class DeadReckoning {
     }
     public void shoot()
     {
-        shoot.set(.35);
-        Timer.delay(3);
-        collect.set(-1);
-        load.set(-1);
+        shoot.set(.32);
         Timer.delay(5);
+        collect.set(1);
+        load.set(-1);
+        Timer.delay(7);
         
         shoot.set(0);        
         collect.set(0);
@@ -58,12 +58,12 @@ public class DeadReckoning {
         if(Autonomousflag) {
             shoot();
             driveTrain.tankDrive(-speed, speed);
-            Timer.delay(2);
+            Timer.delay(1);
             
             if(potentiometer.getVoltage() < 1.5) {//line
                 
                 driveTrain.tankDrive(speed,speed);
-                Timer.delay(1.4);               
+                Timer.delay(1.2);               
                
                 driveTrain.tankDrive(0, 0);
                 Timer.delay(0.9);
