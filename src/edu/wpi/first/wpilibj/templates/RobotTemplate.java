@@ -79,16 +79,9 @@ public class RobotTemplate extends IterativeRobot {
         }
     }
 
-    public void autonomousPeriodic() {
-
-
-        //msg.printLn("hello");
-        //launcher.launchMotor.set(.75);
-        //Timer.delay(3);
-        //collector.set(-1);
-        //launcher.loadMotor.set(-1);
-        //msg.printLn("yo");
-        
+    public void autonomousPeriodic() {         
+        dead.driveToBridge();
+        /*!!!!! REMOVE THIS LINE !!!!!
         if (camera.freshImage()) {
             try {
                 
@@ -103,21 +96,22 @@ public class RobotTemplate extends IterativeRobot {
 
 
             } catch (Exception e) {
-                System.out.println("YO!!!:" + e.getMessage());
+                System.out.println("Exception:" + e.getMessage());
             }
             
-            dead.driveToBridge();
+            
 
 
-            // rajathFilter.getDistances(imageProc.particles);
-            //rajathFilter.compare();
+            
             
            
 
 
         } else {
-            msg.printLn("CAN'T FIND TARGET");
+            msg.printLn("No Camera Image");
         }
+        *///!!!!! REMOVE THIS LINE !!!!!
+        
          /*
           * if(imageProc.isTopTarget(target)) { msg.printLn("Top"); }
           * if(imageProc.isBottomTarget(target)) { msg.printLn("Botton");
