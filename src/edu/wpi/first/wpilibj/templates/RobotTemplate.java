@@ -92,7 +92,10 @@ public class RobotTemplate extends IterativeRobot {
                 msg.printOnLn("dist(midtop):" + imageProc.getDistance(imageProc.particles[0], ImageProcessing.topTargetHeight), DriverStationLCD.Line.kUser3);
                 msg.printOnLn("Tilt:" + imageProc.getCameraTilt(), DriverStationLCD.Line.kUser4);
                                
-                
+                // start gyro debug
+                //double angle = imageproc.getHorizontalAngle();
+                //gyro.turnTurret(angle);
+                //end gyro debug
 
 
             } catch (Exception e) {
