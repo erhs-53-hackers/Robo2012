@@ -17,7 +17,7 @@ public class RobotTemplate extends IterativeRobot {
 
     RobotDrive drive;
     Messager msg;
-    Joystick leftStick, rightStick, launchControlStick;
+    Joystick leftStick, rightStick, launchControlStick, testStick;
     Controls launchControls;
     AxisCamera camera;
     ImageProcessing imageProc;
@@ -138,6 +138,18 @@ public class RobotTemplate extends IterativeRobot {
         System.out.println("Value: " + dead.potentiometer.getVoltage());
 
         // switch to control assisted teleop
+        if(testStick.getRawButton(2)){
+            double power = (testStick.getZ() + 1)/2;
+            msg.println(power);
+            launcher.launchMotor.set(power);
+            Timer.delay(3);
+            collector.set(-1);
+            launcher.loadMotor.set(-1);
+            Timer.delay(7);
+            launcher.launchMotor.set(0);
+            collector.set(0);
+            launcher.loadMotor.set(0);
+        }
         if (launchControls.button11()) {
             isManual = true;
         } else if (launchControls.button12()) {
