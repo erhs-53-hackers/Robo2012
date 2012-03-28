@@ -6,9 +6,9 @@ package edu.wpi.first.wpilibj.templates;
  */
 public class UltraCalc {
 
-    double maxVoltage = 5.0;
-    double maxDistance = 512; //inches
-    double voltsScalar = maxVoltage / maxDistance;
+    private double maxVoltage = 5.0;
+    private double maxDistance = 512; //inches
+    private double voltsScalar = maxVoltage / maxDistance;
     private Messager msg;
 
     public UltraCalc() {
