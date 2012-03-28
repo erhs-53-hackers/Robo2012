@@ -138,9 +138,9 @@ public class RobotTemplate extends IterativeRobot {
         System.out.println("Value: " + dead.potentiometer.getVoltage());
 
         // switch to control assisted teleop
-        if(testStick.getRawButton(2)){
-            double power = (testStick.getZ() + 1)/2;
-            msg.println(power);
+        double power = (testStick.getZ() + 1)/2;
+        msg.printLn(Double.toString(power));
+        if(testStick.getRawButton(2)){            
             launcher.launchMotor.set(power);
             Timer.delay(3);
             collector.set(-1);
