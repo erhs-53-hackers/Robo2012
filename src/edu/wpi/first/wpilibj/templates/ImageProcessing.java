@@ -195,7 +195,7 @@ public class ImageProcessing {
     public double isTopTarget(ParticleAnalysisReport part) {
         double D1 = getDistance(part, T_topTargetHeight);
         double D2 = getDistance(part, B_topTargetHeight);
-        double disparity = max(D1, D2) / min(D1, D2);
+        double disparity = max(D1, D2) - min(D1, D2);
         
         System.out.println("Top1:" + D1);
         System.out.println("Top2:" + D2);
@@ -216,7 +216,7 @@ public class ImageProcessing {
     public double isBottomTarget(ParticleAnalysisReport part) {
         double D1 = getDistance(part, T_bottomTargetHeight);
         double D2 = getDistance(part, B_bottomTargetHeight);
-        double disparity = max(D1, D2) / min(D1, D2);
+        double disparity = max(D1, D2) - min(D1, D2);
         System.out.println("Bottom1:" + D1);
         System.out.println("Bottom2:" + D2);
         System.out.println("----------------------");
