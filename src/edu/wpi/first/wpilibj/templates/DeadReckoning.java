@@ -46,6 +46,10 @@ public class DeadReckoning {
         collect.set(-1);
         load.set(-1);
         Timer.delay(5);
+        
+        shoot.set(0);        
+        collect.set(0);
+        load.set(0);
     }
     public void driveToBridge()
     {
@@ -56,7 +60,7 @@ public class DeadReckoning {
             driveTrain.tankDrive(-speed, speed);
             Timer.delay(2);
             
-            if(potentiometer.getVoltage() < 1.5) {//left
+            if(potentiometer.getVoltage() < 1.5) {//line
                 
                 driveTrain.tankDrive(speed,speed);
                 Timer.delay(1.4);               
@@ -65,14 +69,14 @@ public class DeadReckoning {
                 Timer.delay(0.9);
                 bridge.set(-1);
                 
-                Autonomousflag = false;
-            } else if (potentiometer.getVoltage() < 3 && potentiometer.getVoltage() > 1.5) {//line
+                
+            } else if (potentiometer.getVoltage() < 3 && potentiometer.getVoltage() > 1.5) {//left
                 
                 driveTrain.tankDrive(speed,speed);
                 Timer.delay(3);
                 bridge.set(-1);
                 
-                Autonomousflag = false;
+                
             } else if (potentiometer.getVoltage() < 4.5 && potentiometer.getVoltage() > 3) {//right
                 
                 driveTrain.tankDrive(speed,speed);
@@ -85,11 +89,9 @@ public class DeadReckoning {
                 Timer.delay(2);
                 bridge.set(-1);
                 
-                Autonomousflag = false;
-            } else {//nothing
                 
-                Autonomousflag = false;
             }
+        Autonomousflag = false;
       } else {
             driveTrain.tankDrive(0, 0);
      }
