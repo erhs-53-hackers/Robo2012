@@ -28,7 +28,7 @@ public class ImageProcessing {
     static final double camResHeight = 480;
     static final double targetHeight = 18.125;
     static final double cameraTilt = 13.4;
-    static final double cameraHeight = 21;
+    static final double cameraHeight = 61;
     static final double maxDisparity = .5;
     static final double lambda = camResHeight / FOV;
     

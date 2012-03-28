@@ -22,7 +22,7 @@ public class RobotTemplate extends IterativeRobot {
     AxisCamera camera;
     ImageProcessing imageProc;
     ParticleAnalysisReport target;
-    Launcher launcher;    
+    Launcher launcher;
     Victor bridgeArm, collector;
     GyroX gyro;
     boolean isManual = true;
@@ -30,7 +30,6 @@ public class RobotTemplate extends IterativeRobot {
     int shots = 0;
     double distanceFromTarget;
     DeadReckoning dead;
-
     ParticleFilters rajathFilter;
 
     public void robotInit() {
@@ -38,19 +37,18 @@ public class RobotTemplate extends IterativeRobot {
         msg.printLn("Loading Please Wait...");
         Timer.delay(10);
 
-        //drive = new RobotDrive(
-        //        RoboMap.MOTOR1, RoboMap.MOTOR2, RoboMap.MOTOR3, RoboMap.MOTOR4);
-        //drive = new RobotDrive(new Victor(RoboMap.MOTOR1), new Victor(RoboMap.MOTOR2), new Victor(RoboMap.MOTOR3), new Victor(RoboMap.MOTOR4));
-        //drive.setInvertedMotor(RobotDrive.MotorType.kFrontRight, true);
-        //drive.setInvertedMotor(RobotDrive.MotorType.kRearRight, true);
-        //drive.setInvertedMotor(RobotDrive.MotorType.kRearLeft, true);
-        //drive.setInvertedMotor(RobotDrive.MotorType.kFrontLeft, true);
-        //drive.setSafetyEnabled(false);
-        //getWatchdog().setEnabled(false);
-        //leftStick = new Joystick(RoboMap.JOYSTICK1);
-        //rightStick = new Joystick(RoboMap.JOYSTICK2);
-        //launchControlStick = new Joystick(RoboMap.JOYSTICK3);
-        //launchControls = new Controls(launchControlStick);
+       
+        drive = new RobotDrive(new Victor(RoboMap.MOTOR1), new Victor(RoboMap.MOTOR2), new Victor(RoboMap.MOTOR3), new Victor(RoboMap.MOTOR4));
+        drive.setInvertedMotor(RobotDrive.MotorType.kFrontRight, true);
+        drive.setInvertedMotor(RobotDrive.MotorType.kRearRight, true);
+        drive.setInvertedMotor(RobotDrive.MotorType.kRearLeft, true);
+        drive.setInvertedMotor(RobotDrive.MotorType.kFrontLeft, true);
+        drive.setSafetyEnabled(false);
+        getWatchdog().setEnabled(false);
+        leftStick = new Joystick(RoboMap.JOYSTICK1);
+        rightStick = new Joystick(RoboMap.JOYSTICK2);
+        launchControlStick = new Joystick(RoboMap.JOYSTICK3);
+        launchControls = new Controls(launchControlStick);
 
         camera = AxisCamera.getInstance();
         camera.writeBrightness(30);
@@ -58,11 +56,11 @@ public class RobotTemplate extends IterativeRobot {
         imageProc = new ImageProcessing();
 
         //physics = new Physics();
-        //bridgeArm = new Victor(RoboMap.BRIDGE_MOTOR);
-        //collector = new Victor(RoboMap.COLLECT_MOTOR);
-        //launcher = new Launcher();
+        bridgeArm = new Victor(RoboMap.BRIDGE_MOTOR);
+        collector = new Victor(RoboMap.COLLECT_MOTOR);
+        launcher = new Launcher();
 
-        //dead = new DeadReckoning(drive,launcher.launchMotor,launcher.loadMotor, collector,bridgeArm);
+        dead = new DeadReckoning(drive,launcher.launchMotor,launcher.loadMotor, collector,bridgeArm);
 
         //gyro = new GyroX(RoboMap.GYRO, RoboMap.LAUNCH_TURN, drive);
         rajathFilter = new ParticleFilters();
@@ -71,16 +69,14 @@ public class RobotTemplate extends IterativeRobot {
 
     public void autonomousInit() {
         isShooting = false;//change me!!!!!
-        if(camera.freshImage())
-        {
-                 try{
-                    imageProc.getTheParticles(camera);
-        }catch(Exception e)
-                {
-                    e.printStackTrace();
-                }
-        rajathFilter.getDistances(imageProc.particles);
-        rajathFilter.setArray();   
+        if (camera.freshImage()) {
+            try {
+                imageProc.getTheParticles(camera);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            rajathFilter.getDistances(imageProc.particles);
+            rajathFilter.setArray();
         }
     }
 
@@ -93,75 +89,72 @@ public class RobotTemplate extends IterativeRobot {
         //collector.set(-1);
         //launcher.loadMotor.set(-1);
         //msg.printLn("yo");
+        
         if (camera.freshImage()) {
             try {
-                imageProc.getTheParticles(camera);             
                 
+                imageProc.getTheParticles(camera);
+
                 msg.printOnLn("Top:" + imageProc.isTopTarget(target), DriverStationLCD.Line.kMain6);
                 msg.printOnLn("Bottom:" + imageProc.isBottomTarget(target), DriverStationLCD.Line.kUser2);
-                msg.printOnLn("dist(midtop):" + imageProc.getDistance(imageProc.particles[0], 32.3125), DriverStationLCD.Line.kUser3);
+                msg.printOnLn("dist(midtop):" + imageProc.getDistance(imageProc.particles[0], ImageProcessing.topTargetHeight), DriverStationLCD.Line.kUser3);
+                msg.printOnLn("Tilt:" + imageProc.getCameraTilt(), DriverStationLCD.Line.kMain6);
                 //msg.printLn("" + imageProc.getCameraTilt());
+                
+                
 
 
                 /*
-                if(imageProc.isTopTarget(target)) {
-                    msg.printLn("Top");
-                }
-                if(imageProc.isBottomTarget(target)) {
-                    msg.printLn("Botton");
-                }
-                if(!imageProc.isBottomTarget(target) && !imageProc.isTopTarget(target)) {
-                    msg.printLn("No target found");
-                }
-                * 
-                */
-
-                
-
-                
-                 
-                
+                 * if(imageProc.isTopTarget(target)) { msg.printLn("Top"); }
+                 * if(imageProc.isBottomTarget(target)) { msg.printLn("Botton");
+                 * } if(!imageProc.isBottomTarget(target) &&
+                 * !imageProc.isTopTarget(target)) { msg.printLn("No target
+                 * found"); }
+                 *
+                 */
             } catch (Exception e) {
                 System.out.println("YO!!!:" + e.getMessage());
             }
+            
+            dead.driveToBridge();
 
-       
-       // rajathFilter.getDistances(imageProc.particles);
-        //rajathFilter.compare();
-             
 
-        }
-        else
-        {
+            // rajathFilter.getDistances(imageProc.particles);
+            //rajathFilter.compare();
+            
+           
+
+
+        } else {
             msg.printLn("CAN'T FIND TARGET");
         }
-            //dead.driveToBridge();
+        //dead.driveToBridge();
             /*
-             * if (camera.freshImage() && false) { try {
-             * imageProc.getTheParticles(camera); target =
-             * ImageProcessing.getTopMost(imageProc.particles);
-             *
-             *
-             * double angle = ImageProcessing.getHorizontalAngle(target);
-             * //msg.printLn("" + angle); /* while (MathX.abs(angle -
-             * gyro.modulatedAngle) > 2) { gyro.turnToAngle(angle);
-             * getWatchdog().feed(); }
-             *
-             *
-             *
-             *
-             *
-             *
-             *
-             * if (isShooting) { Timer.delay(3);
-             *
-             * launcher.shoot(target.boundingRectHeight, Physics.HOOP3);
-             *
-             * shots++; if (shots == 2) { isShooting = false; } } } catch
-             * (Exception e) { e.printStackTrace(); System.out.println("ERROR!!!
-             * Cannot Fetch Image"); } } getWatchdog().feed();
-             */
-        
+         * if (camera.freshImage() && false) { try {
+         * imageProc.getTheParticles(camera); target =
+         * ImageProcessing.getTopMost(imageProc.particles);
+         *
+         *
+         * double angle = ImageProcessing.getHorizontalAngle(target);
+         * //msg.printLn("" + angle); /* while (MathX.abs(angle -
+         * gyro.modulatedAngle) > 2) { gyro.turnToAngle(angle);
+         * getWatchdog().feed(); }
+         *
+         *
+         *
+         *
+         *
+         *
+         *
+         * if (isShooting) { Timer.delay(3);
+         *
+         * launcher.shoot(target.boundingRectHeight, Physics.HOOP3);
+         *
+         * shots++; if (shots == 2) { isShooting = false; } } } catch (Exception
+         * e) { e.printStackTrace(); System.out.println("ERROR!!! Cannot Fetch
+         * Image"); } } getWatchdog().feed();
+         */
+
 
 
 
@@ -200,11 +193,12 @@ public class RobotTemplate extends IterativeRobot {
         launcher.launchMotor.set(0);
         collector.set(0);
         launcher.loadMotor.set(0);
-        
+
         msg.clearConsole();
     }
 
     public void teleopPeriodic() {
+        System.out.println("Value: " + dead.potentiometer.getVoltage());
 
         // switch to control assisted teleop
         if (launchControls.button11()) {
@@ -254,26 +248,20 @@ public class RobotTemplate extends IterativeRobot {
                 isShooting = true;
             }
         }
-/*
-        if (camera.freshImage() && isShooting) {
-            try {
-                
-                imageProc.getTheParticles(camera);
-                ParticleAnalysisReport topTarget = imageProc.getTopTarget();
-                double angle = ImageProcessing.getHorizontalAngle(topTarget);
-                gyro.turnTurret(angle);
-                launcher.shootTopTarget();        
-                
-                
-                isShooting = false;               
-            } catch (Exception e) {
-                msg.printLn(e.getMessage());
-                isShooting = false;
-            }
-
-        } 
-        * 
-        */
+        /*
+         * if (camera.freshImage() && isShooting) { try {
+         *
+         * imageProc.getTheParticles(camera); ParticleAnalysisReport topTarget =
+         * imageProc.getTopTarget(); double angle =
+         * ImageProcessing.getHorizontalAngle(topTarget);
+         * gyro.turnTurret(angle); launcher.shootTopTarget();          *
+         *
+         * isShooting = false; } catch (Exception e) {
+         * msg.printLn(e.getMessage()); isShooting = false; }
+         *
+         * }
+         *
+         */
 
 
     }
