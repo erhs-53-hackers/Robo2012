@@ -54,8 +54,7 @@ public class RobotTemplate extends IterativeRobot {
         camera.writeBrightness(30);
         camera.writeResolution(AxisCamera.ResolutionT.k640x480);
         imageProc = new ImageProcessing();
-
-        //physics = new Physics();
+        
         bridgeArm = new Victor(RoboMap.BRIDGE_MOTOR);
         collector = new Victor(RoboMap.COLLECT_MOTOR);
         launcher = new Launcher();
@@ -98,20 +97,11 @@ public class RobotTemplate extends IterativeRobot {
                 msg.printOnLn("Top:" + imageProc.isTopTarget(target), DriverStationLCD.Line.kMain6);
                 msg.printOnLn("Bottom:" + imageProc.isBottomTarget(target), DriverStationLCD.Line.kUser2);
                 msg.printOnLn("dist(midtop):" + imageProc.getDistance(imageProc.particles[0], ImageProcessing.topTargetHeight), DriverStationLCD.Line.kUser3);
-                msg.printOnLn("Tilt:" + imageProc.getCameraTilt(), DriverStationLCD.Line.kMain6);
-                //msg.printLn("" + imageProc.getCameraTilt());
-                
+                msg.printOnLn("Tilt:" + imageProc.getCameraTilt(), DriverStationLCD.Line.kUser4);
+                               
                 
 
 
-                /*
-                 * if(imageProc.isTopTarget(target)) { msg.printLn("Top"); }
-                 * if(imageProc.isBottomTarget(target)) { msg.printLn("Botton");
-                 * } if(!imageProc.isBottomTarget(target) &&
-                 * !imageProc.isTopTarget(target)) { msg.printLn("No target
-                 * found"); }
-                 *
-                 */
             } catch (Exception e) {
                 System.out.println("YO!!!:" + e.getMessage());
             }
@@ -128,65 +118,15 @@ public class RobotTemplate extends IterativeRobot {
         } else {
             msg.printLn("CAN'T FIND TARGET");
         }
-        //dead.driveToBridge();
-            /*
-         * if (camera.freshImage() && false) { try {
-         * imageProc.getTheParticles(camera); target =
-         * ImageProcessing.getTopMost(imageProc.particles);
-         *
-         *
-         * double angle = ImageProcessing.getHorizontalAngle(target);
-         * //msg.printLn("" + angle); /* while (MathX.abs(angle -
-         * gyro.modulatedAngle) > 2) { gyro.turnToAngle(angle);
-         * getWatchdog().feed(); }
-         *
-         *
-         *
-         *
-         *
-         *
-         *
-         * if (isShooting) { Timer.delay(3);
-         *
-         * launcher.shoot(target.boundingRectHeight, Physics.HOOP3);
-         *
-         * shots++; if (shots == 2) { isShooting = false; } } } catch (Exception
-         * e) { e.printStackTrace(); System.out.println("ERROR!!! Cannot Fetch
-         * Image"); } } getWatchdog().feed();
-         */
+         /*
+          * if(imageProc.isTopTarget(target)) { msg.printLn("Top"); }
+          * if(imageProc.isBottomTarget(target)) { msg.printLn("Botton");
+          * } if(!imageProc.isBottomTarget(target) &&
+          * !imageProc.isTopTarget(target)) { msg.printLn("No target
+          * found"); }
+          *
+          */
 
-
-
-
-
-
-        //dead.driveToBridge();
-
-        /*
-         * if (camera.freshImage() && false) { try {
-         * imageProc.getTheParticles(camera); target =
-         * ImageProcessing.getTopMost(imageProc.particles);
-         *
-         *
-         * double angle = ImageProcessing.getHorizontalAngle(target);
-         * //msg.printLn("" + angle); /* while (MathX.abs(angle -
-         * gyro.modulatedAngle) > 2) { gyro.turnToAngle(angle);
-         * getWatchdog().feed(); }
-         *
-         *
-         *
-         *
-         *
-         *
-         *
-         * if (isShooting) { Timer.delay(3);
-         *
-         * launcher.shoot(target.boundingRectHeight, Physics.HOOP3);
-         *
-         * shots++; if (shots == 2) { isShooting = false; } } } catch (Exception
-         * e) { e.printStackTrace(); System.out.println("ERROR!!! Cannot Fetch
-         * Image"); } } getWatchdog().feed();
-         */
     }
 
     public void teleopInit() {
