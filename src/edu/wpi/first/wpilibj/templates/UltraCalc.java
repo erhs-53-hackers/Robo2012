@@ -47,7 +47,7 @@ public class UltraCalc {
      * @param volts average voltage of the ultrasonic sensor
      * @return raw distance to target, in inches
      */
-    public double getRawDistance(double volts) {
+    public static double getRawDistance(double volts) {
         double rawDistance = volts * 102;
         return rawDistance;
     }
@@ -59,7 +59,7 @@ public class UltraCalc {
      * @param volts average voltage of the ultrasonic sensor
      * @return scaled distance to target, in inches
      */
-    public double getScaledDistance(double volts) {
+    public static double getScaledDistance(double volts) {
         double a = 3.92e-10;
         double b = -2.46e-7;
         double c = 5.68e-5;
