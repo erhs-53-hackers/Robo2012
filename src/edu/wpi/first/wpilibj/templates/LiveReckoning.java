@@ -34,14 +34,15 @@ public class LiveReckoning {
     private double savedDist = 0;
     private boolean stepFlag = false;
     private boolean isDone = false;
+    private boolean start = true;
 
     public LiveReckoning(RobotDrive drive, Launcher launcher,
             Jaguar collectMotor, Jaguar bridgeMotor, GyroX gyro1,
-            AnalogChannel ultrasonic1, PIDSource source, PIDOutput output) {
+            AnalogChannel ultrasonic1) {
 
-        pid = new PIDController(0.1, 0, 0, source, output);
+        pid = new PIDController(0.1, 0, 0, gyro1, gyro1);
         pid.setSetpoint(0);
-        pid.setOutputRange(-1, 1);
+        pid.setOutputRange(-255, 255);
         msg = new Messager();
         this.drive = drive;
         this.launcher = launcher;
@@ -54,8 +55,17 @@ public class LiveReckoning {
     }
 
     public void doAuto(AxisCamera camera) {
+        
         if (camera.freshImage()) {
             try {
+                if(start) {
+                    gyro.refreshGyro();
+                    imageProc.getTheParticles(camera);
+                    ParticleAnalysisReport top = ImageProcessing.getTopMost(imageProc.particles);
+                    double angle = ImageProcessing.getHorizontalAngle(top);
+                    pid.setSetpoint(gyro.modulatedAngle - angle);
+                    start = false;
+                }
 
                 imageProc.getTheParticles(camera);
                 pid.enable();

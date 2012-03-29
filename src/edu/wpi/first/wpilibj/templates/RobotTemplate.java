@@ -13,7 +13,7 @@ import edu.wpi.first.wpilibj.image.ParticleAnalysisReport;
  *
  * @author Team53
  */
-public class RobotTemplate extends IterativeRobot implements PIDSource, PIDOutput{
+public class RobotTemplate extends IterativeRobot{
 
     RobotDrive drive;
     Messager msg;
@@ -58,7 +58,7 @@ public class RobotTemplate extends IterativeRobot implements PIDSource, PIDOutpu
         launcher = new Launcher();
 
         dead = new DeadReckoning(drive,launcher.launchMotor,launcher.loadMotor, collector,bridgeArm);
-        live = new LiveReckoning(drive, launcher, collector, bridgeArm, gyro, null, this, this);
+        live = new LiveReckoning(drive, launcher, collector, bridgeArm, gyro, null);
 
         //gyro = new GyroX(RoboMap.GYRO, RoboMap.LAUNCH_TURN, drive);
         //rajathFilter = new ParticleFilters();
@@ -133,17 +133,5 @@ public class RobotTemplate extends IterativeRobot implements PIDSource, PIDOutpu
             }
         }
         
-    }
-
-    public void pidWrite(double output) {
-        //gyro.lazySusan.setRaw((int)output);
-        drive.arcadeDrive(0, output);        
-    }
-
-    public double pidGet() {
-        double d = ImageProcessing.getHorizontalAngle(
-                ImageProcessing.getBottomMost(imageProc.particles));
-        System.out.println(-d);
-        return -d;
     }
 }

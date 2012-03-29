@@ -1,6 +1,7 @@
 package edu.wpi.first.wpilibj.templates;
 
 import edu.wpi.first.wpilibj.Gyro;
+import edu.wpi.first.wpilibj.PIDOutput;
 import edu.wpi.first.wpilibj.PIDSource;
 import edu.wpi.first.wpilibj.PWM;
 import edu.wpi.first.wpilibj.RobotDrive;
@@ -9,7 +10,7 @@ import edu.wpi.first.wpilibj.RobotDrive;
  *
  * @author Nick, Alex, Michael, Dale, Chris
  */
-public class GyroX implements PIDSource {
+public class GyroX implements PIDSource, PIDOutput {
 
     double startAngle = 0; //Change depending on decided starting angle when beginning competition
     RobotDrive driveTrain;
@@ -38,8 +39,7 @@ public class GyroX implements PIDSource {
         return returnAngle;
     }
 
-    private double refreshGyro() {
-        //this.gyro.reset();
+    public double refreshGyro() {        
         modulatedAngle = modAngle(gyro.getAngle() * 4.14015366);
         return modulatedAngle;
     }
@@ -105,6 +105,10 @@ public class GyroX implements PIDSource {
     
     public double pidGet() {
         return modAngle(gyro.getAngle() * 4.14015366);
+    }
+
+    public void pidWrite(double output) {
+        lazySusan.setRaw((int)output);
     }
     
 }
