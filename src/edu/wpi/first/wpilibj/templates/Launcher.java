@@ -11,8 +11,8 @@ import edu.wpi.first.wpilibj.Victor;
  */
 public class Launcher {
 
-    Victor launchMotor;
-    Victor loadMotor;
+    Jaguar launchMotor;
+    Jaguar loadMotor;
     Encoder encoder;
     double topTargetRPM = 5000;//needs to be calibrated
 
@@ -20,8 +20,8 @@ public class Launcher {
      * Default constructor for the launcher
      */
     public Launcher() {
-        this.launchMotor = new Victor(RoboMap.LAUNCH_MOTOR);
-        this.loadMotor = new Victor(RoboMap.LOAD_MOTOR);
+        this.launchMotor = new Jaguar(RoboMap.LAUNCH_MOTOR);
+        this.loadMotor = new Jaguar(RoboMap.LOAD_MOTOR);
         this.encoder = new Encoder(
                 RoboMap.LAUNCH_ENCODER1,
                 RoboMap.LAUNCH_ENCODER2,

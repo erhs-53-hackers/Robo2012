@@ -18,18 +18,18 @@ import edu.wpi.first.wpilibj.Victor;
  */
 public class DeadReckoning {
     RobotDrive driveTrain;
-    Victor shoot;
-    Victor load;
-    Victor collect;
-    Victor bridge;
+    Jaguar shoot;
+    Jaguar load;
+    Jaguar collect;
+    Jaguar bridge;
     AnalogChannel potentiometer;
     double speed = .778443;
     Messager msg = new Messager();
     
     boolean Autonomousflag;
     
-    public DeadReckoning(RobotDrive drive, Victor shootMotor, Victor loadMotor, 
-            Victor collectMotor, Victor bridgeMotor)
+    public DeadReckoning(RobotDrive drive, Jaguar shootMotor, Jaguar loadMotor, 
+            Jaguar collectMotor, Jaguar bridgeMotor)
     {
         driveTrain = drive;
         shoot = shootMotor;

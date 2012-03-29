@@ -6,14 +6,12 @@ package edu.wpi.first.wpilibj.templates;
  */
 public class UltraCalc {
 
-    double maxVoltage = 5.0;
-    double maxDistance = 512; //inches
-    double voltsScalar = maxVoltage / maxDistance;
-    private Messager msg;
+    private static double maxVoltage = 5.0;
+    private static double maxDistance = 512; //inches
+    private static double voltsScalar = maxVoltage / maxDistance;
+    
 
-    public UltraCalc() {
-        msg = new Messager();
-    }
+   
 
     /**
      * Find the range to target, using the default FIRST ultrasonic scalar
@@ -21,10 +19,10 @@ public class UltraCalc {
      * @param volts average voltage of the ultrasonic sensor
      * @return
      */
-    public double findRange(double volts) {
+    public static double findRange(double volts) {
         double range = volts / voltsScalar;
         if (range >= 254) {
-            msg.printLn("Maxed out at 254 inches");
+            System.out.println("Maxed out at 254 inches");
         }
         return range;
     }
@@ -36,7 +34,7 @@ public class UltraCalc {
      * @param scalar find the range using a different scalar
      * @return
      */
-    public double findRangeOther(double volts, double scalar) {
+    public static double findRangeOther(double volts, double scalar) {
         double ret = findRange(volts) * scalar;
         return ret;
     }
@@ -47,7 +45,7 @@ public class UltraCalc {
      * @param volts average voltage of the ultrasonic sensor
      * @return raw distance to target, in inches
      */
-    public double getRawDistance(double volts) {
+    public static double getRawDistance(double volts) {
         double rawDistance = volts * 102;
         return rawDistance;
     }
@@ -59,7 +57,7 @@ public class UltraCalc {
      * @param volts average voltage of the ultrasonic sensor
      * @return scaled distance to target, in inches
      */
-    public double getScaledDistance(double volts) {
+    public static double getScaledDistance(double volts) {
         double a = 3.92e-10;
         double b = -2.46e-7;
         double c = 5.68e-5;
