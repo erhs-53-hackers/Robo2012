@@ -42,7 +42,7 @@ public class LiveReckoning {
 
         pid = new PIDController(0.1, 0, 0, gyro1, gyro1);
         pid.setSetpoint(0);
-        pid.setOutputRange(-255, 255);
+        pid.setOutputRange(-1, 1);
         msg = new Messager();
         this.drive = drive;
         this.launcher = launcher;
@@ -59,15 +59,14 @@ public class LiveReckoning {
         pid.free();        
     }
 
-    public void doAuto(AxisCamera camera) {
-        
+    public void doAuto(AxisCamera camera) {        
         if (camera.freshImage()) {
             try {
                 imageProc.getTheParticles(camera);
                 if(start) {
                     gyro.refreshGyro();                    
                     ParticleAnalysisReport top = ImageProcessing.getTopMost(imageProc.particles);
-                    double angle = ImageProcessing.getHorizontalAngle(top);
+                    double angle = -ImageProcessing.getHorizontalAngle(top);
                     pid.setSetpoint(gyro.modulatedAngle - angle);
                     System.out.println("Setpoint: " + (gyro.modulatedAngle - angle));
                     start = false;

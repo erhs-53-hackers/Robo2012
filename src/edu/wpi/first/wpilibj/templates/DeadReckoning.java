@@ -4,11 +4,10 @@
  */
 package edu.wpi.first.wpilibj.templates;
 
-import edu.wpi.first.wpilibj.RobotDrive;
 import edu.wpi.first.wpilibj.AnalogChannel;
 import edu.wpi.first.wpilibj.Jaguar;
+import edu.wpi.first.wpilibj.RobotDrive;
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.Victor;
 
 
 /**
@@ -73,7 +72,13 @@ public class DeadReckoning {
             } else if (potentiometer.getVoltage() < 3 && potentiometer.getVoltage() > 1.5) {//left
                 
                 driveTrain.tankDrive(speed,speed);
-                Timer.delay(3);
+                Timer.delay(1);
+                driveTrain.tankDrive(0, -speed);
+                Timer.delay(1);
+                driveTrain.tankDrive(-speed, 0);
+                Timer.delay(1);
+                driveTrain.tankDrive(speed, speed);
+                Timer.delay(2);
                 bridge.set(-1);
                 
                 
@@ -82,9 +87,9 @@ public class DeadReckoning {
                 driveTrain.tankDrive(speed,speed);
                 Timer.delay(1);
                 driveTrain.tankDrive(0, speed);
-                Timer.delay(.25);
+                Timer.delay(1);
                 driveTrain.tankDrive(speed, 0);
-                Timer.delay(.25);
+                Timer.delay(1);
                 driveTrain.tankDrive(speed, speed);
                 Timer.delay(2);
                 bridge.set(-1);
