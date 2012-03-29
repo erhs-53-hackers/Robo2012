@@ -9,7 +9,8 @@ public class UltraCalc {
     private static double maxVoltage = 5.0;
     private static double maxDistance = 512; //inches
     private static double voltsScalar = maxVoltage / maxDistance;
-    
+    private Messager msg;
+
 
    
 

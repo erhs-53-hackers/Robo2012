@@ -130,6 +130,7 @@ public class LiveReckoning {
                 isDone = true;
             }
         }
+
         if (isDone) { //resets robot
             stepFlag = false;
             gyro.turnTurretToAngle(0);
