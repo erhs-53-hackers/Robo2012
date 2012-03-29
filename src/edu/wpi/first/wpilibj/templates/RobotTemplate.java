@@ -137,19 +137,7 @@ public class RobotTemplate extends IterativeRobot implements PIDSource, PIDOutpu
     public void teleopPeriodic() {
         System.out.println("Value: " + dead.potentiometer.getVoltage());
 
-        // switch to control assisted teleop
-        double power = (testStick.getZ() + 1)/2;
-        msg.printLn(Double.toString(power));
-        if(testStick.getRawButton(2)){            
-            launcher.launchMotor.set(power);
-            Timer.delay(3);
-            collector.set(-1);
-            launcher.loadMotor.set(-1);
-            Timer.delay(7);
-            launcher.launchMotor.set(0);
-            collector.set(0);
-            launcher.loadMotor.set(0);
-        }
+        // switch to control assisted teleop       
         if (launchControls.button11()) {
             isManual = true;
         } else if (launchControls.button12()) {
