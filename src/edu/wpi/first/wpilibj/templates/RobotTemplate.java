@@ -69,7 +69,7 @@ public class RobotTemplate extends IterativeRobot{
     }
 
     public void disabledInit() {
-        live.free();
+        //live.free();
     }   
 
     public void teleopInit() {        
