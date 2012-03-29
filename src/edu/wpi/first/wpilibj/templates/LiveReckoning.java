@@ -42,13 +42,13 @@ public class LiveReckoning {
 
         pid = new PIDController(0.1, 0, 0, gyro1, gyro1);
         pid.setSetpoint(0);
-        pid.setOutputRange(-1, 1);
+        pid.setOutputRange(-0.4, 0.4);
         msg = new Messager();
         this.drive = drive;
         this.launcher = launcher;
         collect = collectMotor;
         bridge = bridgeMotor;
-        potentiometer = new AnalogChannel(1);
+        //potentiometer = new AnalogChannel(1);
         gyro = gyro1;
         ultrasonic = ultrasonic1;
         imageProc = new ImageProcessing();
@@ -64,11 +64,12 @@ public class LiveReckoning {
             try {
                 imageProc.getTheParticles(camera);
                 if(start) {
+                    gyro.gyro.reset();
                     gyro.refreshGyro();                    
                     ParticleAnalysisReport top = ImageProcessing.getTopMost(imageProc.particles);
                     double angle = -ImageProcessing.getHorizontalAngle(top);
-                    pid.setSetpoint(gyro.modulatedAngle - angle);
-                    System.out.println("Setpoint: " + (gyro.modulatedAngle - angle));
+                    pid.setSetpoint(angle);
+                    System.out.println("Setpoint: " + (angle));
                     start = false;
                 }
                 

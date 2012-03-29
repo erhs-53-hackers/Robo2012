@@ -12,7 +12,7 @@ import edu.wpi.first.wpilibj.camera.AxisCamera;
  *
  * @author Team53
  */
-public class RobotTemplate extends IterativeRobot{
+public class RobotTemplate extends IterativeRobot{ 
 
     RobotDrive drive;
     Messager msg;
@@ -34,7 +34,11 @@ public class RobotTemplate extends IterativeRobot{
         Timer.delay(10);
 
        
-        drive = new RobotDrive(new Jaguar(1), new Jaguar(2));
+        drive = new RobotDrive(RoboMap.MOTOR1, RoboMap.MOTOR2, RoboMap.MOTOR3, RoboMap.MOTOR4);
+        drive.setInvertedMotor(RobotDrive.MotorType.kFrontLeft, true);
+        drive.setInvertedMotor(RobotDrive.MotorType.kFrontRight, true);
+        drive.setInvertedMotor(RobotDrive.MotorType.kRearLeft, true);
+        drive.setInvertedMotor(RobotDrive.MotorType.kRearRight, true);
        
         drive.setSafetyEnabled(false);
         getWatchdog().setEnabled(false);
@@ -42,20 +46,28 @@ public class RobotTemplate extends IterativeRobot{
         rightStick = new Joystick(RoboMap.JOYSTICK2);
         launchControlStick = new Joystick(RoboMap.JOYSTICK3);
         launchControls = new Controls(launchControlStick);
+        
 
         camera = AxisCamera.getInstance();
         camera.writeBrightness(30);
-        camera.writeResolution(AxisCamera.ResolutionT.k640x480);        
+        camera.writeResolution(AxisCamera.ResolutionT.k640x480);
+        camera.writeMaxFPS(10);
+         
+        
         
         bridgeArm = new Jaguar(RoboMap.BRIDGE_MOTOR);
         collector = new Jaguar(RoboMap.COLLECT_MOTOR);
         launcher = new Launcher();
-
+        
+        gyro = new GyroX(RoboMap.GYRO, RoboMap.LAUNCH_TURN, drive);
         dead = new DeadReckoning(drive,launcher.launchMotor,launcher.loadMotor, collector,bridgeArm);
         live = new LiveReckoning(drive, launcher, collector, bridgeArm, gyro, null);
 
-        gyro = new GyroX(RoboMap.GYRO, RoboMap.LAUNCH_TURN, drive);        
+                
         msg.printLn("Done: FRC 2012");
+        //while(true) {
+        //System.out.println("Gyro:" + gyro.refreshGyro());
+        //}
     }
 
     public void autonomousInit() {
@@ -63,7 +75,7 @@ public class RobotTemplate extends IterativeRobot{
     }   
 
     public void autonomousPeriodic() {
-        dead.driveToBridge();
+        dead.shoot();
         //live.doAuto(camera);
     }
 
@@ -79,8 +91,12 @@ public class RobotTemplate extends IterativeRobot{
         msg.clearConsole();
     }
 
+    
+
     public void teleopPeriodic() {
-        // switch to control assisted teleop       
+        // switch to control assisted teleop  
+        
+        
         if (launchControls.button11()) {
             isManual = true;
         } else if (launchControls.button12()) {
@@ -107,13 +123,13 @@ public class RobotTemplate extends IterativeRobot{
         if (isManual) {
             msg.printOnLn("Mode: Manual", DriverStationLCD.Line.kMain6);
             if (launchControls.button7()) {
-                collector.set(-1);
+                collector.set(1);
             } else if (launchControls.button8()) {
                 collector.set(0);
             }
             double power = (launchControlStick.getThrottle() + 1) / 2;
             launcher.launchMotor.set(power);
-            msg.printOnLn("Launch Power = " + power, DriverStationLCD.Line.kUser2);
+            msg.printOnLn("Launch Power = " + power, DriverStationLCD.Line.kUser2);            
             // control the firing mechanism
             if (launchControls.button1()) {
                 launcher.manualShoot();
@@ -130,6 +146,8 @@ public class RobotTemplate extends IterativeRobot{
         }
         
         //live.doTele(camera, isShooting);
+        
+        
         
     }
 }

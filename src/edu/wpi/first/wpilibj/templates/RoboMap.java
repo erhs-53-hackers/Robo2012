@@ -25,9 +25,9 @@ public class RoboMap {
     public static final int LAUNCH_ENCODER1 = 9;
     public static final int LAUNCH_ENCODER2 = 10;
     /* Analog */
-    public static final int AUTO_POT = 1;
+    public static final int AUTO_POT = 3;
     public static final int TELO_POT = 2;
-    public static final int GYRO = 3;
+    public static final int GYRO = 1;
     public static final int BATTERY_METER = 4; //not actually used in code
     public static final int ULTRASONIC = 5;
     /* USB */

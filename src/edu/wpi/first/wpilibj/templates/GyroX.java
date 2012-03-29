@@ -38,9 +38,15 @@ public class GyroX implements PIDSource, PIDOutput {
         double returnAngle = angle % 360 + (angle > 180 ? -360 : 0);
         return returnAngle;
     }
+    double last = 0;
 
     public double refreshGyro() {        
         modulatedAngle = modAngle(gyro.getAngle() * 4.14015366);
+        //System.out.println("" + gyro.getAngle());
+        double rejetheth = gyro.pidGet()- last;
+        last = rejetheth;
+        //System.out.println("PID:" + rejetheth);
+        
         return modulatedAngle;
     }
 
@@ -108,7 +114,8 @@ public class GyroX implements PIDSource, PIDOutput {
     }
 
     public void pidWrite(double output) {
-        lazySusan.setRaw((int)output);
+        //lazySusan.setRaw((int)output);
+        driveTrain.arcadeDrive(0, output);
     }
     
 }
