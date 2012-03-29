@@ -19,20 +19,15 @@ public class RobotTemplate extends IterativeRobot{
     Messager msg;
     Joystick leftStick, rightStick, launchControlStick, testStick;
     Controls launchControls;
-    AxisCamera camera;
-    ImageProcessing imageProc;
-    
+    AxisCamera camera;       
     Launcher launcher;
     Jaguar bridgeArm, collector;
-    GyroX gyro;
-    PIDController pid;
+    GyroX gyro;    
     boolean isManual = true;
-    boolean isShooting = false;
-    int shots = 0;
-    double distanceFromTarget;
+    boolean isShooting = false;   
     DeadReckoning dead;
     LiveReckoning live;
-    ParticleFilters rajathFilter;
+    
 
     public void robotInit() {        
         msg = new Messager();
@@ -60,8 +55,7 @@ public class RobotTemplate extends IterativeRobot{
         dead = new DeadReckoning(drive,launcher.launchMotor,launcher.loadMotor, collector,bridgeArm);
         live = new LiveReckoning(drive, launcher, collector, bridgeArm, gyro, null);
 
-        //gyro = new GyroX(RoboMap.GYRO, RoboMap.LAUNCH_TURN, drive);
-        //rajathFilter = new ParticleFilters();
+        gyro = new GyroX(RoboMap.GYRO, RoboMap.LAUNCH_TURN, drive);        
         msg.printLn("Done: FRC 2012");
     }
 
@@ -70,12 +64,15 @@ public class RobotTemplate extends IterativeRobot{
     }   
 
     public void autonomousPeriodic() {
-        dead.driveToBridge();        
+        dead.driveToBridge();
+        //live.doAuto(camera);
+    }
+
+    public void disabledInit() {
+        live.free();
     }   
 
-    public void teleopInit() {
-        pid.disable();
-        pid.free();
+    public void teleopInit() {        
         launcher.launchMotor.set(0);
         collector.set(0);
         launcher.loadMotor.set(0);
@@ -132,6 +129,8 @@ public class RobotTemplate extends IterativeRobot{
                 isShooting = true;
             }
         }
+        
+        //live.doTele(camera, isShooting);
         
     }
 }

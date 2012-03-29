@@ -53,22 +53,29 @@ public class LiveReckoning {
         ultrasonic = ultrasonic1;
         imageProc = new ImageProcessing();
     }
+    
+    public void free() {
+        pid.disable();
+        pid.free();        
+    }
 
     public void doAuto(AxisCamera camera) {
         
         if (camera.freshImage()) {
             try {
+                imageProc.getTheParticles(camera);
                 if(start) {
-                    gyro.refreshGyro();
-                    imageProc.getTheParticles(camera);
+                    gyro.refreshGyro();                    
                     ParticleAnalysisReport top = ImageProcessing.getTopMost(imageProc.particles);
                     double angle = ImageProcessing.getHorizontalAngle(top);
                     pid.setSetpoint(gyro.modulatedAngle - angle);
+                    System.out.println("Setpoint: " + (gyro.modulatedAngle - angle));
                     start = false;
                 }
-
-                imageProc.getTheParticles(camera);
-                pid.enable();
+                
+                if(!pid.isEnable()) pid.enable();
+                
+                
 
 
                 //msg.printOnLn("Top:" + imageProc.isTopTarget(target), DriverStationLCD.Line.kMain6);
