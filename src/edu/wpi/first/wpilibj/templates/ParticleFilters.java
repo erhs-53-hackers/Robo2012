@@ -12,44 +12,39 @@ import edu.wpi.first.wpilibj.DriverStationLCD;
  * @author Rajath
  */
 public class ParticleFilters {
+
     ParticleAnalysisReport particles[];
     private double FOVradians = Math.toRadians(35);
     private double maxHeight = 480;
     private double cameraTilt = Math.toRadians(15);
     private double levelPixel = FOVradians / 2 + toPixels(cameraTilt);
-    
     double[] current;
     double[] newangle;
-    
     private Messager msg;
-    
     final double VerticalFOV_p = 480; // field of view, pixels
     final double HorizontalFOV_p = 640;
-
     final double targetHeight = 18.0;
-
     final double heightToBottomOfTopTarget = 100;
     final double heightToTopOfTopTarget =
             heightToBottomOfTopTarget + targetHeight;
-
     final double heightToBottomOfBottomTarget = 30;
     final double heightToTopOfBottomTarget =
             heightToBottomOfBottomTarget + targetHeight;
-
     final double heightToBottomOfMiddleTarget = 56;
     final double heightToTopOfMiddleTarget =
             heightToBottomOfMiddleTarget + targetHeight;
-
     final double cameraHeight = 54;
-    
+
     public ParticleFilters() {
         msg = new Messager();
         newangle = new double[1000];
         current = new double[1000];
     }
+
     public void setParticle(ParticleAnalysisReport[] particles) {
         this.particles = particles;
     }
+
     public double[] getDistances(ParticleAnalysisReport[] particles) {
         int iter = 0;
         if (particles.length == 0) {
@@ -73,6 +68,7 @@ public class ParticleFilters {
         }
         return newangle;
     }
+
     public void setArray() {
         current = newangle;
     }
@@ -86,19 +82,19 @@ public class ParticleFilters {
     }
 
     public void compare() {
-        for (int i = 0; i < current.length; i ++)
-        {
-        if  (current[i] > newangle[i] + 4 || current[i] < newangle[i] + 4 ) {
-            msg.printLn("I am in the origninal part");
-        } else {
-            msg.printOnLn("I am in the wrong f****** place", DriverStationLCD.Line.kUser4);
-        }
+        for (int i = 0; i < current.length; i++) {
+            if (current[i] > newangle[i] + 4 || current[i] < newangle[i] + 4) {
+                msg.printLn("I am in the origninal part");
+            } else {
+                msg.printOnLn("I am in the wrong f****** place", DriverStationLCD.Line.kUser4);
+            }
         }
     }
 
     private double toPixels(double radians) {
         return radians / FOVradians * maxHeight;
     }
+
     private double toRadians(double pixels) {
         return pixels / maxHeight * FOVradians;
     }
@@ -118,7 +114,7 @@ public class ParticleFilters {
     public double adjacent(double opposite, double radians) {
         return opposite / Math.tan(radians);
     }
-    
+
     public double getDistance1(double centerOfMassY, double rectangleHeight,
             int iterator) {
         double radians = toRadians(convertToLevel(toUpperPixel(centerOfMassY,

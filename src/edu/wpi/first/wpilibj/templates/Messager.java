@@ -19,11 +19,9 @@ public class Messager {
     public Messager() {
         driverLCD = DriverStationLCD.getInstance();
         msg = new String[7];
-
         for (int i = 0; i < 7; i++) {
             msg[i] = " ";
         }
-
     }
 
     private void moveUp() {
@@ -32,8 +30,6 @@ public class Messager {
         msg[3] = msg[2];
         msg[2] = msg[1];
         msg[1] = msg[0];
-
-
     }
 
     private void push(DriverStationLCD.Line line, String _msg) {
@@ -44,16 +40,12 @@ public class Messager {
             _msg = _msg.substring(20);
 
             post(_msg);
-
-
         } else {
             for (int i = 0; i < _msg.length(); i++) {
                 String s = "" + _msg.toCharArray()[i];
                 driverLCD.println(line, i + 1, s);
             }
-
         }
-
     }
 
     private void post(String s) {
@@ -98,16 +90,15 @@ public class Messager {
         driverLCD.println(line, 1, s);
         driverLCD.updateLCD();
     }
-    
+
     /**
      * Prints a message to the Driver Station LCD in a console-like manner
-     * 
+     *
      * @param s The String to be printed on the Driver Station
      */
     public void printLn(String s) {
         String time = "" + (int) Timer.getFPGATimestamp();
         post("[" + time + "]: " + s);
-
         driverLCD.updateLCD();
     }
 }

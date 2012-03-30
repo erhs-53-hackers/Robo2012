@@ -33,7 +33,6 @@ public class RobotTemplate extends IterativeRobot{
         msg.printLn("Loading Please Wait...");
         Timer.delay(10);
 
-       
         drive = new RobotDrive(RoboMap.MOTOR1, RoboMap.MOTOR2, RoboMap.MOTOR3, RoboMap.MOTOR4);
         drive.setInvertedMotor(RobotDrive.MotorType.kFrontLeft, true);
         drive.setInvertedMotor(RobotDrive.MotorType.kFrontRight, true);
@@ -46,14 +45,11 @@ public class RobotTemplate extends IterativeRobot{
         rightStick = new Joystick(RoboMap.JOYSTICK2);
         launchControlStick = new Joystick(RoboMap.JOYSTICK3);
         launchControls = new Controls(launchControlStick);
-        
 
         camera = AxisCamera.getInstance();
         camera.writeBrightness(30);
         camera.writeResolution(AxisCamera.ResolutionT.k640x480);
         camera.writeMaxFPS(10);
-         
-        
         
         bridgeArm = new Jaguar(RoboMap.BRIDGE_MOTOR);
         collector = new Jaguar(RoboMap.COLLECT_MOTOR);
@@ -63,7 +59,6 @@ public class RobotTemplate extends IterativeRobot{
         dead = new DeadReckoning(drive,launcher.launchMotor, collector,bridgeArm);
         live = new LiveReckoning(drive, launcher, collector, bridgeArm, gyro, null);
 
-                
         msg.printLn("Done: FRC 2012");
         //while(true) {
         //System.out.println("Gyro:" + gyro.refreshGyro());
@@ -86,17 +81,12 @@ public class RobotTemplate extends IterativeRobot{
     public void teleopInit() {        
         launcher.launchMotor.set(0);
         collector.set(0);
-        
-
         msg.clearConsole();
     }
 
-    
-
     public void teleopPeriodic() {
+        
         // switch to control assisted teleop  
-        
-        
         if (launchControls.button11()) {
             isManual = true;
         } else if (launchControls.button12()) {
@@ -139,8 +129,6 @@ public class RobotTemplate extends IterativeRobot{
         }
         
         //live.doTele(camera, isShooting);
-        
-        
         
     }
 }

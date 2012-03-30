@@ -29,7 +29,7 @@ public class Launcher {
         this.encoder.setDistancePerPulse(1);
     }
 
-        private double getRPM() {
+    private double getRPM() {
         double rate;
         int sampleNumber = 500;
         double deltaTime = .5;
@@ -91,8 +91,6 @@ public class Launcher {
         collectMotor.set(0);
         launchMotor.set(0);        
     }
-    
-    
     
     public void manualShoot() {
         collectMotor.set(-1);

@@ -9,36 +9,6 @@ public class UltraCalc {
     private static double maxVoltage = 5.0;
     private static double maxDistance = 512; //inches
     private static double voltsScalar = maxVoltage / maxDistance;
-    private Messager msg;
-
-
-   
-
-    /**
-     * Find the range to target, using the default FIRST ultrasonic scalar
-     *
-     * @param volts average voltage of the ultrasonic sensor
-     * @return
-     */
-    public static double findRange(double volts) {
-        double range = volts / voltsScalar;
-        if (range >= 254) {
-            System.out.println("Maxed out at 254 inches");
-        }
-        return range;
-    }
-
-    /**
-     * Find the range to target, with an overloaded voltage scalar
-     *
-     * @param volts average voltage of the ultrasonic sensor
-     * @param scalar find the range using a different scalar
-     * @return
-     */
-    public static double findRangeOther(double volts, double scalar) {
-        double ret = findRange(volts) * scalar;
-        return ret;
-    }
 
     /**
      * Find the raw distance to the target
