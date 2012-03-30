@@ -147,7 +147,7 @@ public class RobotTemplate extends IterativeRobot {
             }
         }
 
-        //live.doTele(camera, isShooting);
+        live.doTele();
 
     }
 }

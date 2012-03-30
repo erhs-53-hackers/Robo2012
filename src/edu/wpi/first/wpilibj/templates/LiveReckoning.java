@@ -6,6 +6,7 @@ package edu.wpi.first.wpilibj.templates;
 
 import edu.wpi.first.wpilibj.RobotDrive;
 import edu.wpi.first.wpilibj.AnalogChannel;
+import edu.wpi.first.wpilibj.DriverStationLCD;
 import edu.wpi.first.wpilibj.Jaguar;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.Gyro;
@@ -120,19 +121,29 @@ public class LiveReckoning {
 
     }
 
-    public void doTele(AxisCamera camera, boolean isShooting) {
+    public void doTele() {
 
-        if (camera.freshImage() && isShooting) {
+        if (camera.freshImage()) {
             try {
                 imageProc.getTheParticles(camera);
-                //ParticleAnalysisReport topTarget = imageProc.getTopTarget();
-                //double angle = ImageProcessing.getHorizontalAngle(topTarget);
-                //gyro.turnTurret(angle);
-                //launcher.shootTopTarget();
-                isShooting = false;
+
+                ParticleAnalysisReport[] parts = imageProc.particles;
+                if (parts != null) {
+                    if (parts.length > 0) {
+                        ParticleAnalysisReport topTarget = ImageProcessing.getTopMost(imageProc.particles);
+                        double dist = imageProc.getDistance(topTarget, ImageProcessing.topTargetHeight);
+                        msg.printOnLn("Dist(Top):" + dist, DriverStationLCD.Line.kMain6);
+
+                    } else {
+                        msg.printLn("Can't find target");
+                    }
+                } else {
+                    msg.printLn("Can't find target");
+                }
+
             } catch (Exception e) {
                 msg.printLn(e.getMessage());
-                isShooting = false;
+
             }
         }
     }

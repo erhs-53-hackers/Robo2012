@@ -36,7 +36,7 @@ public class DeadReckoning {
     }
 
     public void shoot() {
-        shoot.set(.8);
+        shoot.set(.96);
         Timer.delay(7);
         collect.set(-1);
     }
