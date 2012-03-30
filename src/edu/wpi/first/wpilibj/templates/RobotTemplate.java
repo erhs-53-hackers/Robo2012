@@ -7,6 +7,7 @@ package edu.wpi.first.wpilibj.templates;
 
 import edu.wpi.first.wpilibj.*;
 import edu.wpi.first.wpilibj.camera.AxisCamera;
+import edu.wpi.first.wpilibj.image.ParticleAnalysisReport;
 
 /**
  *
@@ -18,7 +19,7 @@ public class RobotTemplate extends IterativeRobot{
     Messager msg;
     Joystick leftStick, rightStick, launchControlStick, testStick;
     Controls launchControls;
-    AxisCamera camera;       
+          
     Launcher launcher;
     Jaguar bridgeArm, collector;
     GyroX gyro;    
@@ -44,12 +45,7 @@ public class RobotTemplate extends IterativeRobot{
         leftStick = new Joystick(RoboMap.JOYSTICK1);
         rightStick = new Joystick(RoboMap.JOYSTICK2);
         launchControlStick = new Joystick(RoboMap.JOYSTICK3);
-        launchControls = new Controls(launchControlStick);
-
-        camera = AxisCamera.getInstance();
-        camera.writeBrightness(30);
-        camera.writeResolution(AxisCamera.ResolutionT.k640x480);
-        camera.writeMaxFPS(10);
+        launchControls = new Controls(launchControlStick);        
         
         bridgeArm = new Jaguar(RoboMap.BRIDGE_MOTOR);
         collector = new Jaguar(RoboMap.COLLECT_MOTOR);
@@ -71,7 +67,7 @@ public class RobotTemplate extends IterativeRobot{
 
     public void autonomousPeriodic() {
         //dead.shoot();
-        live.doAuto(camera);
+        live.doAuto();
     }
 
     public void disabledInit() {
@@ -81,6 +77,7 @@ public class RobotTemplate extends IterativeRobot{
     public void teleopInit() {        
         launcher.launchMotor.set(0);
         collector.set(0);
+        live.reset();
         msg.clearConsole();
     }
 
@@ -112,7 +109,14 @@ public class RobotTemplate extends IterativeRobot{
 
         if (isManual) {
             msg.printOnLn("Mode: Manual", DriverStationLCD.Line.kMain6);
-            
+            if(launchControlStick.getTrigger()) {
+                ParticleAnalysisReport[] parts = live.imageProc.particles;
+                ParticleAnalysisReport top = ImageProcessing.getTopMost(parts);
+                live.turnToTarget(top);
+            } else {
+                live.free();
+                live.reset();
+            }
             collector.set(launchControlStick.getY());
             
             double power = (launchControlStick.getThrottle() + 1) / 2;

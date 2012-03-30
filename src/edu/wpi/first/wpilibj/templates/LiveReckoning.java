@@ -27,8 +27,9 @@ public class LiveReckoning {
     private Jaguar bridge;
     private AnalogChannel potentiometer;
     private GyroX gyro;
+    private AxisCamera camera;
     private AnalogChannel ultrasonic;
-    private ImageProcessing imageProc;
+    public ImageProcessing imageProc;
     private Launcher launcher;
     private PIDController pid;
     private double savedDist = 0;
@@ -40,9 +41,7 @@ public class LiveReckoning {
             Jaguar collectMotor, Jaguar bridgeMotor, GyroX gyro1,
             AnalogChannel ultrasonic1) {
 
-        pid = new PIDController(0.08, 0, 0, gyro1, gyro1);
-        pid.setSetpoint(0);
-        pid.setOutputRange(-1, 1);
+        reset();
         msg = new Messager();
         this.drive = drive;
         this.launcher = launcher;
@@ -51,7 +50,18 @@ public class LiveReckoning {
         //potentiometer = new AnalogChannel(1);
         gyro = gyro1;
         ultrasonic = ultrasonic1;
+
+        camera = AxisCamera.getInstance();
+        camera.writeBrightness(30);
+        camera.writeResolution(AxisCamera.ResolutionT.k640x480);
+        camera.writeMaxFPS(10);
+
         imageProc = new ImageProcessing();
+    }
+    
+    public void reset() {
+        pid = new PIDController(0.08, 0, 0, gyro, gyro);        
+        pid.setOutputRange(-1, 1);
     }
 
     public void free() {
@@ -61,52 +71,43 @@ public class LiveReckoning {
         }
     }
 
-    public void doAuto(AxisCamera camera) {
-        if (camera.freshImage()) {
-            try {
-                imageProc.getTheParticles(camera);
-                if (start) {
-                    gyro.gyro.reset();
-                    gyro.refreshGyro();
-                    ParticleAnalysisReport top = ImageProcessing.getTopMost(imageProc.particles);
-                    double angle = ImageProcessing.getHorizontalAngle(top);
-                    pid.setSetpoint(angle);
-
-                    System.out.println("Setpoint: " + (angle));
-                    start = false;
-                }
-
-                if (!pid.isEnable()) {
-                    pid.enable();
-                    System.out.println("yo");
-                }
-
-                //msg.printOnLn("Top:" + imageProc.isTopTarget(target), DriverStationLCD.Line.kMain6);
-                //msg.printOnLn("Bottom:" + imageProc.isBottomTarget(target), DriverStationLCD.Line.kUser2);
-                //msg.printOnLn("dist(midtop):" + imageProc.getDistance(imageProc.particles[0], ImageProcessing.topTargetHeight), DriverStationLCD.Line.kUser3);
-                //msg.printOnLn("Tilt:" + imageProc.getCameraTilt(), DriverStationLCD.Line.kUser4);
-
-                // start gyro debug
-                //double angle = imageproc.getHorizontalAngle();
-
-                //gyro.turnTurret(angle);
-                //end gyro debug
-
-            } catch (Exception e) {
-                System.out.println("Exception: " + e.getMessage());
-            }
-
-        } else {
-            msg.printLn("No Camera Image");
+    public void turnToTarget(ParticleAnalysisReport part) {
+        while (!camera.freshImage()) {
+            msg.printLn("Waiting for Camera...");
         }
 
-        /*
-         * if(imageProc.isTopTarget(target)) { msg.printLn("Top"); }
-         * if(imageProc.isBottomTarget(target)) { msg.printLn("Botton"); }
-         * if(!imageProc.isBottomTarget(target) &&
-         * !imageProc.isTopTarget(target)) { msg.printLn("No target found"); }
-         *
-         */
+        try {
+            imageProc.getTheParticles(camera);
+            if (start) {
+                gyro.gyro.reset();
+                gyro.refreshGyro();
+                double angle = ImageProcessing.getHorizontalAngle(part);
+                pid.setSetpoint(angle);
+                System.out.println("Setpoint: " + angle);
+                start = false;
+            }
+
+            pid.enable();
+
+        } catch (Exception e) {
+            System.out.println("Exception: " + e.getMessage());
+        }
+    }
+
+    public void doAuto() {
+        try {
+            imageProc.getTheParticles(camera);
+            ParticleAnalysisReport top = ImageProcessing.getTopMost(imageProc.particles);
+            turnToTarget(top);
+            launcher.launchMotor.set(.75);
+            Timer.delay(7);
+            collect.set(1);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+
+
+
     }
 
     public void doTele(AxisCamera camera, boolean isShooting) {
