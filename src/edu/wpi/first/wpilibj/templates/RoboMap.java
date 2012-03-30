@@ -14,12 +14,8 @@ public class RoboMap {
     public static final int LAUNCH_MOTOR = 5;
     public static final int BRIDGE_MOTOR = 7;
     public static final int LAUNCH_LIMIT = 8;
-    public static final int LAUNCH_TURN = 9;
-    public static final int ULTRASONIC_ECHO = 10;
-    /* Digital Output 2 */
+    public static final int LAUNCH_TURN = 9;   
     public static final int COLLECT_MOTOR = 10;
-    /* Digital Input */
-    public static final int ULTRASONIC_PING = 1;
     /* Digital I/O */
     public static final int LAUNCH_ENCODER1 = 9;
     public static final int LAUNCH_ENCODER2 = 10;

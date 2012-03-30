@@ -27,8 +27,7 @@ public class LiveReckoning {
     private Jaguar bridge;
     private AnalogChannel potentiometer;
     private GyroX gyro;
-    private AxisCamera camera;
-    private AnalogChannel ultrasonic;
+    private AxisCamera camera;    
     public ImageProcessing imageProc;
     private Launcher launcher;
     private PIDController pid;
@@ -38,8 +37,7 @@ public class LiveReckoning {
     private boolean start = true;
 
     public LiveReckoning(RobotDrive drive, Launcher launcher,
-            Jaguar collectMotor, Jaguar bridgeMotor, GyroX gyro1,
-            AnalogChannel ultrasonic1) {
+            Jaguar collectMotor, Jaguar bridgeMotor, GyroX gyro1) {
 
         gyro = gyro1;        
         msg = new Messager();
@@ -48,7 +46,7 @@ public class LiveReckoning {
         collect = collectMotor;
         bridge = bridgeMotor;
         //potentiometer = new AnalogChannel(1);        
-        ultrasonic = ultrasonic1;
+        
         camera = AxisCamera.getInstance();
         camera.writeBrightness(30);
         camera.writeResolution(AxisCamera.ResolutionT.k640x480);
@@ -126,34 +124,6 @@ public class LiveReckoning {
                 msg.printLn(e.getMessage());
                 isShooting = false;
             }
-        }
-    }
-
-    public void shoot(double horAngleToTarget, double numberOfShots) {
-        if (gyro.modulatedAngle == 0 && stepFlag == false) {
-            savedDist = UltraCalc.getScaledDistance(ultrasonic.getAverageVoltage());
-            stepFlag = true;
-        } else {
-            gyro.turnRobotToAngle(0);
-        }
-        if (stepFlag) {
-            if (horAngleToTarget != 0) {
-                gyro.turnTurretToAngle(horAngleToTarget);
-            } else {
-                for (int i = 0; i < numberOfShots; i++) { //modulate power according to distance and height
-                    launcher.launchMotor.set(.75);
-                    Timer.delay(3);
-                    collect.set(1);
-                    launcher.collectMotor.set(1);
-                }
-                isDone = true;
-            }
-        }
-
-        if (isDone) { //resets robot
-            stepFlag = false;
-            gyro.turnTurretToAngle(0);
-            isDone = false;
         }
     }
 }

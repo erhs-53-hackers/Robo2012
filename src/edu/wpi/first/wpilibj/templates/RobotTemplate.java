@@ -18,8 +18,7 @@ public class RobotTemplate extends IterativeRobot{
     RobotDrive drive;
     Messager msg;
     Joystick leftStick, rightStick, launchControlStick, testStick;
-    Controls launchControls;
-          
+    Controls launchControls;          
     Launcher launcher;
     Jaguar bridgeArm, collector;
     GyroX gyro;    
@@ -51,9 +50,9 @@ public class RobotTemplate extends IterativeRobot{
         collector = new Jaguar(RoboMap.COLLECT_MOTOR);
         launcher = new Launcher(collector);
         
-        gyro = new GyroX(RoboMap.GYRO, RoboMap.LAUNCH_TURN, drive);
+        gyro = new GyroX(RoboMap.GYRO, drive);
         dead = new DeadReckoning(drive,launcher.launchMotor, collector,bridgeArm);
-        live = new LiveReckoning(drive, launcher, collector, bridgeArm, gyro, null);
+        live = new LiveReckoning(drive, launcher, collector, bridgeArm, gyro);
 
         msg.printLn("Done: FRC 2012");
         //while(true) {
