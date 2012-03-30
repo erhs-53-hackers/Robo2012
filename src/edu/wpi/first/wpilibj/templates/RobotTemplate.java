@@ -63,8 +63,8 @@ public class RobotTemplate extends IterativeRobot {
     }
 
     public void autonomousPeriodic() {
-        //dead.shoot();
-        live.doAuto();
+        dead.shoot();
+        //live.doAuto();
     }
 
     public void disabledInit() {
@@ -74,7 +74,8 @@ public class RobotTemplate extends IterativeRobot {
     public void teleopInit() {
         launcher.launchMotor.set(0);
         collector.set(0);
-        live.reset();
+        //live.free();
+        //live.reset();
         msg.clearConsole();
     }
 
@@ -97,25 +98,40 @@ public class RobotTemplate extends IterativeRobot {
 
         // motor to lower bridge arm, currently independent of teleop assitance
         if (leftStick.getRawButton(3)) {
-            bridgeArm.set(.5);
-        } else if (leftStick.getRawButton(2)) {
             bridgeArm.set(-1);
+        } else if (leftStick.getRawButton(2)) {
+            bridgeArm.set(1);
         } else {
             bridgeArm.set(0);
         }
 
         if (isManual) {
             msg.printOnLn("Mode: Manual", DriverStationLCD.Line.kMain6);
+            System.out.println("trig:" + launchControlStick.getTrigger());
+            
             if (launchControlStick.getTrigger()) {
+                try {
+                    live.imageProc.getTheParticles(live.camera);
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
                 ParticleAnalysisReport[] parts = live.imageProc.particles;
                 if (parts != null) {
-                    ParticleAnalysisReport top = ImageProcessing.getTopMost(parts);
-                    live.turnToTarget(top);
+                    if (parts.length > 0) {
+                        ParticleAnalysisReport top = ImageProcessing.getTopMost(parts);
+                        live.turnToTarget(top);
+                    } else {
+                        msg.printLn("Can't find target");
+                    }
+                } else {
+                    msg.printLn("Can't find target");
                 }
             } else {
-                live.free();
+                //live.free();                
                 live.reset();
             }
+            
+            
             collector.set(launchControlStick.getY());
 
             double power = (launchControlStick.getThrottle() + 1) / 2;

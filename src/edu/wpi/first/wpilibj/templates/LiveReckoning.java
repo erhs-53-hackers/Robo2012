@@ -27,7 +27,7 @@ public class LiveReckoning {
     private Jaguar bridge;
     private AnalogChannel potentiometer;
     private GyroX gyro;
-    private AxisCamera camera;    
+    public AxisCamera camera;
     public ImageProcessing imageProc;
     private Launcher launcher;
     private PIDController pid;
@@ -39,27 +39,29 @@ public class LiveReckoning {
     public LiveReckoning(RobotDrive drive, Launcher launcher,
             Jaguar collectMotor, Jaguar bridgeMotor, GyroX gyro1) {
 
-        gyro = gyro1;        
+        gyro = gyro1;
         msg = new Messager();
         this.drive = drive;
         this.launcher = launcher;
         collect = collectMotor;
         bridge = bridgeMotor;
-        //potentiometer = new AnalogChannel(1);        
-        
+        //potentiometer = new AnalogChannel(1);
+
         camera = AxisCamera.getInstance();
         camera.writeBrightness(30);
         camera.writeResolution(AxisCamera.ResolutionT.k640x480);
         camera.writeMaxFPS(10);
 
         imageProc = new ImageProcessing();
-        
-        reset();
+
+        pid = new PIDController(0.08, 0, 0, gyro, gyro);
+        pid.setOutputRange(-1, 1);
     }
 
     public final void reset() {
-        pid = new PIDController(0.08, 0, 0, gyro, gyro);
-        pid.setOutputRange(-1, 1);
+        if (pid.isEnable()) {
+            pid.reset();
+        }
     }
 
     public void free() {
@@ -70,25 +72,31 @@ public class LiveReckoning {
     }
 
     public void turnToTarget(ParticleAnalysisReport part) {
-        while (!camera.freshImage()) {
-            msg.printLn("Waiting for Camera...");
+        if (camera.freshImage()) {
+            try {
+                imageProc.getTheParticles(camera);
+                gyro.gyro.reset();
+                gyro.refreshGyro();
+                double angle = ImageProcessing.getHorizontalAngle(part);
+                pid.setSetpoint(angle);
+                System.out.println("Setpoint: " + angle);
+
+
+                if (!pid.isEnable()) {
+                    pid.enable();
+                }
+
+
+            } catch (Exception e) {
+                System.out.println("Exception: " + e.getMessage());
+            }
+        } else {
+            System.out.println("Waiting for fresh image...");
+
+
         }
+        System.out.println("set:" + pid.getSetpoint());
 
-        try {
-            imageProc.getTheParticles(camera);
-
-            gyro.gyro.reset();
-            gyro.refreshGyro();
-            double angle = ImageProcessing.getHorizontalAngle(part);
-            pid.setSetpoint(angle);
-            System.out.println("Setpoint: " + angle);
-
-
-            pid.enable();
-
-        } catch (Exception e) {
-            System.out.println("Exception: " + e.getMessage());
-        }
     }
 
     public void doAuto() {
@@ -97,14 +105,16 @@ public class LiveReckoning {
                 imageProc.getTheParticles(camera);
                 ParticleAnalysisReport top = ImageProcessing.getTopMost(imageProc.particles);
                 turnToTarget(top);
-                launcher.launchMotor.set(.75);
-                Timer.delay(7);
-                collect.set(1);
+
                 start = false;
             }
         } catch (Exception ex) {
             ex.printStackTrace();
         }
+
+        launcher.launchMotor.set(.75);
+        Timer.delay(7);
+        collect.set(-1);
 
 
 

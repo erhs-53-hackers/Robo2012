@@ -36,9 +36,9 @@ public class DeadReckoning {
     }
 
     public void shoot() {
-        shoot.set(.75);
+        shoot.set(.8);
         Timer.delay(7);
-        collect.set(1);
+        collect.set(-1);
     }
 
     public void driveToBridge() {

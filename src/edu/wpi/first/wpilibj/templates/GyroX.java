@@ -73,11 +73,14 @@ public class GyroX implements PIDSource, PIDOutput {
     
     public double pidGet() {
         System.out.println(refreshGyro());
+        System.out.println("in:" + refreshGyro());
+        
         return refreshGyro();
     }
 
     public void pidWrite(double output) {
         //lazySusan.setRaw((int)output);
+        System.out.println("out:" + output);
         driveTrain.arcadeDrive(0, -output);
     }
     
