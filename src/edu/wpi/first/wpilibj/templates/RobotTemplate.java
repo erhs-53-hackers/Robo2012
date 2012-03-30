@@ -6,29 +6,27 @@
 package edu.wpi.first.wpilibj.templates;
 
 import edu.wpi.first.wpilibj.*;
-import edu.wpi.first.wpilibj.camera.AxisCamera;
 import edu.wpi.first.wpilibj.image.ParticleAnalysisReport;
 
 /**
  *
  * @author Team53
  */
-public class RobotTemplate extends IterativeRobot{ 
+public class RobotTemplate extends IterativeRobot {
 
     RobotDrive drive;
     Messager msg;
     Joystick leftStick, rightStick, launchControlStick, testStick;
-    Controls launchControls;          
+    Controls launchControls;
     Launcher launcher;
     Jaguar bridgeArm, collector;
-    GyroX gyro;    
+    GyroX gyro;
     boolean isManual = true;
-    boolean isShooting = false;   
+    boolean isShooting = false;
     DeadReckoning dead;
     LiveReckoning live;
-    
 
-    public void robotInit() {        
+    public void robotInit() {
         msg = new Messager();
         msg.printLn("Loading Please Wait...");
         Timer.delay(10);
@@ -38,20 +36,20 @@ public class RobotTemplate extends IterativeRobot{
         drive.setInvertedMotor(RobotDrive.MotorType.kFrontRight, true);
         drive.setInvertedMotor(RobotDrive.MotorType.kRearLeft, true);
         drive.setInvertedMotor(RobotDrive.MotorType.kRearRight, true);
-       
+
         drive.setSafetyEnabled(false);
         getWatchdog().setEnabled(false);
         leftStick = new Joystick(RoboMap.JOYSTICK1);
         rightStick = new Joystick(RoboMap.JOYSTICK2);
         launchControlStick = new Joystick(RoboMap.JOYSTICK3);
-        launchControls = new Controls(launchControlStick);        
-        
+        launchControls = new Controls(launchControlStick);
+
         bridgeArm = new Jaguar(RoboMap.BRIDGE_MOTOR);
         collector = new Jaguar(RoboMap.COLLECT_MOTOR);
         launcher = new Launcher(collector);
-        
+
         gyro = new GyroX(RoboMap.GYRO, drive);
-        dead = new DeadReckoning(drive,launcher.launchMotor, collector,bridgeArm);
+        dead = new DeadReckoning(drive, launcher.launchMotor, collector, bridgeArm);
         live = new LiveReckoning(drive, launcher, collector, bridgeArm, gyro);
 
         msg.printLn("Done: FRC 2012");
@@ -62,7 +60,7 @@ public class RobotTemplate extends IterativeRobot{
 
     public void autonomousInit() {
         isShooting = false;//change me!!!!!       
-    }   
+    }
 
     public void autonomousPeriodic() {
         //dead.shoot();
@@ -71,9 +69,9 @@ public class RobotTemplate extends IterativeRobot{
 
     public void disabledInit() {
         live.free();
-    }   
+    }
 
-    public void teleopInit() {        
+    public void teleopInit() {
         launcher.launchMotor.set(0);
         collector.set(0);
         live.reset();
@@ -81,7 +79,7 @@ public class RobotTemplate extends IterativeRobot{
     }
 
     public void teleopPeriodic() {
-        
+
         // switch to control assisted teleop  
         if (launchControls.button11()) {
             isManual = true;
@@ -108,20 +106,22 @@ public class RobotTemplate extends IterativeRobot{
 
         if (isManual) {
             msg.printOnLn("Mode: Manual", DriverStationLCD.Line.kMain6);
-            if(launchControlStick.getTrigger()) {
+            if (launchControlStick.getTrigger()) {
                 ParticleAnalysisReport[] parts = live.imageProc.particles;
-                ParticleAnalysisReport top = ImageProcessing.getTopMost(parts);
-                live.turnToTarget(top);
+                if (parts != null) {
+                    ParticleAnalysisReport top = ImageProcessing.getTopMost(parts);
+                    live.turnToTarget(top);
+                }
             } else {
                 live.free();
                 live.reset();
             }
             collector.set(launchControlStick.getY());
-            
+
             double power = (launchControlStick.getThrottle() + 1) / 2;
             launcher.launchMotor.set(power);
             msg.printOnLn("Launch Power = " + power, DriverStationLCD.Line.kUser2);
-            
+
         } else if (!isManual) {
             msg.printOnLn("Mode: Auto", DriverStationLCD.Line.kMain6);
             collector.set((launchControlStick.getThrottle() + 1) / 2);
@@ -130,8 +130,8 @@ public class RobotTemplate extends IterativeRobot{
                 isShooting = true;
             }
         }
-        
+
         //live.doTele(camera, isShooting);
-        
+
     }
 }
