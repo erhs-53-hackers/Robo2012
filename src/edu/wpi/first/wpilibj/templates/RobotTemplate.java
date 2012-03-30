@@ -57,10 +57,10 @@ public class RobotTemplate extends IterativeRobot{
         
         bridgeArm = new Jaguar(RoboMap.BRIDGE_MOTOR);
         collector = new Jaguar(RoboMap.COLLECT_MOTOR);
-        launcher = new Launcher();
+        launcher = new Launcher(collector);
         
         gyro = new GyroX(RoboMap.GYRO, RoboMap.LAUNCH_TURN, drive);
-        dead = new DeadReckoning(drive,launcher.launchMotor,launcher.loadMotor, collector,bridgeArm);
+        dead = new DeadReckoning(drive,launcher.launchMotor, collector,bridgeArm);
         live = new LiveReckoning(drive, launcher, collector, bridgeArm, gyro, null);
 
                 
@@ -75,18 +75,18 @@ public class RobotTemplate extends IterativeRobot{
     }   
 
     public void autonomousPeriodic() {
-        dead.shoot();
-        //live.doAuto(camera);
+        //dead.shoot();
+        live.doAuto(camera);
     }
 
     public void disabledInit() {
-        //live.free();
+        live.free();
     }   
 
     public void teleopInit() {        
         launcher.launchMotor.set(0);
         collector.set(0);
-        launcher.loadMotor.set(0);
+        
 
         msg.clearConsole();
     }
@@ -122,20 +122,13 @@ public class RobotTemplate extends IterativeRobot{
 
         if (isManual) {
             msg.printOnLn("Mode: Manual", DriverStationLCD.Line.kMain6);
-            if (launchControls.button7()) {
-                collector.set(1);
-            } else if (launchControls.button8()) {
-                collector.set(0);
-            }
+            
+            collector.set(launchControlStick.getY());
+            
             double power = (launchControlStick.getThrottle() + 1) / 2;
             launcher.launchMotor.set(power);
-            msg.printOnLn("Launch Power = " + power, DriverStationLCD.Line.kUser2);            
-            // control the firing mechanism
-            if (launchControls.button1()) {
-                launcher.manualShoot();
-            } else {
-                launcher.loadMotor.set(0);
-            }
+            msg.printOnLn("Launch Power = " + power, DriverStationLCD.Line.kUser2);         
+            
         } else if (!isManual) {
             msg.printOnLn("Mode: Auto", DriverStationLCD.Line.kMain6);
             collector.set((launchControlStick.getThrottle() + 1) / 2);

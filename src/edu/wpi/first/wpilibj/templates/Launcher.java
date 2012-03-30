@@ -12,16 +12,16 @@ import edu.wpi.first.wpilibj.Victor;
 public class Launcher {
 
     Jaguar launchMotor;
-    Jaguar loadMotor;
+    Jaguar collectMotor;
     Encoder encoder;
     double topTargetRPM = 5000;//needs to be calibrated
 
     /**
      * Default constructor for the launcher
      */
-    public Launcher() {
+    public Launcher(Jaguar collect) {
         this.launchMotor = new Jaguar(RoboMap.LAUNCH_MOTOR);
-        this.loadMotor = new Jaguar(RoboMap.LOAD_MOTOR);
+        this.collectMotor= collect;
         this.encoder = new Encoder(
                 RoboMap.LAUNCH_ENCODER1,
                 RoboMap.LAUNCH_ENCODER2,
@@ -70,9 +70,9 @@ public class Launcher {
             Timer.delay(.025);
         }
         encoder.stop();
-        loadMotor.set(1);
+        collectMotor.set(1);
         Timer.delay(5);
-        loadMotor.set(0);
+        collectMotor.set(0);
         launchMotor.set(0);
     }
     
@@ -86,16 +86,16 @@ public class Launcher {
             
         }
         encoder.stop();
-        loadMotor.set(1);
+        collectMotor.set(1);
         Timer.delay(5);
-        loadMotor.set(0);
+        collectMotor.set(0);
         launchMotor.set(0);        
     }
     
     
     
     public void manualShoot() {
-        loadMotor.set(-1);
+        collectMotor.set(-1);
         //Timer.delay(5);
         //loadMotor.set(0);
         //launchMotor.set(0);

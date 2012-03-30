@@ -16,8 +16,7 @@ import edu.wpi.first.wpilibj.Timer;
 public class DeadReckoning {
 
     RobotDrive driveTrain;
-    Jaguar shoot;
-    Jaguar load;
+    Jaguar shoot;    
     Jaguar collect;
     Jaguar bridge;
     AnalogChannel potentiometer;
@@ -25,11 +24,11 @@ public class DeadReckoning {
     Messager msg = new Messager();
     boolean Autonomousflag;
 
-    public DeadReckoning(RobotDrive drive, Jaguar shootMotor, Jaguar loadMotor,
+    public DeadReckoning(RobotDrive drive, Jaguar shootMotor,
             Jaguar collectMotor, Jaguar bridgeMotor) {
         driveTrain = drive;
         shoot = shootMotor;
-        load = loadMotor;
+        
         collect = collectMotor;
         bridge = bridgeMotor;
         potentiometer = new AnalogChannel(7);
@@ -37,10 +36,10 @@ public class DeadReckoning {
     }
 
     public void shoot() {
-        shoot.set(.35);
+        shoot.set(.75);
         Timer.delay(7);
         collect.set(1);
-        load.set(-1);
+       
     }
 
     public void driveToBridge() {
@@ -52,7 +51,7 @@ public class DeadReckoning {
                 Timer.delay(7);
                 shoot.set(0);
                 collect.set(0);
-                load.set(0);
+                
                 driveTrain.tankDrive(-speed, speed);
                 Timer.delay(1);
                 driveTrain.tankDrive(speed, speed);
