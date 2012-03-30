@@ -12,7 +12,6 @@ public class RoboMap {
     public static final int MOTOR3 = 3;
     public static final int MOTOR4 = 4;
     public static final int LAUNCH_MOTOR = 5;
-    public static final int LOAD_MOTOR = 6;
     public static final int BRIDGE_MOTOR = 7;
     public static final int LAUNCH_LIMIT = 8;
     public static final int LAUNCH_TURN = 9;
