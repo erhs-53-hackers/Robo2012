@@ -3,9 +3,9 @@ package edu.wpi.first.wpilibj.templates;
 import com.sun.squawk.util.MathUtils;
 
 /**
- * Implements java.lang.Math and com.sun.squak.util.MathUtils to trig functions 
- * to use degrees instead of Radians.
- * For use in Physics class, specifically
+ * Implements java.lang.Math and com.sun.squak.util.MathUtils to trig functions
+ * to use degrees instead of Radians. For use in Physics class, specifically
+ *
  * @author Nick
  */
 public class MathX {

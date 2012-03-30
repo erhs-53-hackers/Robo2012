@@ -81,9 +81,6 @@ public class LiveReckoning {
                     System.out.println("yo");
                 }
 
-
-
-
                 //msg.printOnLn("Top:" + imageProc.isTopTarget(target), DriverStationLCD.Line.kMain6);
                 //msg.printOnLn("Bottom:" + imageProc.isBottomTarget(target), DriverStationLCD.Line.kUser2);
                 //msg.printOnLn("dist(midtop):" + imageProc.getDistance(imageProc.particles[0], ImageProcessing.topTargetHeight), DriverStationLCD.Line.kUser3);
@@ -95,11 +92,9 @@ public class LiveReckoning {
                 //gyro.turnTurret(angle);
                 //end gyro debug
 
-
             } catch (Exception e) {
-                System.out.println("Exception:" + e.getMessage());
+                System.out.println("Exception: " + e.getMessage());
             }
-
 
         } else {
             msg.printLn("No Camera Image");
@@ -118,13 +113,11 @@ public class LiveReckoning {
 
         if (camera.freshImage() && isShooting) {
             try {
-
                 imageProc.getTheParticles(camera);
                 //ParticleAnalysisReport topTarget = imageProc.getTopTarget();
                 //double angle = ImageProcessing.getHorizontalAngle(topTarget);
                 //gyro.turnTurret(angle);
                 //launcher.shootTopTarget();
-
                 isShooting = false;
             } catch (Exception e) {
                 msg.printLn(e.getMessage());
