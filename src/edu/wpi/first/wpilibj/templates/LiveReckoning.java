@@ -58,9 +58,9 @@ public class LiveReckoning {
 
         imageProc = new ImageProcessing();
     }
-    
+
     public void reset() {
-        pid = new PIDController(0.08, 0, 0, gyro, gyro);        
+        pid = new PIDController(0.08, 0, 0, gyro, gyro);
         pid.setOutputRange(-1, 1);
     }
 
@@ -78,14 +78,13 @@ public class LiveReckoning {
 
         try {
             imageProc.getTheParticles(camera);
-            if (start) {
-                gyro.gyro.reset();
-                gyro.refreshGyro();
-                double angle = ImageProcessing.getHorizontalAngle(part);
-                pid.setSetpoint(angle);
-                System.out.println("Setpoint: " + angle);
-                start = false;
-            }
+
+            gyro.gyro.reset();
+            gyro.refreshGyro();
+            double angle = ImageProcessing.getHorizontalAngle(part);
+            pid.setSetpoint(angle);
+            System.out.println("Setpoint: " + angle);
+
 
             pid.enable();
 
@@ -96,12 +95,15 @@ public class LiveReckoning {
 
     public void doAuto() {
         try {
-            imageProc.getTheParticles(camera);
-            ParticleAnalysisReport top = ImageProcessing.getTopMost(imageProc.particles);
-            turnToTarget(top);
-            launcher.launchMotor.set(.75);
-            Timer.delay(7);
-            collect.set(1);
+            if (start) {
+                imageProc.getTheParticles(camera);
+                ParticleAnalysisReport top = ImageProcessing.getTopMost(imageProc.particles);
+                turnToTarget(top);
+                launcher.launchMotor.set(.75);
+                Timer.delay(7);
+                collect.set(1);
+                start = false;
+            }
         } catch (Exception ex) {
             ex.printStackTrace();
         }
