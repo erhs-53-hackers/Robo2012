@@ -121,7 +121,7 @@ public class RobotTemplate extends IterativeRobot{
             
             double power = (launchControlStick.getThrottle() + 1) / 2;
             launcher.launchMotor.set(power);
-            msg.printOnLn("Launch Power = " + power, DriverStationLCD.Line.kUser2);         
+            msg.printOnLn("Launch Power = " + power, DriverStationLCD.Line.kUser2);
             
         } else if (!isManual) {
             msg.printOnLn("Mode: Auto", DriverStationLCD.Line.kMain6);

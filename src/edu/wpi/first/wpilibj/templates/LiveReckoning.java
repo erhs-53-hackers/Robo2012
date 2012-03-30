@@ -41,25 +41,25 @@ public class LiveReckoning {
             Jaguar collectMotor, Jaguar bridgeMotor, GyroX gyro1,
             AnalogChannel ultrasonic1) {
 
-        reset();
+        gyro = gyro1;        
         msg = new Messager();
         this.drive = drive;
         this.launcher = launcher;
         collect = collectMotor;
         bridge = bridgeMotor;
-        //potentiometer = new AnalogChannel(1);
-        gyro = gyro1;
+        //potentiometer = new AnalogChannel(1);        
         ultrasonic = ultrasonic1;
-
         camera = AxisCamera.getInstance();
         camera.writeBrightness(30);
         camera.writeResolution(AxisCamera.ResolutionT.k640x480);
         camera.writeMaxFPS(10);
 
         imageProc = new ImageProcessing();
+        
+        reset();
     }
 
-    public void reset() {
+    public final void reset() {
         pid = new PIDController(0.08, 0, 0, gyro, gyro);
         pid.setOutputRange(-1, 1);
     }
