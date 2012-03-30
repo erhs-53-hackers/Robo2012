@@ -40,9 +40,9 @@ public class LiveReckoning {
             Jaguar collectMotor, Jaguar bridgeMotor, GyroX gyro1,
             AnalogChannel ultrasonic1) {
 
-        pid = new PIDController(0.1, 0, 0, gyro1, gyro1);
+        pid = new PIDController(0.08, 0, 0, gyro1, gyro1);
         pid.setSetpoint(0);
-        pid.setOutputRange(-0.4, 0.4);
+        pid.setOutputRange(-1, 1);
         msg = new Messager();
         this.drive = drive;
         this.launcher = launcher;
@@ -55,8 +55,10 @@ public class LiveReckoning {
     }
 
     public void free() {
-        pid.disable();
-        pid.free();
+        if (pid.isEnable()) {
+            pid.disable();
+            pid.free();
+        }
     }
 
     public void doAuto(AxisCamera camera) {
@@ -67,14 +69,16 @@ public class LiveReckoning {
                     gyro.gyro.reset();
                     gyro.refreshGyro();
                     ParticleAnalysisReport top = ImageProcessing.getTopMost(imageProc.particles);
-                    double angle = -ImageProcessing.getHorizontalAngle(top);
+                    double angle = ImageProcessing.getHorizontalAngle(top);
                     pid.setSetpoint(angle);
+
                     System.out.println("Setpoint: " + (angle));
                     start = false;
                 }
 
                 if (!pid.isEnable()) {
                     pid.enable();
+                    System.out.println("yo");
                 }
 
 

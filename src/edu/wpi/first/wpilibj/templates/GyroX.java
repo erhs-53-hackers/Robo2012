@@ -110,12 +110,13 @@ public class GyroX implements PIDSource, PIDOutput {
     }
     
     public double pidGet() {
+        System.out.println(modAngle(gyro.getAngle() * 4.14015366));
         return modAngle(gyro.getAngle() * 4.14015366);
     }
 
     public void pidWrite(double output) {
         //lazySusan.setRaw((int)output);
-        driveTrain.arcadeDrive(0, output);
+        driveTrain.arcadeDrive(0, -output);
     }
     
 }
