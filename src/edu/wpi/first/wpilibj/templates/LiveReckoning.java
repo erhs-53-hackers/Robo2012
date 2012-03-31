@@ -4,21 +4,13 @@
  */
 package edu.wpi.first.wpilibj.templates;
 
-import edu.wpi.first.wpilibj.RobotDrive;
-import edu.wpi.first.wpilibj.AnalogChannel;
-import edu.wpi.first.wpilibj.DriverStationLCD;
-import edu.wpi.first.wpilibj.Jaguar;
-import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.Gyro;
-import edu.wpi.first.wpilibj.PIDController;
-import edu.wpi.first.wpilibj.PIDOutput;
-import edu.wpi.first.wpilibj.PIDSource;
+import edu.wpi.first.wpilibj.*;
 import edu.wpi.first.wpilibj.camera.AxisCamera;
 import edu.wpi.first.wpilibj.image.ParticleAnalysisReport;
 
 /**
  *
- * @author Alex
+ * @author Michael, Alex
  */
 public class LiveReckoning {
 
@@ -45,8 +37,7 @@ public class LiveReckoning {
         this.drive = drive;
         this.launcher = launcher;
         collect = collectMotor;
-        bridge = bridgeMotor;
-        //potentiometer = new AnalogChannel(1);
+        bridge = bridgeMotor;        
 
         camera = AxisCamera.getInstance();
         camera.writeBrightness(30);
@@ -84,12 +75,8 @@ public class LiveReckoning {
                     pid.setSetpoint(angle);
                     System.out.println("Setpoint: " + angle);
 
-
-
                     pid.enable();
-                    System.out.println("Enabled");
-
-
+                    System.out.println("PID Enabled");
 
                 } catch (Exception e) {
                     System.out.println("Exception: " + e.getMessage());
@@ -98,11 +85,8 @@ public class LiveReckoning {
             }
         } else {
             System.out.println("Waiting for fresh image...");
-
-
         }
         System.out.println("set:" + pid.getSetpoint());
-
     }
 
     public void doAuto() {
@@ -117,13 +101,9 @@ public class LiveReckoning {
         } catch (Exception ex) {
             ex.printStackTrace();
         }
-
         launcher.launchMotor.set(.75);
         Timer.delay(7);
         collect.set(-1);
-
-
-
     }
 
     public void doTele() {

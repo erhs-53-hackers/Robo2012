@@ -13,8 +13,7 @@ public class Launcher {
 
     Jaguar launchMotor;
     Jaguar collectMotor;
-    Encoder encoder;
-    double topTargetRPM = 5000;//needs to be calibrated
+    Encoder encoder;    
 
     /**
      * Default constructor for the launcher
@@ -57,45 +56,5 @@ public class Launcher {
         deltaEncod = encod2 - encod1;
         rate = deltaEncod / (deltaTime * 6) * 4.67;
         return rate;
-    }
-
-    public void shoot(int pixel, double height) {
-        double speed = 0.0;
-        /* 1000 can change to tested values later */
-        int launchSpeed = pixel * 1000;
-        encoder.start();
-        while (MathX.abs(getRPM() - launchSpeed) >= 100) {
-            launchMotor.set(speed);
-            speed += .025;
-            Timer.delay(.025);
-        }
-        encoder.stop();
-        collectMotor.set(1);
-        Timer.delay(5);
-        collectMotor.set(0);
-        launchMotor.set(0);
-    }
-    
-    public void shootTopTarget() {
-        double speed = 0.0;
-        encoder.start();
-        while (MathX.abs(getRPM() - topTargetRPM) >= 100) {
-            launchMotor.set(speed);
-            speed += .025;
-            Timer.delay(.025);
-            
-        }
-        encoder.stop();
-        collectMotor.set(1);
-        Timer.delay(5);
-        collectMotor.set(0);
-        launchMotor.set(0);        
-    }
-    
-    public void manualShoot() {
-        collectMotor.set(-1);
-        //Timer.delay(5);
-        //loadMotor.set(0);
-        //launchMotor.set(0);
-    }
+    }    
 }

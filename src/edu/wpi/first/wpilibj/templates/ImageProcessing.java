@@ -39,16 +39,7 @@ public class ImageProcessing {
     static final double B_topTargetHeight = 100;//inches to bottom of tape
     static final double B_middleTargetHeight = 63;//inches to bottom of tape
     static final double B_bottomTargetHeight = 30;//inches to bottom of tape
-
-    //static final double topTargetHeight = 53;//inches to middle
-    //static final double middleTargetHeight = 72;//inches to middle
-    //static final double bottomTargetHeight = 16.375;//inches to middle
-    //static final double T_topTargetHeight = 53 + (targetHeight/2);//inches to top of tape
-    //static final double T_middleTargetHeight = 81;//inches to top of tape
-    //static final double T_bottomTargetHeight = 16.375 + (targetHeight/2);//inches to top of tape
-    //static final double B_topTargetHeight = 53 - (targetHeight/2);//inches to bottom of tape
-    //static final double B_middleTargetHeight = 63;//inches to bottom of tape
-    //static final double B_bottomTargetHeight = 16.375 - (targetHeight/2);//inches to bottom of tape
+    
     public ImageProcessing() {
         criteriaCollection.addCriteria(
                 MeasurementType.IMAQ_MT_BOUNDING_RECT_WIDTH, 30, 400, false);
@@ -235,11 +226,5 @@ public class ImageProcessing {
         } else {
             return false;
         }
-    }
-    /*
-     * public ParticleAnalysisReport getTopTarget() throws Exception { for(int
-     * i=0;i<particles.length;i++) { if(isTopTarget(particles[i])) { return
-     * particles[i]; } } throw new Exception("Top target not found!"); }
-     *
-     */
+    }    
 }

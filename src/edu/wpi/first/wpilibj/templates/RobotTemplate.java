@@ -21,8 +21,7 @@ public class RobotTemplate extends IterativeRobot {
     Launcher launcher;
     Jaguar bridgeArm, collector;
     GyroX gyro;
-    boolean isManual = true;
-    boolean isShooting = false;
+    boolean isManual = true;    
     DeadReckoning dead;
     LiveReckoning live;
     boolean first = true;
@@ -53,14 +52,7 @@ public class RobotTemplate extends IterativeRobot {
         dead = new DeadReckoning(drive, launcher.launchMotor, collector, bridgeArm);
         live = new LiveReckoning(drive, launcher, collector, bridgeArm, gyro);
 
-        msg.printLn("Done: FRC 2012");
-        //while(true) {
-        //System.out.println("Gyro:" + gyro.refreshGyro());
-        //}
-    }
-
-    public void autonomousInit() {
-        isShooting = false;//change me!!!!!       
+        msg.printLn("Done: FRC 2012");        
     }
 
     public void autonomousPeriodic() {
@@ -89,7 +81,7 @@ public class RobotTemplate extends IterativeRobot {
             first = false;
         }
         
-        //live.doAuto();
+        
     }
 
     public void disabledInit() {
@@ -98,9 +90,7 @@ public class RobotTemplate extends IterativeRobot {
 
     public void teleopInit() {
         launcher.launchMotor.set(0);
-        collector.set(0);
-        //live.free();
-        //live.reset();
+        collector.set(0);        
         msg.clearConsole();
     }
 
@@ -145,8 +135,7 @@ public class RobotTemplate extends IterativeRobot {
                 } else {
                     msg.printLn("Can't find target");
                 }
-            } else {
-                //live.free();                
+            } else {                               
                 live.reset();
             }
 
@@ -170,8 +159,6 @@ public class RobotTemplate extends IterativeRobot {
             msg.printOnLn("Launch Power = " + power, DriverStationLCD.Line.kUser2);
 
         }
-
         live.doTele();
-
     }
 }

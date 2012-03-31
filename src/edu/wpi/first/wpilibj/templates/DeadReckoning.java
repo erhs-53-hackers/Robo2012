@@ -11,7 +11,7 @@ import edu.wpi.first.wpilibj.Timer;
 
 /**
  *
- * @author Rajath
+ * @author Rajath, Michael
  */
 public class DeadReckoning {
 
