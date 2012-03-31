@@ -6,7 +6,6 @@
 package edu.wpi.first.wpilibj.templates;
 
 import edu.wpi.first.wpilibj.*;
-import edu.wpi.first.wpilibj.image.ParticleAnalysisReport;
 
 /**
  *
@@ -77,9 +76,6 @@ public class RobotTemplate extends IterativeRobot {
     }
 
     public void teleopPeriodic() {
-
-
-
         // drive system, independent of teleop assistance
         if (leftStick.getRawButton(1) || rightStick.getRawButton(1)) {
             drive.tankDrive(leftStick.getAxis(Joystick.AxisType.kY) * .4,
@@ -106,11 +102,9 @@ public class RobotTemplate extends IterativeRobot {
                 live.reset();
             }
 
-
             collector.set(launchControlStick.getY());
 
             double power = (launchControlStick.getThrottle() + 1) / 2;
-
             if (launchControls.button5()) {
                 power = .56;
             } else if (launchControls.button3()) {
@@ -126,6 +120,7 @@ public class RobotTemplate extends IterativeRobot {
             msg.printOnLn("Launch Power = " + power, DriverStationLCD.Line.kUser2);
 
         }
+        
         live.doTele();
     }
 }
