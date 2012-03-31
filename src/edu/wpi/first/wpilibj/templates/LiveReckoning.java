@@ -143,7 +143,7 @@ public class LiveReckoning {
                         msg.printOnLn("Can't find target", DriverStationLCD.Line.kUser6);
                     }
                 } else {
-                    msg.printLn("Can't find target");
+                    msg.printOnLn("Can't find target", DriverStationLCD.Line.kUser6);
                 }
 
             } catch (Exception e) {

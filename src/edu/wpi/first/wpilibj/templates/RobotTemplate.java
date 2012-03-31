@@ -79,10 +79,10 @@ public class RobotTemplate extends IterativeRobot {
                     ParticleAnalysisReport top = ImageProcessing.getTopMost(parts);
                     live.turnToTarget(top);
                 } else {
-                    msg.printLn("Can't find target");
+                    msg.printOnLn("Can't find target", DriverStationLCD.Line.kUser6);
                 }
             } else {
-                msg.printLn("Can't find target");
+                msg.printOnLn("Can't find target", DriverStationLCD.Line.kUser6);
             }
             
             dead.shoot();
