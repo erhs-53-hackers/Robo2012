@@ -17,17 +17,14 @@ public class LiveReckoning {
     private Messager msg;
     private RobotDrive drive;
     private Jaguar collect;
-    private Jaguar bridge;
-    private AnalogChannel potentiometer;
+    private Jaguar bridge;    
     private GyroX gyro;
     public AxisCamera camera;
     public ImageProcessing imageProc;
     private Launcher launcher;
     private PIDController pid;
-    private double savedDist = 0;
-    private boolean stepFlag = false;
-    private boolean isDone = false;
-    public boolean start = true;
+    
+    
 
     public LiveReckoning(RobotDrive drive, Launcher launcher,
             Jaguar collectMotor, Jaguar bridgeMotor, GyroX gyro1) {
@@ -37,7 +34,7 @@ public class LiveReckoning {
         this.drive = drive;
         this.launcher = launcher;
         collect = collectMotor;
-        bridge = bridgeMotor;        
+        bridge = bridgeMotor;
 
         camera = AxisCamera.getInstance();
         camera.writeBrightness(30);
@@ -52,15 +49,13 @@ public class LiveReckoning {
 
     public final void reset() {
         if (pid.isEnable()) {
-            pid.reset();
-            start = true;
+            pid.reset();            
         }
     }
 
-    public void free() {
+    public void disable() {
         if (pid.isEnable()) {
-            pid.disable();
-            pid.free();
+            pid.disable();            
         }
     }
 
@@ -81,7 +76,7 @@ public class LiveReckoning {
                 } catch (Exception e) {
                     System.out.println("Exception: " + e.getMessage());
                 }
-                start = false;
+                
             }
         } else {
             System.out.println("Waiting for fresh image...");
@@ -89,21 +84,21 @@ public class LiveReckoning {
         System.out.println("set:" + pid.getSetpoint());
     }
 
-    public void doAuto() {
+    public void turnToTopTarget() {
         try {
-            if (start) {
-                imageProc.getTheParticles(camera);
-                ParticleAnalysisReport top = ImageProcessing.getTopMost(imageProc.particles);
+            imageProc.getTheParticles(camera);
+            ParticleAnalysisReport[] parts = imageProc.particles;
+            if (parts != null && parts.length > 0) {
+
+                ParticleAnalysisReport top = ImageProcessing.getTopMost(parts);
                 turnToTarget(top);
 
-                start = false;
+            } else {
+                msg.printOnLn("Can't find target", DriverStationLCD.Line.kUser6);
             }
         } catch (Exception ex) {
-            ex.printStackTrace();
+            msg.printOnLn("Can't find target", DriverStationLCD.Line.kUser6);
         }
-        launcher.launchMotor.set(.75);
-        Timer.delay(7);
-        collect.set(-1);
     }
 
     public void doTele() {

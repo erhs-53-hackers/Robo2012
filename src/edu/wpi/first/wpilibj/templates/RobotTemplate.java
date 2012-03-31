@@ -21,7 +21,7 @@ public class RobotTemplate extends IterativeRobot {
     Launcher launcher;
     Jaguar bridgeArm, collector;
     GyroX gyro;
-    boolean isManual = true;    
+    boolean isManual = true;
     DeadReckoning dead;
     LiveReckoning live;
     boolean first = true;
@@ -52,45 +52,27 @@ public class RobotTemplate extends IterativeRobot {
         dead = new DeadReckoning(drive, launcher.launchMotor, collector, bridgeArm);
         live = new LiveReckoning(drive, launcher, collector, bridgeArm, gyro);
 
-        msg.printLn("Done: FRC 2012");        
+        msg.printLn("Done: FRC 2012");
     }
 
     public void autonomousPeriodic() {
-
         if (first) {
             while (!live.camera.freshImage()) {
             }
-            try {
-                live.imageProc.getTheParticles(live.camera);
-            } catch (Exception ex) {
-                ex.printStackTrace();
-            }
-            ParticleAnalysisReport[] parts = live.imageProc.particles;
-            if (parts != null) {
-                if (parts.length > 0) {
-                    ParticleAnalysisReport top = ImageProcessing.getTopMost(parts);
-                    live.turnToTarget(top);
-                } else {
-                    msg.printOnLn("Can't find target", DriverStationLCD.Line.kUser6);
-                }
-            } else {
-                msg.printOnLn("Can't find target", DriverStationLCD.Line.kUser6);
-            }
             
+            live.turnToTopTarget();
             dead.shoot();
             first = false;
         }
-        
-        
     }
 
     public void disabledInit() {
-        live.free();
+        live.disable();
     }
 
     public void teleopInit() {
         launcher.launchMotor.set(0);
-        collector.set(0);        
+        collector.set(0);
         msg.clearConsole();
     }
 
@@ -119,23 +101,8 @@ public class RobotTemplate extends IterativeRobot {
             msg.printOnLn("Mode: Manual", DriverStationLCD.Line.kMain6);
 
             if (launchControlStick.getTrigger()) {
-                try {
-                    live.imageProc.getTheParticles(live.camera);
-                } catch (Exception ex) {
-                    ex.printStackTrace();
-                }
-                ParticleAnalysisReport[] parts = live.imageProc.particles;
-                if (parts != null) {
-                    if (parts.length > 0) {                        
-                        ParticleAnalysisReport top = ImageProcessing.getTopMost(parts);
-                        live.turnToTarget(top);
-                    } else {
-                        msg.printLn("Can't find target");
-                    }
-                } else {
-                    msg.printLn("Can't find target");
-                }
-            } else {                               
+                live.turnToTopTarget();
+            } else {
                 live.reset();
             }
 
@@ -152,7 +119,7 @@ public class RobotTemplate extends IterativeRobot {
                 power = .75;
             } else if (launchControls.button6()) {
                 power = .82;
-            } else if(launchControls.button2()) {
+            } else if (launchControls.button2()) {
                 power = .8;
             }
             launcher.launchMotor.set(power);

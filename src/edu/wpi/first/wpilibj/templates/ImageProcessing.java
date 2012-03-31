@@ -17,7 +17,7 @@ import edu.wpi.first.wpilibj.image.ParticleAnalysisReport;
  */
 public class ImageProcessing {
 
-    ParticleAnalysisReport particles[];
+    ParticleAnalysisReport particles[] = null;
     CriteriaCollection criteriaCollection = new CriteriaCollection();
     ParticleAnalysisReport bottomTarget, topTarget, middleTargetLeft,
             middleTargetRight;
