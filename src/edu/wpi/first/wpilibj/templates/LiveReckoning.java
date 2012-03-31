@@ -35,7 +35,7 @@ public class LiveReckoning {
     private double savedDist = 0;
     private boolean stepFlag = false;
     private boolean isDone = false;
-    private boolean start = true;
+    public boolean start = true;
 
     public LiveReckoning(RobotDrive drive, Launcher launcher,
             Jaguar collectMotor, Jaguar bridgeMotor, GyroX gyro1) {
@@ -62,6 +62,7 @@ public class LiveReckoning {
     public final void reset() {
         if (pid.isEnable()) {
             pid.reset();
+            start = true;
         }
     }
 
@@ -74,22 +75,26 @@ public class LiveReckoning {
 
     public void turnToTarget(ParticleAnalysisReport part) {
         if (camera.freshImage()) {
-            try {
-                imageProc.getTheParticles(camera);
-                gyro.gyro.reset();
-                gyro.refreshGyro();
-                double angle = ImageProcessing.getHorizontalAngle(part);
-                pid.setSetpoint(angle);
-                System.out.println("Setpoint: " + angle);
+            if (start) {
+                try {
+                    imageProc.getTheParticles(camera);
+                    gyro.gyro.reset();
+                    gyro.refreshGyro();
+                    double angle = ImageProcessing.getHorizontalAngle(part);
+                    pid.setSetpoint(angle);
+                    System.out.println("Setpoint: " + angle);
 
 
-                if (!pid.isEnable()) {
-                    pid.enable();
+                    if (!pid.isEnable()) {
+                        pid.enable();
+                        System.out.println("Enabled");
+                    }
+
+
+                } catch (Exception e) {
+                    System.out.println("Exception: " + e.getMessage());
                 }
-
-
-            } catch (Exception e) {
-                System.out.println("Exception: " + e.getMessage());
+                start = false;
             }
         } else {
             System.out.println("Waiting for fresh image...");
@@ -132,10 +137,10 @@ public class LiveReckoning {
                     if (parts.length > 0) {
                         ParticleAnalysisReport topTarget = ImageProcessing.getTopMost(imageProc.particles);
                         double dist = imageProc.getDistance(topTarget, ImageProcessing.topTargetHeight);
-                        msg.printOnLn("Dist(Top):" + dist, DriverStationLCD.Line.kMain6);
+                        msg.printOnLn("Dist(Top):" + dist, DriverStationLCD.Line.kUser6);
 
                     } else {
-                        msg.printLn("Can't find target");
+                        msg.printOnLn("Can't find target", DriverStationLCD.Line.kUser6);
                     }
                 } else {
                     msg.printLn("Can't find target");

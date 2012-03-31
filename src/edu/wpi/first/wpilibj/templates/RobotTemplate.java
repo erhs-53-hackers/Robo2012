@@ -25,6 +25,7 @@ public class RobotTemplate extends IterativeRobot {
     boolean isShooting = false;
     DeadReckoning dead;
     LiveReckoning live;
+    boolean first = true;
 
     public void robotInit() {
         msg = new Messager();
@@ -63,7 +64,31 @@ public class RobotTemplate extends IterativeRobot {
     }
 
     public void autonomousPeriodic() {
-        dead.shoot();
+
+        if (first) {
+            while (!live.camera.freshImage()) {
+            }
+            try {
+                live.imageProc.getTheParticles(live.camera);
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+            ParticleAnalysisReport[] parts = live.imageProc.particles;
+            if (parts != null) {
+                if (parts.length > 0) {
+                    ParticleAnalysisReport top = ImageProcessing.getTopMost(parts);
+                    live.turnToTarget(top);
+                } else {
+                    msg.printLn("Can't find target");
+                }
+            } else {
+                msg.printLn("Can't find target");
+            }
+            
+            dead.shoot();
+            first = false;
+        }
+        
         //live.doAuto();
     }
 
@@ -81,12 +106,7 @@ public class RobotTemplate extends IterativeRobot {
 
     public void teleopPeriodic() {
 
-        // switch to control assisted teleop  
-        if (launchControls.button11()) {
-            isManual = true;
-        } else if (launchControls.button12()) {
-            isManual = false;
-        }
+
 
         // drive system, independent of teleop assistance
         if (leftStick.getRawButton(2) || rightStick.getRawButton(2)) {
@@ -107,8 +127,7 @@ public class RobotTemplate extends IterativeRobot {
 
         if (isManual) {
             msg.printOnLn("Mode: Manual", DriverStationLCD.Line.kMain6);
-            System.out.println("trig:" + launchControlStick.getTrigger());
-            
+
             if (launchControlStick.getTrigger()) {
                 try {
                     live.imageProc.getTheParticles(live.camera);
@@ -118,6 +137,7 @@ public class RobotTemplate extends IterativeRobot {
                 ParticleAnalysisReport[] parts = live.imageProc.particles;
                 if (parts != null) {
                     if (parts.length > 0) {
+                        live.start = true;
                         ParticleAnalysisReport top = ImageProcessing.getTopMost(parts);
                         live.turnToTarget(top);
                     } else {
@@ -130,21 +150,24 @@ public class RobotTemplate extends IterativeRobot {
                 //live.free();                
                 live.reset();
             }
-            
-            
+
+
             collector.set(launchControlStick.getY());
 
             double power = (launchControlStick.getThrottle() + 1) / 2;
+
+            if (launchControls.button5()) {
+                power = .65;
+            } else if (launchControls.button3()) {
+                power = .7;
+            } else if (launchControls.button4()) {
+                power = .75;
+            } else if (launchControls.button6()) {
+                power = .8;
+            }
             launcher.launchMotor.set(power);
             msg.printOnLn("Launch Power = " + power, DriverStationLCD.Line.kUser2);
 
-        } else if (!isManual) {
-            msg.printOnLn("Mode: Auto", DriverStationLCD.Line.kMain6);
-            collector.set((launchControlStick.getThrottle() + 1) / 2);
-
-            if (launchControls.button2()) {
-                isShooting = true;
-            }
         }
 
         live.doTele();
