@@ -22,7 +22,7 @@ public class LiveReckoning {
     public AxisCamera camera;
     public ImageProcessing imageProc;
     private Launcher launcher;
-    private PIDController pid;
+    public PIDController pid;
     
     
 

@@ -63,10 +63,14 @@ public class RobotTemplate extends IterativeRobot {
             dead.shoot();
             first = false;
         }
+        if(live.pid.getError() < 2 && live.pid.isEnable()) {
+            live.pid.disable();
+        }
     }
 
     public void disabledInit() {
         live.disable();
+        first = true;
     }
 
     public void teleopInit() {
