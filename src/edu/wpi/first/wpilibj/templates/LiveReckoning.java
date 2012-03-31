@@ -75,7 +75,7 @@ public class LiveReckoning {
 
     public void turnToTarget(ParticleAnalysisReport part) {
         if (camera.freshImage()) {
-            if (start) {
+            if (!pid.isEnable()) {
                 try {
                     imageProc.getTheParticles(camera);
                     gyro.gyro.reset();
@@ -85,10 +85,10 @@ public class LiveReckoning {
                     System.out.println("Setpoint: " + angle);
 
 
-                    if (!pid.isEnable()) {
-                        pid.enable();
-                        System.out.println("Enabled");
-                    }
+
+                    pid.enable();
+                    System.out.println("Enabled");
+
 
 
                 } catch (Exception e) {

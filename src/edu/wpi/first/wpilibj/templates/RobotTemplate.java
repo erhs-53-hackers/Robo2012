@@ -109,9 +109,9 @@ public class RobotTemplate extends IterativeRobot {
 
 
         // drive system, independent of teleop assistance
-        if (leftStick.getRawButton(2) || rightStick.getRawButton(2)) {
-            drive.tankDrive(leftStick.getAxis(Joystick.AxisType.kY) * .5,
-                    rightStick.getAxis(Joystick.AxisType.kY) * .5);
+        if (leftStick.getRawButton(1) || rightStick.getRawButton(1)) {
+            drive.tankDrive(leftStick.getAxis(Joystick.AxisType.kY) * .4,
+                    rightStick.getAxis(Joystick.AxisType.kY) * .4);
         } else {
             drive.tankDrive(leftStick, rightStick);
         }
@@ -136,8 +136,7 @@ public class RobotTemplate extends IterativeRobot {
                 }
                 ParticleAnalysisReport[] parts = live.imageProc.particles;
                 if (parts != null) {
-                    if (parts.length > 0) {
-                        live.start = true;
+                    if (parts.length > 0) {                        
                         ParticleAnalysisReport top = ImageProcessing.getTopMost(parts);
                         live.turnToTarget(top);
                     } else {
@@ -157,12 +156,14 @@ public class RobotTemplate extends IterativeRobot {
             double power = (launchControlStick.getThrottle() + 1) / 2;
 
             if (launchControls.button5()) {
-                power = .65;
+                power = .56;
             } else if (launchControls.button3()) {
                 power = .7;
             } else if (launchControls.button4()) {
                 power = .75;
             } else if (launchControls.button6()) {
+                power = .82;
+            } else if(launchControls.button2()) {
                 power = .8;
             }
             launcher.launchMotor.set(power);
